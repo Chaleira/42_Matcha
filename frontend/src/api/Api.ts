@@ -34,6 +34,34 @@ export namespace Api {
 				});
 		}
 
+		export async function register(username: string, email: string, password: string): Promise<boolean> {
+			const myHeaders = new Headers();
+			myHeaders.append("Content-Type", "application/json");
+
+			const body = JSON.stringify({
+				"username": username,
+				"email": email,
+				"password": password
+			});
+
+			return await fetch(`${URL}/user/register`, {
+				method: "POST",
+				headers: myHeaders,
+				body: body,
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid registration");
+					}
+					localStorage.removeItem("token");
+					return true;
+				}).catch((error) => {
+					alert(error);
+					return false;
+				});
+		}
+
 	}
 
 
