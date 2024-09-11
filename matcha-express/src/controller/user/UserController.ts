@@ -113,7 +113,7 @@ router.get('/user/list', authenticateToken, async (req: Request, res: Response) 
   try {
     // Initialize an empty filter object
     const filters: Record<string, any> = {};
-    const invalidFilters: string[] = ['password', 'isDeleted'];
+    const invalidFilters: string[] = ['password', 'isDeleted', 'email'];
     const invalidKeys: string[] = [];
     const validKeys: string[] = ["location", "radius" ]
 
