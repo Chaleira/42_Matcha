@@ -1,10 +1,15 @@
 import express, { Request, Response } from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import userRoutes from './controller/user/UserController';
 import { env } from '../env';
 
+
 const app = express();
 const port = 3000;
+
+// Enable CORS for all origins
+app.use(cors());
 
 // Middleware
 app.use(express.json());

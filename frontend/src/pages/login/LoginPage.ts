@@ -1,7 +1,10 @@
-import { AnchorElement, ButtonElement, CardElement, Component, DivElement, H4Element, Router, TextFieldElement, VBoxElement } from "typecomposer";
+import { AnchorElement, ButtonElement, CardElement, Component, DivElement, H4Element, ref, Router, TextFieldElement, VBoxElement } from "typecomposer";
+import { Api } from "../../api/Api";
 
 
 export class LoginPage extends Component {
+
+	user = ref({ email: "", password: "" });
 
 	constructor() {
 		super({ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", width: "100vw" });
@@ -9,9 +12,9 @@ export class LoginPage extends Component {
 		const vbox = new VBoxElement({ padding: "10px", gap: "15px" });
 
 		vbox.append(new H4Element({ text: "Matcha", className: "login_header" }));
-		vbox.append(new TextFieldElement({ placeholder: "Username" }));
-		vbox.append(new TextFieldElement({ placeholder: "Password" }));
-		vbox.append(new ButtonElement({ text: "Login", width: "200px", height: "50px", margin: "0 auto", onclick: () => Router.go("#/home") }));
+		vbox.append(new TextFieldElement({ placeholder: "Email", value: this.user.value.email }));
+		vbox.append(new TextFieldElement({ placeholder: "Password", type: "password", value: this.user.value.password }));
+		vbox.append(new ButtonElement({ text: "Login", width: "200px", height: "50px", margin: "0 auto", onclick: () => this.login() }));
 		const div = new DivElement({ display: "flex", justifyContent: "space-between" });
 		div.append(new AnchorElement({ text: "Register", rlink: "#/register" }));
 		div.append(new AnchorElement({ text: "Forgot password?", rlink: "#/forgot" }));
@@ -20,4 +23,11 @@ export class LoginPage extends Component {
 		this.append(card);
 	}
 
+	private login() {
+		Api.User.login(this.user.value.email, this.user.value.password).then((success) => {
+			if (success) {
+				Router.go("#/home");
+			}
+		});
+	}
 }
