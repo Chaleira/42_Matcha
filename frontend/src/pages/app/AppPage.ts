@@ -47,7 +47,6 @@ export class AppPage extends BorderPaneElement {
 	updateLocation(location: { latitude: number, longitude: number }) {
 		userStore.value.userLocation.coordinates[0] = location.latitude;
 		userStore.value.userLocation.coordinates[1] = location.longitude
-		console.log(`Latitude: ${location.latitude}, Longitude: ${location.longitude}`);
 		Api.User.update({ userLocation: userStore.value.userLocation })
 	}
 
