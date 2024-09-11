@@ -17,7 +17,7 @@ const SECRET_KEY = 'your_jwt_secret_key';
 
 router.post('/user/register', async (req: Request, res: Response) => {
   try {
-    const { username, email, password, age } = req.body;
+    const { username, email, password, age, userLocation } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,7 +25,8 @@ router.post('/user/register', async (req: Request, res: Response) => {
       username,
       email,
       password: hashedPassword,
-      age
+      age,
+      userLocation,
     });
 
     await newUser.save();
@@ -112,12 +113,32 @@ router.get('/user/list', authenticateToken, async (req: Request, res: Response) 
   try {
     // Initialize an empty filter object
     const filters: Record<string, any> = {};
-    const invalidFilters: string[] = ['password', 'isDeleted'];
+    const invalidFilters: string[] = ['password', 'isDeleted', 'email'];
     const invalidKeys: string[] = [];
+    const validKeys: string[] = ["location", "radius" ]
+
+    // Extract location parameters
+    const { location, radius } = req.query;
+
+    // Parse location and radius if provided
+    if (location && typeof location === 'string') {
+      const [longitude, latitude] = location.split(',').map(Number);
+      if (!isNaN(longitude) && !isNaN(latitude)) {
+        const radiusInMeters = radius ? parseInt(radius as string, 10) : 10000; // Default radius
+        filters.userLocation = {
+          $geoWithin: {
+            $centerSphere: [
+              [longitude, latitude], // Coordinates
+              radiusInMeters / 6378100 // Radius in radians
+            ]
+          }
+        };
+      }
+    }
 
     // Dynamically add query parameters to the filters object
     for (const key in req.query) {
-      if (req.query.hasOwnProperty(key) &&  hasField(UserModel, key) && !invalidFilters.includes(key)) {
+      if (req.query.hasOwnProperty(key) && hasField(UserModel, key) && !invalidFilters.includes(key)) {
         // Handle cases like age where the value needs to be parsed into a number
         if (key === 'age') {
           const ageParam = req.query[key] as string;
@@ -134,7 +155,8 @@ router.get('/user/list', authenticateToken, async (req: Request, res: Response) 
         }
       }
       else {
-        invalidKeys.push(key);
+        if (!validKeys.includes(key)) 
+          invalidKeys.push(key);
       }
     }
 
