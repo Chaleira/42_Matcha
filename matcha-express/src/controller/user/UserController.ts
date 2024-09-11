@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express';
 interface AuthenticatedRequest extends Request {
   user?: { id: string };
 }
-import {IUser, UserModel } from "../../model/user/UserModel";
+import {IUser, UserModel, hasField } from "../../model/user/UserModel";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { authenticateToken } from "../../middleware/AuthMiddleware";
@@ -55,14 +55,9 @@ router.post('/user/login',  async (req: Request, res: Response) => {
   }
 });
 
-router.get('/user/logout', (req: Request, res: Response) => {
-  
-  res.json({ message: 'Logout successful' });
-});
-
 router.get('/user/profile', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-      const user = await UserModel.findById(req.user?.id);
+      const user = await UserModel.findById(req.user?.id).select('-password -isDeleted -__v');
       res.status(200).json(user);
   }
   catch (err: any) {
@@ -78,7 +73,7 @@ router.post('/user/update', authenticateToken, async (req: AuthenticatedRequest,
     const updatedUser = await UserModel.findByIdAndUpdate(req.user?.id, allowedFields, {
       new: true, // Return the updated document
       runValidators: true, // Ensure validation is applied to updated fields
-    });
+    }).select('-password -isDeleted -__v');
 
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
@@ -100,13 +95,63 @@ router.get('/user/delete', authenticateToken, async (req: AuthenticatedRequest, 
     return res.status(400).json({ message: 'User already deleted' });
   }
   try {
-    const deletedUser = await UserModel.findByIdAndUpdate(req.user?.id, { isDeleted: true });
+    const deletedUser = await UserModel.findByIdAndUpdate(req.user?.id, { isDeleted: true }).select('-password -isDeleted -__v');
 
     if (!deletedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
 
     res.status(200).json({ message: 'User deleted successfully' , deletedUser});
+  } catch (err: any) {
+    res.status(400).json({ message: err.message });
+  }
+});
+
+// GET /users/list?name=John&age=30&email=test@example.com
+router.get('/user/list', authenticateToken, async (req: Request, res: Response) => {
+  try {
+    // Initialize an empty filter object
+    const filters: Record<string, any> = {};
+    const invalidFilters: string[] = ['password', 'isDeleted'];
+    const invalidKeys: string[] = [];
+
+    // Dynamically add query parameters to the filters object
+    for (const key in req.query) {
+      if (req.query.hasOwnProperty(key) &&  hasField(UserModel, key) && !invalidFilters.includes(key)) {
+        // Handle cases like age where the value needs to be parsed into a number
+        if (key === 'age') {
+          const ageParam = req.query[key] as string;
+          
+          // Check if the age parameter contains a range (e.g., '20-30')
+          if (ageParam.includes('-')) {
+            const [minAge, maxAge] = ageParam.split('-').map(Number);
+            filters[key] = { $gte: minAge, $lte: maxAge };
+          } else {
+            filters[key] = parseInt(ageParam, 10);
+        }
+        } else {
+          filters[key] = req.query[key];
+        }
+      }
+      else {
+        invalidKeys.push(key);
+      }
+    }
+
+    // Find users with the dynamically constructed filters
+    const users = await UserModel.find(filters).select('-password -isDeleted -__v');
+    if (!users.length) {
+      return res.status(404).json({ message: 'No users found' });
+    }
+
+    if (invalidKeys.length > 0) {
+      res.status(400).json({
+        message: `Some invalid properties were sent: ${invalidKeys.join(', ')}`,
+        users: users,
+      });
+    } else {
+      res.status(200).json(users);
+    }
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }

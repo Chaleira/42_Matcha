@@ -5,7 +5,7 @@ interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  // age: number;
+  age: number;
   // first_name: string;
   // last_name: string;
   // bio: string;
@@ -24,6 +24,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   isDeleted: { type: Boolean, default: false }
   // age: { type: Number, required: true }
 });
+
+export function hasField(model: mongoose.Model<IUser>, fieldName: string): boolean {
+  return !!model.schema.path(fieldName);
+}
 
 // Create a model using the schema and interface
 const UserModel = mongoose.model<IUser>('User', userSchema, 'User');

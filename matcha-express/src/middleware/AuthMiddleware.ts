@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 const SECRET_KEY = 'your_jwt_secret_key'; // Make sure to keep this safe and secure
 
 export const authenticateToken = (req: Request, res: Response, next: NextFunction) => {
+  if (req.url === '/api/user/login' || req.url === '/api/user/register') return next(); // Skip authentication for login and register routes
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Extract the token
 
@@ -18,4 +19,3 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     next();
   });
 };
-
