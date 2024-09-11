@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
 import userRoutes from './controller/user/UserController';
-import {authenticateToken} from './middleware/AuthMiddleware';
+import { env } from '../env';
 
 const app = express();
 const port = 3000;
@@ -15,7 +15,7 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Connect to MongoDB
-mongoose.connect('mongodb+srv://zequielzico:Vox9KeRE4lmy5sZH@matcha.rp96o.mongodb.net/matcha')
+mongoose.connect(`mongodb+srv://${env.mongodb.username}:${env.mongodb.password}@matcha.rp96o.mongodb.net/matcha`)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
