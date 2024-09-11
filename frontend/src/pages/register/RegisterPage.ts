@@ -29,9 +29,11 @@ export class RegisterPage extends Component {
 	private register() {
 		if (this.user.value.password.toString() == this.user.value.confirmPassword.toString()) {
 			this.user.value.msg = "";
-			Api.User.register(this.user.value.username, this.user.value.email, this.user.value.password).then((success) => {
-				if (success) {
+			Api.User.register(this.user.value.username, this.user.value.email, this.user.value.password).then((msg) => {
+				if (msg != "Registration successful") {
 					Router.go("#/login", { email: this.user.value.email });
+				} else {
+					this.user.value.msg = msg;
 				}
 			});
 		}
