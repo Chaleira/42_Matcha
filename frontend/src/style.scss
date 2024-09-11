@@ -44,6 +44,19 @@ register-page {
   }
 }
 
+login-page,
+register-page {
+  background-image: url("/assets/image/4451074-online-messaging-isometric-color-vector-illustration-person-social-network-profile-chatting-like-website-3d-concept-socializing-infografico-webpage-mobile-app-design-vetor.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 button {
   border: 0;
   background-color: #8b3dff;

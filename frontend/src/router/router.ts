@@ -4,12 +4,14 @@ import { RegisterPage } from '../pages/register/RegisterPage';
 import { ForgotPage } from '../pages/forgot/ForgotPage';
 import { HomeView } from '../views/home/HomeView';
 import { AppPage } from '../pages/app/AppPage';
+import { routerGuardHome } from './RouterGuard';
 
 Router.create({
   history: 'hash',
   routes: [
     {
       path: '/',
+      guard: routerGuardHome,
       component: AppPage,
       children: [
         { path: 'home', component: HomeView },
