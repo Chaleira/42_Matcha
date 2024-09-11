@@ -7,7 +7,7 @@ export class LoginPage extends Component {
 	user = ref({ email: Router.props["email"] || "", password: "" });
 
 	constructor() {
-		super({ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh", width: "100vw" });
+		super();
 		const card = new CardElement({ width: "400px" });
 		const vbox = new VBoxElement({ padding: "10px", gap: "15px" });
 

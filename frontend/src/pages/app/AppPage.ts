@@ -1,4 +1,6 @@
 import { BorderPaneElement, DivElement, RouteView } from 'typecomposer'
+import { Api } from '../../api/Api';
+import { userStore } from '../../store/UserStore';
 
 export class AppPage extends BorderPaneElement {
 
@@ -43,7 +45,10 @@ export class AppPage extends BorderPaneElement {
 	}
 
 	updateLocation(location: { latitude: number, longitude: number }) {
+		userStore.value.userLocation.coordinates[0] = location.latitude;
+		userStore.value.userLocation.coordinates[1] = location.longitude
 		console.log(`Latitude: ${location.latitude}, Longitude: ${location.longitude}`);
+		Api.User.update({ userLocation: userStore.value.userLocation })
 	}
 
 
