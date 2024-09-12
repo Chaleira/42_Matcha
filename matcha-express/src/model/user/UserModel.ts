@@ -5,13 +5,15 @@ interface IUser extends Document {
   username: string;
   email: string;
   password: string;
+  avatar: { type: String, required: false };
+  album: { type: [String], required: false };
   age: number;
-  // first_name: string;
-  // last_name: string;
-  // bio: string;
-  // tags: string[];
-  // gender: string;
-  // sexual_orientation: string;
+  firstName: string;
+  lastNname: string;
+  bio: string;
+  tags: string[];
+  gender: string;
+  sexualOrientation: string;
   isDeleted: boolean;
   userLocation: {
     type: 'Point';
@@ -23,9 +25,20 @@ interface IUser extends Document {
 const userSchema: Schema<IUser> = new mongoose.Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  avatar: { type: String, required: false },
+  album: { type: [String], required: false },
   password: { type: String, required: true },
   isDeleted: { type: Boolean, default: false },
   age: { type: Number, required: true },
+  firstName: { type: String, required: true },
+  lastNname: { type: String, required: true },
+  bio: { type: String, required: true },
+  tags: {
+    type: [String], required:
+      true
+  },
+  gender: { type: String, required: true },
+  sexualOrientation: { type: String, required: true },
   userLocation: {
     type: {
       type: String,
@@ -48,4 +61,4 @@ userSchema.index({ userLocation: '2dsphere' });
 // Create a model using the schema and interface
 const UserModel = mongoose.model<IUser>('User', userSchema, 'User');
 
-export {IUser, UserModel};
+export { IUser, UserModel };
