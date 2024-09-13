@@ -60,8 +60,80 @@ register-page {
 button {
   border: 0;
   background-color: #8b3dff;
+  padding: 5px;
 }
 
 button:hover {
   background-color: #9c60f6;
+}
+
+.tag {
+  cursor: pointer;
+  padding: 7px;
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;
+}
+
+.tag:hover {
+  opacity: 0.8;
+}
+
+.tag-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.tag-pop {
+  max-height: 40px;
+  //background-color: "red";
+  border-radius: 10px;
+  background-color: none;
+  padding: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.album-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+  overflow: auto;
+}
+
+.album-item {
+  display: flex;
+  overflow: hidden;
+  position: relative;
+  min-height: 100px;
+  min-width: 100px;
+  border: 1px solid #e0e0e0;
+  transition: transform 0.3s ease;
+}
+
+.album-item img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.album-item:hover .album-close {
+  display: block;
+}
+
+.album-close {
+  display: none;
+  cursor: pointer;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+
+.album-close:hover {
+  transform: scale(1.2); /* Slight zoom on hover */
 }
