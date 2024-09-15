@@ -5,6 +5,7 @@ import { ForgotPage } from '../pages/forgot/ForgotPage';
 import { HomeView } from '../views/home/HomeView';
 import { AppPage } from '../pages/app/AppPage';
 import { routerGuardHome } from './RouterGuard';
+import { ChatView } from '../views/chat/ChatView';
 
 Router.create({
   history: 'hash',
@@ -15,6 +16,7 @@ Router.create({
       component: AppPage,
       children: [
         { path: 'home', component: HomeView },
+        { path: 'chat', component: ChatView },
       ]
     },
     {

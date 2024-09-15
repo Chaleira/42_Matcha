@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "typecomposer": "^0.0.67"
+    "typecomposer": "^0.0.68"
   },
   "devDependencies": {
     "sass": "^1.69.5",

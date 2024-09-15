@@ -4,7 +4,7 @@ export interface IUser {
 	username: string;
 	email: string;
 	avatar?: string;
-	album?: string[];
+	albums?: string[];
 	password: string;
 	age: number;
 	firstName: string;

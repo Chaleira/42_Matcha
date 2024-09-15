@@ -59,7 +59,7 @@ export namespace Api {
 			})
 				.then(async (response) => {
 					if (!response.ok) {
-						throw new Error("Invalid registration");
+						return "Invalid registration";
 					}
 					localStorage.removeItem("token");
 					return "Registration successful";

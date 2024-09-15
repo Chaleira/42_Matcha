@@ -1,4 +1,4 @@
-import { BorderPaneElement, DivElement, RouteView } from 'typecomposer'
+import { AnchorElement, BorderPaneElement, DivElement, RouteView } from 'typecomposer'
 import { Api } from '../../api/Api';
 import { userStore } from '../../store/UserStore';
 
@@ -10,7 +10,9 @@ export class AppPage extends BorderPaneElement {
 
 	onInit(): void {
 		this.top = new DivElement({ height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
-		this.center = new RouteView({ width: "auto%", height: "calc(100vh)", backgroundColor: "white", overflowY: "auto", overflowX: "hidden" });
+		this.top.append(new AnchorElement({ text: "Home", rlink: "#/home", color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Chat", rlink: "#/chat", color: "#fff", margin: "0 10px" }));
+		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
 	}
 
 	onConnected(): void {
