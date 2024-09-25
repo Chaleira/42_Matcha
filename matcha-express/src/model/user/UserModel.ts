@@ -56,6 +56,10 @@ export function hasField(model: mongoose.Model<IUser>, fieldName: string): boole
   return !!model.schema.path(fieldName);
 }
 
+export function findUserByField(model: mongoose.Model<IUser>, fieldName: string, value: string): Promise<IUser | null> {
+  return model.findOne({ [fieldName]: value });
+}
+
 userSchema.index({ userLocation: '2dsphere' });
 
 // Create a model using the schema and interface
