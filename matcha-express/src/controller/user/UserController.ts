@@ -17,7 +17,7 @@ const SECRET_KEY = 'your_jwt_secret_key';
 
 router.post('/user/register', async (req: Request, res: Response) => {
   try {
-    const { username, email, password, age, userLocation, avatar, album,
+    const { username, email, password, dateBirth, userLocation, avatar, album,
             firstName, lastName, bio, tags, gender, sexualOrientation, } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,7 +26,7 @@ router.post('/user/register', async (req: Request, res: Response) => {
       username,
       email,
       password: hashedPassword,
-      age,
+      dateBirth,
       avatar,
       album,
       firstName,

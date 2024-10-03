@@ -7,7 +7,7 @@ interface IUser extends Document {
   password: string;
   avatar: { type: String, required: false };
   album: { type: [String], required: false };
-  age: number;
+  dateBirth: Date;
   firstName: string;
   lastName: string;
   bio: string;
@@ -26,7 +26,7 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  age: { type: Number, required: true },
+  dateBirth: { type: Date, required: true },
   avatar: { type: String, required: false },
   album: { type: [String], required: false },
   isDeleted: { type: Boolean, default: false },

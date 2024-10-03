@@ -2,7 +2,6 @@ import { AnchorElement, AvatarElement, ButtonElement, CardElement, Component, Di
 import { Api } from "../../api/Api";
 import { AlbumContainer } from "../../components/AlbumContainer";
 import { TagList } from "../../components/TagList";
-import { IUser } from "../../api/Interfaces";
 
 
 
