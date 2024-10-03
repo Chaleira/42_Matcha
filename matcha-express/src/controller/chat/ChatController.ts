@@ -45,12 +45,16 @@ router.get('/chat/delete', async (req: Request, res: Response) => {
 });
 
 router.get('/chat/list', async (req: Request, res: Response) => {
+    
 
-    const userId: string | undefined = req.query.userId ? req.query.userId.toString() : undefined;
-    // console.log(userId);
-    // console.log(findChatsByUserId(userId));
-    const chats = (userId ? await findChatsByUserId(new String(userId).toString()) : await ChatModel.find()) || [];
-    chats.length ? res.status(200).json(chats) : res.status(404).json({ message: 'No chats found' });
+    const userId = req.query?.userId as string;
+    try {
+        console.log('User ID:', userId);
+        const chats = await findChatsByUserId(userId) || [];
+        chats.length ? res.status(200).json(chats) : res.status(404).json({ message: 'No chats found' });
+    } catch (error) {
+        res.status(404).json({ message: "invalid userid" });
+  }
 });
 
 export default router;

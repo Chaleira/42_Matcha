@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { IUser } from "../user/UserModel";
 
 interface IChat extends Document {
@@ -36,7 +36,15 @@ export function userIsInChat(chat: IChat, user: IUser): boolean {
 }
 
 export async function findChatsByUserId(userId: string): Promise<IChat[]> {
-    return await ChatModel.find({ usersId: userId });
+    try {
+        const userObjectId = new Types.ObjectId(userId);
+
+        const chats = await ChatModel.find({ usersId: userObjectId }) || null;
+        return chats;
+    }
+    catch (err) {
+        throw err;
+    }
 }
 
 const ChatModel = mongoose.model<IChat>("Chat", chatSchema);
