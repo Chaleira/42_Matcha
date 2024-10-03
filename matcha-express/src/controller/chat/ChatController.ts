@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 
 import { ChatModel, findChatsByUserId } from "../../model/chat/ChatModel";
-import { UserModel, findUserByField } from "../../model/user/UserModel"; 
+import { UserModel, findUserByField } from "../../model/user/UserModel";
 
 const router = express.Router();
 
@@ -45,11 +45,11 @@ router.get('/chat/delete', async (req: Request, res: Response) => {
 });
 
 router.get('/chat/list', async (req: Request, res: Response) => {
-    
-    const userId = req.query.userId as string;
+
+    const userId: string | undefined = req.query.userId ? req.query.userId.toString() : undefined;
     // console.log(userId);
     // console.log(findChatsByUserId(userId));
-    const chats = userId ? await findChatsByUserId(userId) : await ChatModel.find();
+    const chats = (userId ? await findChatsByUserId(new String(userId).toString()) : await ChatModel.find()) || [];
     chats.length ? res.status(200).json(chats) : res.status(404).json({ message: 'No chats found' });
 });
 

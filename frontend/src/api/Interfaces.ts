@@ -19,3 +19,10 @@ export interface IUser {
 	}
 	isDeleted?: boolean;
 }
+
+
+export interface IMessage {
+	sender: string;
+	content: string;
+	date: Date;
+}

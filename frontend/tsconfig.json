@@ -24,7 +24,7 @@
     "emitDecoratorMetadata": true,
 
     /* Type checking */
-    "types": ["vite/client", "typecomposer-plugin/client"]
+    "types": ["vite/client", "typecomposer-plugin/client", "typecomposer/typings"]
   },
   "include": ["src"]
 }

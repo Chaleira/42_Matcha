@@ -42,15 +42,12 @@ export namespace Api {
 				});
 		}
 
-		export async function register(username: string, email: string, password: string): Promise<string> {
+		export async function register(user: IUser): Promise<string> {
+			console.log(user);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
-			const body = JSON.stringify({
-				"username": username,
-				"email": email,
-				"password": password
-			});
+			const body = JSON.stringify(user);
 
 			return await fetch(`${URL}/user/register`, {
 				method: "POST",

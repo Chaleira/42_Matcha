@@ -8,7 +8,7 @@ import { IUser } from "../../api/Interfaces";
 
 export class RegisterPage extends Component {
 
-	user = ref({
+	user = ref<any>({
 		username: "", email: "", password: "", confirmPassword: "", avatar: "", msg: "", albums: [], dateBirth: new Date().toISOString(),
 		firstName: "", lastName: "", bio: "w", tags: [], gender: "male", sexualOrientation: "heterosexual"
 	});
@@ -120,16 +120,30 @@ export class RegisterPage extends Component {
 	}
 
 	private register() {
-		console.log(this.user.toJSON<IUser>().albums);
 		if (this.user.value.password.toString() == this.user.value.confirmPassword.toString()) {
-			this.user.value.msg = "";
-			Api.User.register(this.user.value.username, this.user.value.email, this.user.value.password).then((msg) => {
-				if (msg != "Registration successful") {
-					Router.go("#/login", { email: this.user.value.email });
-				} else {
-					this.user.value.msg = msg;
-				}
-			});
+			fetch('https://ipapi.co/json/')
+				.then(response => response.json())
+				.then(data => {
+					const latitude = data.latitude;
+					const longitude = data.longitude;
+					this.user.value.msg = "";
+					const user: any = {
+						...this.user.toJSON(), userLocation: {
+							"type": "Point",
+							"coordinates": [latitude, longitude
+							]
+						}
+					}
+					Api.User.register(user).then((msg) => {
+						if (msg != "Registration successful") {
+							Router.go("#/login", { email: this.user.value.email });
+						} else {
+							this.user.value.msg = msg;
+						}
+					});
+				})
+				.catch(error => console.error('Error fetching IP location:', error));
+
 		}
 		else {
 			this.user.value.msg = "Passwords do not match";

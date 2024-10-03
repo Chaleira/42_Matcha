@@ -1,8 +1,11 @@
 import { AnchorElement, BorderPaneElement, DivElement, RouteView } from 'typecomposer'
 import { Api } from '../../api/Api';
 import { userStore } from '../../store/UserStore';
+import { io, Socket } from "socket.io-client";
 
 export class AppPage extends BorderPaneElement {
+
+	static socket: Socket = io("http://localhost:3000");
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });
