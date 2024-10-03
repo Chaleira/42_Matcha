@@ -199,7 +199,14 @@ list-element ul li {
 }
 
 .message-list {
+  padding-bottom: 30px;
   ul {
-    display: flex;
+    //display: flex;
   }
+}
+
+.message-item {
+  word-wrap: break-word; /* Permite que o texto seja quebrado */
+  overflow-wrap: break-word; /* Versão mais moderna para quebrar o texto */
+  white-space: normal; /* Permite a quebra de linha no texto */
 }
