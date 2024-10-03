@@ -46,14 +46,5 @@ export class HomeView extends Component {
 		users.forEach((user: IUser) => {
 			if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
 		});
-		users.forEach((user: IUser) => {
-			if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
-		});
-		users.forEach((user: IUser) => {
-			if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
-		});
-		users.forEach((user: IUser) => {
-			if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
-		});
 	}
 }

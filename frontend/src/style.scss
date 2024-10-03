@@ -199,10 +199,8 @@ list-element ul li {
 }
 
 .message-list {
-  padding-bottom: 30px;
-  ul {
-    //display: flex;
-  }
+  width: 100%;
+  height: -webkit-fill-available !important;
 }
 
 .message-item {

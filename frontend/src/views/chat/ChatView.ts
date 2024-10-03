@@ -39,12 +39,14 @@ class UserMessageView extends Component {
 class MessageItem extends Component {
 
 	constructor(message: IMessage) {
-		super({ width: "100%", display: "flex", paddingBottom: "10px" });
-		const div = new DivElement({ display: "flex", width: "auto", flexDirection: "column", alignItems: "flex-start", padding: "15px", borderRadius: "5px", backgroundColor: "#f0f0f0", marginBottom: "5px" });
+		super({ width: "100%", display: "flex" });
+		const isUser = userStore.value._id?.toString() == message.sender;
+		const color = isUser ? "rgb(159 201 194)" : "rgb(195 201 203)";
+		const div = new DivElement({ display: "flex", width: "auto", flexDirection: "column", alignItems: "flex-start", padding: "15px", borderRadius: "5px", backgroundColor: color, marginBottom: "5px" });
 		// @ts-ignore
-		div.append(new ParagraphElement({ className: "message-item", text: message.content, maxWidth: "40vw" }));
-		div.append(new SpanElement({ text: this.formatTime(new Date(message.date)), fontSize: "10px", color: "#666" }));
-		this.style.justifyContent = message.sender == userStore.value._id?.toString() ? "flex-end" : "flex-start";
+		div.append(new ParagraphElement({ className: "message-item", text: message.content, maxWidth: "40vw", color: "black" }));
+		div.append(new SpanElement({ text: this.formatTime(new Date(message.date)), fontSize: "10px", color: "#525d62", alignSelf: isUser ? "end" : "start" }));
+		this.style.justifyContent = isUser ? "flex-end" : "flex-start";
 		this.append(div);
 	}
 
@@ -61,7 +63,7 @@ class MessageItem extends Component {
 export class ChatView extends Component {
 
 	private listUsers = new ListElement({ width: "100%" });
-	private listMessages = new ListElement({ className: "message-list", width: "100%", padding: "20px" });
+	private listMessages = new ListElement({ className: "message-list", width: "100%" });
 	private sendButton = new ButtonElement({ width: "18%", height: "55px", backgroundColor: "blue", color: "white", text: "Send", marginBottom: "5px" });
 	private textField = new TextFieldElement({ placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "80%", margin: "auto" });
 	private backgroundImage = ref<string>("")
@@ -107,6 +109,7 @@ export class ChatView extends Component {
 		const textArea = new DivElement({
 			width: "100%", overflow: "hidden", marginBottom: "15px",
 			border: "1px solid #ccc", borderRadius: "5px",
+			display: "flex",
 			backgroundImage: this.backgroundImage,
 			backgroundSize: "cover",
 			backgroundPosition: "center",
@@ -120,6 +123,7 @@ export class ChatView extends Component {
 	private addMessage(message: IMessage) {
 		const item = this.listMessages.addItem(new MessageItem(message));
 		item.style.margin = "10px";
+		this.listMessages.scrollToBottom();
 	}
 
 	private updateMessages(messages: IMessage[] | undefined) {
