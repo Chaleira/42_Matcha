@@ -1,8 +1,11 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
+import http from 'http';
 import userRoutes from './controller/user/UserController';
 import chatRoutes from './controller/chat/ChatController';
+import { Server as SocketIOServer } from 'socket.io';
+import socketInit from './socket';
 import { env } from '../env';
 
 
@@ -26,9 +29,19 @@ mongoose.connect(`mongodb+srv://${env.mongodb.username}:${env.mongodb.password}@
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
-// Server
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
-});
+  const server = http.createServer(app);
+  const io = new SocketIOServer(server, {
+    cors: {
+      origin: "*", // You can restrict this to specific domains
+      methods: ["GET", "POST"],
+    }
+  });
+  
+  socketInit(io); // Initialize the Socket.IO server
+  
+  // Start the server
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`Server running on http://0.0.0.0:${port}`);
+  });
 
 export default app;
