@@ -1,7 +1,7 @@
 import { ButtonElement, Component, DivElement, HBoxElement, ImageElement, ListElement, ParagraphElement, ref, SpanElement, TextFieldElement, VBoxElement } from "typecomposer";
-import { AppPage } from "../../pages/app/AppPage";
-import { IMessage } from "../../api/Interfaces";
-import { userStore } from "../../store/UserStore";
+import { AppPage } from "@/pages/app/AppPage";
+import { IMessage } from "@/api/Interfaces";
+import { userStore } from "@/store/UserStore";
 
 
 

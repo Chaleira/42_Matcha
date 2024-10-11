@@ -1,8 +1,8 @@
 import { Component, DivElement, GridElement, HBoxElement, ImageElement, SpanElement, VBoxElement } from "typecomposer";
-import { userStore } from "../../store/UserStore";
-import { Api } from "../../api/Api";
-import { IUser } from "../../api/Interfaces";
-import { TagList } from "../../components/TagList";
+import { userStore } from "@/store/UserStore";
+import { Api } from "@/api/Api";
+import { IUser } from "@/api/Interfaces";
+import { TagList } from "@/components/TagList";
 
 
 class UserView extends Component {

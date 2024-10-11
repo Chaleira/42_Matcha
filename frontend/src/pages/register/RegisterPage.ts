@@ -1,7 +1,7 @@
 import { AnchorElement, AvatarElement, ButtonElement, CardElement, Component, DivElement, DropDown, H4Element, HBoxElement, ref, Router, SpanElement, TextAreaElement, TextFieldElement, VBoxElement } from "typecomposer";
-import { Api } from "../../api/Api";
-import { AlbumContainer } from "../../components/AlbumContainer";
-import { TagList } from "../../components/TagList";
+import { Api } from "@/api/Api";
+import { AlbumContainer } from "@/components/AlbumContainer";
+import { TagList } from "@/components/TagList";
 
 
 

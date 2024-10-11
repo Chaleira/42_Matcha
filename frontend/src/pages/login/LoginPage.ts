@@ -1,5 +1,5 @@
 import { AnchorElement, ButtonElement, CardElement, Component, DivElement, H4Element, ref, Router, TextFieldElement, VBoxElement } from "typecomposer";
-import { Api } from "../../api/Api";
+import { Api } from "@/api/Api";
 
 
 export class LoginPage extends Component {

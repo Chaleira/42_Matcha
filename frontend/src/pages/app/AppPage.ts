@@ -1,6 +1,6 @@
 import { AnchorElement, BorderPaneElement, DivElement, RouteView } from 'typecomposer'
-import { Api } from '../../api/Api';
-import { userStore } from '../../store/UserStore';
+import { Api } from '@/api/Api';
+import { userStore } from '@/store/UserStore';
 import { io, Socket } from "socket.io-client";
 
 export class AppPage extends BorderPaneElement {

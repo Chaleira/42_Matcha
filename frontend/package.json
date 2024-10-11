@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "socket.io-client": "^4.8.0",
-    "typecomposer": "^0.0.73"
+    "typecomposer": "^0.0.76"
   },
   "devDependencies": {
     "@types/socket.io-client": "^3.0.0",
     "sass": "^1.69.5",
-    "typecomposer-plugin": "^0.0.17",
+    "typecomposer-plugin": "^0.0.20",
     "typescript": "^5.3.2",
     "vite": "^5.2.0"
   }
