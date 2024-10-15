@@ -15,6 +15,6 @@ export const userStore = ref<IUser>({
   bio: "",
   lastName: "",
   firstName: "",
-  age: 0,
+  dateBirth: new Date(),
   password: "",
 });

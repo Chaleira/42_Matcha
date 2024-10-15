@@ -6,6 +6,7 @@ import { HomeView } from '../views/home/HomeView';
 import { AppPage } from '../pages/app/AppPage';
 import { routerGuardHome } from './RouterGuard';
 import { ChatView } from '../views/chat/ChatView';
+import { ProfileView } from '../views/profile/ProfileView';
 
 Router.create({
   history: 'hash',
@@ -17,6 +18,7 @@ Router.create({
       children: [
         { path: 'home', component: HomeView },
         { path: 'chat', component: ChatView },
+        { path: 'profile', component: ProfileView },
       ]
     },
     {

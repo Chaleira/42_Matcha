@@ -1,4 +1,4 @@
-import { Component, DivElement, GridElement, HBoxElement, ImageElement, SpanElement, VBoxElement } from "typecomposer";
+import { ButtonElement, Component, DivElement, GridElement, HBoxElement, ImageElement, Router, SpanElement, VBoxElement } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { IUser } from "@/api/Interfaces";
@@ -20,6 +20,7 @@ class UserView extends Component {
 		//hbox.append(TagList.createTag(TagList.tags[1], false, () => { }, undefined));
 		//hbox.append(TagList.createTag(TagList.tags[2], false, () => { }, undefined));
 		vbox.append(hbox);
+		vbox.append(new ButtonElement({ text: "profile", onclick: () => { Router.go("#/profile", {id: user._id})} }));
 		this.append(vbox);
 	}
 }

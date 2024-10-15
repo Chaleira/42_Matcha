@@ -4,9 +4,9 @@ export interface IUser {
 	username: string;
 	email: string;
 	avatar?: string;
-	albums?: string[];
+	album?: string[];
 	password: string;
-	age: number;
+	dateBirth: Date;
 	firstName: string;
 	lastName: string;
 	bio: string
