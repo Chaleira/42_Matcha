@@ -33,21 +33,29 @@ export class TagList extends HBoxElement {
 		const tag1 = new PopUpButton({ buttonText: "➕", className: "tag-pop", options: [grid], hover: false });
 		tag1.buttonIcon.style.textAlign = "center";
 		this.append(tag1);
+		const buttons = this.querySelectorAll<ButtonElement>("[tag]");
+		for (const btn of buttons){
+			if (user.value.tags.includes(btn.getAttribute("tag"))){
+				btn.click();
+			}
+		}
+	}
+
+	addTag(tag: ButtonElement, item: { tag: string, color: string }, parant?: HTMLElement ) {
+		if (parant == undefined) {
+			tag.disabled = true;
+			this.insertBefore(this.insertTag(item, tag), this.children[this.children.length - 1]);
+			this.user.value.tags.push(item.tag);
+		} else {
+			this.removeChild(tag);
+			parant.disabled = false;
+			const index = (this.user.value.tags as []).findIndex((e: string) => e.toString() == item.tag);
+			this.user.value.tags.splice(index, 1);
+		}
 	}
 
 	insertTag(item: { tag: string, color: string }, parant?: HTMLElement): ButtonElement {
-		const tag = TagList.createTag(item, true, () => {
-			if (parant == undefined) {
-				tag.disabled = true;
-				this.insertBefore(this.insertTag(item, tag), this.children[this.children.length - 1]);
-				this.user.value.tags.push(item.tag);
-			} else {
-				this.removeChild(tag);
-				parant.disabled = false;
-				const index = (this.user.value.tags as []).findIndex((e: string) => e.toString() == item.tag);
-				this.user.value.tags.splice(index, 1);
-			}
-		}, parant);
+		const tag = TagList.createTag(item, true, () => this.addTag(tag, item, parant), parant);
 		return tag;
 	}
 
@@ -66,6 +74,7 @@ export class TagList extends HBoxElement {
 		const tag = new ButtonElement({
 			text: textTag, className: "tag", backgroundColor: item.color, onclick: onclick
 		});
+		tag.setAttribute("tag", item.tag);
 		if (isExtend == false)
 			tag.title = item.tag.replace(textTag, "").trim();
 		return tag;

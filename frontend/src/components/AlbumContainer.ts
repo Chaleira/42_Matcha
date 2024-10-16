@@ -1,3 +1,4 @@
+import { userStore } from "@/store/UserStore";
 import { Component, DivElement, ImageElement, InputElement, ref, StyleOptional } from "typecomposer";
 
 
@@ -13,16 +14,18 @@ export class AlbumContainer extends Component {
 		this.container = new DivElement({ className: "album-container" });
 		this.container.append(this.createAddPhoto());
 		this.append(this.container);
+		for(const image of props.user.value.album){
+			this.createAlbum(new ImageElement({ src: image.toString() }));
+		}
 	}
 
 	createAlbum(image: ImageElement) {
 		const album = new DivElement({ className: "album-item" });
 		album.append(image);
-		this.props.user.value.albums.push(image.src);
 		const close = new DivElement({ className: "album-close", text: "❌" });
 		close.onclick = () => {
-			const index = (this.props.user.value.albums as []).findIndex((e: string) => e.toString() == image.src);
-			this.props.user.value.albums.splice(index, 1);
+			const index = (this.props.user.value.album as []).findIndex((e: string) => e.toString() == image.src);
+			this.props.user.value.album.splice(index, 1);
 			album.remove();
 		}
 		album.append(close);
@@ -44,6 +47,7 @@ export class AlbumContainer extends Component {
 					reader.onload = (e: any) => {
 						console.log(e.target.result);
 						this.createAlbum(new ImageElement({ src: e.target.result as string }));
+						this.props.user.value.album.push(e.target.result as string);
 					};
 					reader.readAsDataURL(files[i]);
 				}
