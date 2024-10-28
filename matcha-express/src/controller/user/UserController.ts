@@ -18,7 +18,7 @@ const SECRET_KEY = 'your_jwt_secret_key';
 router.post('/user/register', async (req: Request, res: Response) => {
   try {
     const { username, email, password, dateBirth, userLocation, avatar, album,
-            firstName, lastName, bio, tags, gender, sexualOrientation, } = req.body;
+            firstName, lastName, bio, tags, gender, sexualOrientation} = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -79,16 +79,17 @@ router.post('/user/update', authenticateToken, async (req: AuthenticatedRequest,
   const updateFields = req.body; // Get the fields to update from the request body
 
   const {password, ...allowedFields} = updateFields;
+
   try {
     const updatedUser = await UserModel.findByIdAndUpdate(req.user?.id, allowedFields, {
       new: true, // Return the updated document
       runValidators: true, // Ensure validation is applied to updated fields
     }).select('-password -isDeleted -__v');
-
+    
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+    
     res.status(200).json(updatedUser);
   } catch (err: any) {
     res.status(400).json({ message: err.message });

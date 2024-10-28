@@ -3,18 +3,20 @@ import { IUser } from "@/api/Interfaces";
 import { AlbumContainer } from "@/components/AlbumContainer";
 import { TagList } from "@/components/TagList";
 import { userStore } from "@/store/UserStore";
-import { ButtonElement, Component, DivElement, DropDown, H1Element, H3Element, HBoxElement, IComponent, ImageElement, Router, TextAreaElement, TextFieldElement, VBoxElement } from "typecomposer";
+import { AvatarElement, ButtonElement, Component, DialogPane, DivElement, DropDown, H1Element, H3Element, HBoxElement, IComponent, ImageElement, Router, TextAreaElement, TextFieldElement, VBoxElement } from "typecomposer";
+import { ActionButtons } from "./components/actionButtons";
 
 
 
 
 export class ProfileView extends Component {
 
-  
+    fullScreen = new DialogPane({className: "full-screen", zIndex: "10", backgroundColor: "#000000bf"})
     constructor() {
         super({ className: "profile-view" });
-        // this.innerText = "ProfileView";
         this.update();
+        this.append(this.fullScreen);
+
     }
 
 	async update() {
@@ -26,7 +28,9 @@ export class ProfileView extends Component {
         }
         const user:IUser = users[0];
         const isMyUser = user._id == userStore.value._id
-        const avatar = new ImageElement({ src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "250px" , maxWidth: "250px", margin: "20px", marginRight: "30px", borderRadius: "50px"});
+
+        const avatar = new propertyItem("", isMyUser ? new AvatarElement({className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "250px" , maxWidth: "250px", margin: "20px", marginRight: "30px", borderRadius: "50px", cursor: "pointer"})
+                                        : new ImageElement({className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "250px" , maxWidth: "250px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(<string>user.avatar)}));
         const headerDiv = new HBoxElement({justifyContent: "flex", width: "100%"});
         headerDiv.append(avatar);
 
@@ -36,17 +40,11 @@ export class ProfileView extends Component {
         usernameUpdateButton.append(new H1Element({ text: user.username.toUpperCase() || "NAME", color: "black", marginTop: "30px"}))
         headerDiv.append(usernameUpdateButton);
 
-        const fameRateAndActions = new VBoxElement({width: "fill", height: "fill"});
         if (!isMyUser){
-            const buttonDiv = new DivElement({position: "absolute", right: "20px", width: "fill", height: "fill:", gap: "50px", marginTop: "30px"})
-            buttonDiv.append(new ButtonElement({alignSelf: "right", width: "50px", height: "50px", margin: "5px", backgroundColor: "blue"}));
-            buttonDiv.append(new ButtonElement({alignSelf: "right", width: "50px", height: "50px", margin: "5px", backgroundColor: "green"}));
-            buttonDiv.append(new ButtonElement({alignSelf: "right", width: "50px", height: "50px", margin: "5px", backgroundColor: "red"}));
-            buttonDiv.append(new ButtonElement({alignSelf: "right", width: "50px", height: "50px", margin: "5px", backgroundColor: "#ffc72a"}));
-            fameRateAndActions.append(buttonDiv);
+            const buttonDiv = new ActionButtons(user);
+            this.append(buttonDiv);
         }
-        headerDiv.append(fameRateAndActions);
-
+     
         const userInfo = new VBoxElement({backgroundColor: "#808080b2", width: "100%", height: "100%", padding: "20px", borderRadius: "20px", backgroundBlendMode: "darken", display: "flex"})
         userInfo.append(new propertyItem("Name: ", isMyUser ? new TextFieldElement({text: user.firstName + " " + user.lastName, variant: "underlined"}) : user.firstName + " " + user.lastName));
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
@@ -69,14 +67,34 @@ export class ProfileView extends Component {
         const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({text: user.bio, width: "100%", height: "100%"}) : user.bio));
         bio.element1.style.marginBottom = 0;
         const album = new HBoxElement({ gap: "20px", width: "100%", marginTop: "40px"});
-        user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px" })));
-        userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "20px", maxHeight: "200px", width: "100%", user: userStore }) : album));
+        user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image)})));
+            userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "20px", maxHeight: "200px", width: "100%", user: userStore }) : album));
 		
         const vbox = new VBoxElement({ gap: "5px", padding: "20px", width: "100%", height: "100%", justifyContent: "center", alignItems: "left"});
         vbox.append(headerDiv);
         vbox.append(userInfo);
         this.append(vbox);
 	}
+
+    openFullScreen(image :string){
+      
+        const img = new ImageElement({src: image, maxWidth: "100%", maxHeight: "100"});
+        this.fullScreen.content.append(img);
+        this.fullScreen.show();
+        this.fullScreen.onclick = () => this.closeFullScreen(img);
+        this.fullScreen.style.display = "flex";
+        this.fullScreen.content.style["justify-content"] = "center";
+        this.fullScreen.content.style.padding = "0";
+        this.fullScreen.content.style.height = "";
+        this.fullScreen.content.style.width = "";
+        this.fullScreen.content.style.maxWidth = "60%";
+        this.fullScreen.content.style.maxHeight = "60%";
+        console.log("clicked");
+    }
+
+    closeFullScreen(img: ImageElement) {
+        this.fullScreen.content.removeChild(img);
+    }
 }
 
 class propertyItem extends HBoxElement {

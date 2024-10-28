@@ -18,6 +18,10 @@ export interface IUser {
 		"coordinates": number[]
 	}
 	isDeleted?: boolean;
+	liked: IUser[],
+	blocked: IUser[],
+	viewd: IUser[],
+	matched: IUser[],
 }
 
 

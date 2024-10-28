@@ -8,7 +8,7 @@ import { TagList } from "@/components/TagList";
 export class RegisterPage extends Component {
 
 	user = ref<any>({
-		username: "", email: "", password: "", confirmPassword: "", avatar: "", msg: "", albums: [], dateBirth: new Date().toISOString(),
+		username: "", email: "", password: "", confirmPassword: "", avatar: "", msg: "", album: [], dateBirth: new Date().toISOString(),
 		firstName: "", lastName: "", bio: "w", tags: [], gender: "male", sexualOrientation: "heterosexual"
 	});
 	private card = new CardElement({ width: "450px" });
@@ -104,7 +104,7 @@ export class RegisterPage extends Component {
 	private step4(): VBoxElement {
 		const vbox = new VBoxElement({ padding: "10px", gap: "15px" });
 		vbox.append(new SpanElement({ text: "Avatar" }));
-		vbox.append(new AvatarElement({}));
+		vbox.append(new AvatarElement({src: this.user.value.avatar}));
 		vbox.append(new SpanElement({ text: "Album" }));
 		vbox.append(new AlbumContainer({ maxHeight: "200px", width: "100%", user: this.user }));
 		const hbox2 = new HBoxElement({ gap: "10px" });
@@ -119,6 +119,7 @@ export class RegisterPage extends Component {
 	}
 
 	private register() {
+		console.log(this.user.toJSON());
 		if (this.user.value.password.toString() == this.user.value.confirmPassword.toString()) {
 			fetch('https://ipapi.co/json/')
 				.then(response => response.json())

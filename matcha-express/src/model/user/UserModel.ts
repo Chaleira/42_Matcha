@@ -19,6 +19,10 @@ interface IUser extends Document {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
   };
+  liked: IUser[];
+  blocked: IUser[];
+  viewed: IUser[];
+  matched: IUser[];
 }
 
 // Define a schema
@@ -49,7 +53,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
       type: [Number],
       required: true
     }
-  }
+  },
+  liked: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
+  blocked: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
+  viewed: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
+  matched: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}]
 });
 
 export function hasField(model: mongoose.Model<IUser>, fieldName: string): boolean {

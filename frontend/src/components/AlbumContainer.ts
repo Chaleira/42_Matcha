@@ -1,5 +1,5 @@
 import { userStore } from "@/store/UserStore";
-import { Component, DivElement, ImageElement, InputElement, ref, StyleOptional } from "typecomposer";
+import { Component, ComponentProps, DivElement, ImageElement, InputElement, ref } from "typecomposer";
 
 
 
@@ -7,7 +7,7 @@ export class AlbumContainer extends Component {
 
 	private container: DivElement;
 
-	constructor(private props: StyleOptional & {
+	constructor(private props: ComponentProps & {
 		user: ref<any>
 	}) {
 		super({ overflow: "hidden", display: "flex", flexDirection: "column", padding: "0px", ...props });
