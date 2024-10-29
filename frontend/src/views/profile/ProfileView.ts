@@ -92,4 +92,3 @@ class propertyItem extends HBoxElement {
         this.append(this.element2);
     }
 }
-
