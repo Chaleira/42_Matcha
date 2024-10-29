@@ -3,7 +3,7 @@ import { IUser } from "@/api/Interfaces";
 import { AlbumContainer } from "@/components/AlbumContainer";
 import { TagList } from "@/components/TagList";
 import { userStore } from "@/store/UserStore";
-import { AvatarElement, ButtonElement, Component, DialogPane, DivElement, DropDown, H1Element, H3Element, HBoxElement, IComponent, ImageElement, Router, TextAreaElement, TextFieldElement, VBoxElement } from "typecomposer";
+import { AvatarElement, ButtonElement, Component, DialogPanel, DropDown, H1Element, H3Element, HBoxElement, ImageElement, Router, TextAreaElement, TextFieldElement, VBoxElement } from "typecomposer";
 import { ActionButtons } from "./components/actionButtons";
 
 
@@ -11,7 +11,7 @@ import { ActionButtons } from "./components/actionButtons";
 
 export class ProfileView extends Component {
 
-    fullScreen = new DialogPane({className: "full-screen", zIndex: "10", backgroundColor: "#000000bf"})
+    fullScreen = new DialogPanel({className: "full-screen", zIndex: "10", backgroundColor: "#000000bf"})
     constructor() {
         super({ className: "profile-view" });
         this.update();
@@ -78,22 +78,12 @@ export class ProfileView extends Component {
 
     openFullScreen(image :string){
       
-        const img = new ImageElement({src: image, maxWidth: "100%", maxHeight: "100"});
-        this.fullScreen.content.append(img);
-        this.fullScreen.show();
-        this.fullScreen.onclick = () => this.closeFullScreen(img);
+        const img = new ImageElement({src: image, maxWidth: "1000px", maxHeight: "1000px"});
+        this.fullScreen.content = img;
         this.fullScreen.style.display = "flex";
-        this.fullScreen.content.style["justify-content"] = "center";
-        this.fullScreen.content.style.padding = "0";
-        this.fullScreen.content.style.height = "";
-        this.fullScreen.content.style.width = "";
-        this.fullScreen.content.style.maxWidth = "60%";
-        this.fullScreen.content.style.maxHeight = "60%";
+        this.fullScreen.show();
+        this.fullScreen.onclick = () => {this.fullScreen.style.display = "none"};
         console.log("clicked");
-    }
-
-    closeFullScreen(img: ImageElement) {
-        this.fullScreen.content.removeChild(img);
     }
 }
 

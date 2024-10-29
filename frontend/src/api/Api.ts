@@ -121,7 +121,41 @@ export namespace Api {
 					return error;
 				});
 		}
+
+		export async function like(params: { userBeingLikedId: string, userLikingId: string}): Promise<IUser> {
+			return await fetch(`${URL}/user/like`, {
+				method: "POST",
+				headers: ApiHeader(),
+				body: JSON.stringify(params),
+				redirect: "follow"
+		})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid like");
+					}
+					response.json().then((data) => console.log(data.message));
+					return await response.json();
+				}).catch((error) => {
+					return error;
+				});
+		}
+
+		export async function block(params: { userBlockingId: string, userBlockedId: string}): Promise<IUser> {
+			return await fetch(`${URL}/user/block`, {
+				method: "POST",
+				headers: ApiHeader(),
+				body: JSON.stringify(params),
+				redirect: "follow"
+		})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid block");
+					}
+					response.json().then((data) => console.log(data.message));
+					return await response.json();
+				}).catch((error) => {
+					return error;
+				});
+		}
 	}
-
-
 }
