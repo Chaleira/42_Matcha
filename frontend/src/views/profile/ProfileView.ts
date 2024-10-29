@@ -99,4 +99,3 @@ class propertyItem extends HBoxElement {
         this.append(this.element1,  this.element2);
     }
 }
-
