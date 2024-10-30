@@ -36,7 +36,7 @@ export class ProfileView extends Component {
 
         const usernameUpdateButton = new VBoxElement({justifyContent: "flex", width: "fill", height: "fill", position: "relative"});
         if (user._id == userStore.value._id)
-            usernameUpdateButton.append(new ButtonElement({position: "absolute", bottom: "50px", width: "150px", height: "50px", text: "Update Profile"}))
+            usernameUpdateButton.append(new ButtonElement({position: "absolute", bottom: "50px", width: "150px", height: "50px", text: "Update Profile", onclick: () => this.updateProfile()}));
         usernameUpdateButton.append(new H1Element({ text: user.username.toUpperCase() || "NAME", color: "black", marginTop: "30px"}))
         headerDiv.append(usernameUpdateButton);
 
@@ -46,7 +46,10 @@ export class ProfileView extends Component {
         }
      
         const userInfo = new VBoxElement({backgroundColor: "#808080b2", width: "100%", height: "100%", padding: "20px", borderRadius: "20px", backgroundBlendMode: "darken", display: "flex"})
-        userInfo.append(new propertyItem("Name: ", isMyUser ? new TextFieldElement({text: user.firstName + " " + user.lastName, variant: "underlined"}) : user.firstName + " " + user.lastName));
+        const fullName = new HBoxElement({ gap: "5px", width: "100%" });
+        fullName.append(new propertyItem("Name: ", isMyUser ? new TextFieldElement({value: userStore.value.firstName, variant: "underlined"}) : user.firstName));
+        fullName.append(new propertyItem("", isMyUser ? new TextFieldElement({value: userStore.value.lastName, variant: "underlined"}) : user.lastName));
+        userInfo.append(fullName);
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
 			options: ["male", "female", "develop"],
 			value: userStore.value.gender,
@@ -64,7 +67,7 @@ export class ProfileView extends Component {
 		const hbox = new HBoxElement({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
         userInfo.append(new propertyItem("Tags: ", isMyUser ? new TagList(userStore) : hbox));
-        const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({text: user.bio, width: "100%", height: "100%"}) : user.bio));
+        const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({value: userStore.value.bio, width: "100%", height: "100%"}) : user.bio));
         bio.element1.style.marginBottom = 0;
         const album = new HBoxElement({ gap: "20px", width: "100%", marginTop: "40px"});
         user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image)})));
@@ -84,6 +87,11 @@ export class ProfileView extends Component {
         this.fullScreen.show();
         this.fullScreen.onclick = () => {this.fullScreen.style.display = "none"};
         console.log("clicked");
+    }
+
+    updateProfile() {
+        console.log(userStore.toJSON());
+        Api.User.update(userStore.toJSON());
     }
 }
 

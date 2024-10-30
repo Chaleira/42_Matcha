@@ -14,7 +14,7 @@ export namespace Api {
 
 	export namespace Chat {
 
-		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string }[]> {
+		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string, userId: string }[]> {
 			return await fetch(`${URL}/chat/list?userId=${userId}`, {
 				method: "GET",
 				headers: Api.ApiHeader(),

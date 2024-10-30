@@ -55,7 +55,7 @@ router.get('/chat/list', async (req: Request, res: Response) => {
             const user = await UserModel.findById(id);
             chat["title"] = user?.username || "Unknown";
             // @ts-ignore
-            result.push({ ...(chat._doc), title: user?.username || "Unknown", icon: user?.avatar || "" });
+            result.push({ ...(chat._doc), title: user?.username || "Unknown", icon: user?.avatar || "", userId: id });
         }
         chats.length ? res.status(200).json(result) : res.status(404).json({ message: 'No chats found' });
     } catch (error) {

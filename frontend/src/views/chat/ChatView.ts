@@ -8,7 +8,7 @@ import { Api } from "@/api/Api";
 
 class UserMessageView extends Component {
 
-	constructor(user: { firstName: string, avatar?: string }, chatId: string) {
+	constructor(user: { firstName: string, avatar?: string, userId: string}, chatId: string) {
 		super({
 			className: "user-message-view",
 
@@ -24,7 +24,7 @@ class UserMessageView extends Component {
 		const vbox = this.appendChild(new VBoxElement({ gap: "5px", padding: "5px", width: "100%" }));
 		vbox.append(new SpanElement({ text: user.firstName || "name" }));
 		const hbox = vbox.appendChild(new HBoxElement({ gap: "5px" }));
-		hbox.append(new SpanElement({ text: "👤", title: "Profile", className: "btn" }));
+		hbox.append(new SpanElement({ text: "👤", title: "Profile", className: "btn",  onclick: () => { Router.go("#/profile", {id: user.userId})} }));
 		hbox.append(new SpanElement({ text: "🚫", title: "Block", className: "btn" }));
 		hbox.append(new SpanElement({ text: "🗑️", title: "Delete Messages", className: "btn" }));
 		hbox.append(new SpanElement({ text: "🚨", title: "Report", className: "btn" }));
@@ -104,6 +104,7 @@ export class ChatView extends Component {
 		for (let i = 0; i < 10; i++)
 			this.listUsers.addItem(new UserMessageView({
 				firstName: "User " + i,
+				userId: i.toString(),
 			}, "66f44ce9c55a5333fb682ad6"));
 		const hbox = new HBoxElement({ gap: "10px", alignItems: "center" });
 		hbox.append(this.textField, this.sendButton);
@@ -126,9 +127,11 @@ export class ChatView extends Component {
 		console.log("items: ", items);
 		this.listUsers.removeItems();
 		for (const item of items) {
+			if (userStore.value.blocked.find(e => e == item.userId) != undefined) continue;
 			this.listUsers.addItem(new UserMessageView({
 				firstName: item.title,
-				avatar: item.icon
+				avatar: item.icon,
+				userId: item.userId
 			}, item._id
 			));
 		}
