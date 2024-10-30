@@ -30,7 +30,7 @@ router.post('/chat/create', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/chat', async (req: Request, res: Response) => {
+router.get('/chat/get', async (req: Request, res: Response) => {
     const chatId = req.query.chatId;
     const chat = await ChatModel.findById(chatId);
     chat ? res.status(200).json(chat) : res.status(404).json({ message: 'Chat not found' });
@@ -55,7 +55,7 @@ router.get('/chat/list', async (req: Request, res: Response) => {
             const user = await UserModel.findById(id);
             chat["title"] = user?.username || "Unknown";
             // @ts-ignore
-            result.push({ ...(chat._doc), title: user?.username || "Unknown" });
+            result.push({ ...(chat._doc), title: user?.username || "Unknown", icon: user?.avatar || "" });
         }
         chats.length ? res.status(200).json(result) : res.status(404).json({ message: 'No chats found' });
     } catch (error) {

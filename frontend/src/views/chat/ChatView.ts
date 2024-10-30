@@ -1,4 +1,4 @@
-import { ButtonElement, Component, DivElement, HBoxElement, ImageElement, ListElement, ParagraphElement, ref, SpanElement, TextFieldElement, VBoxElement } from "typecomposer";
+import { ButtonElement, Component, DivElement, HBoxElement, ImageElement, ListElement, ParagraphElement, ref, Router, SpanElement, TextFieldElement, VBoxElement } from "typecomposer";
 import { AppPage } from "@/pages/app/AppPage";
 import { IMessage } from "@/api/Interfaces";
 import { userStore } from "@/store/UserStore";
@@ -125,11 +125,19 @@ export class ChatView extends Component {
 		const items = await Api.Chat.list(userStore.value._id || "");
 		console.log("items: ", items);
 		this.listUsers.removeItems();
-		for (const item of items)
+		for (const item of items) {
 			this.listUsers.addItem(new UserMessageView({
 				firstName: item.title,
+				avatar: item.icon
 			}, item._id
 			));
+		}
+		const id = Router.props.id;
+		if (id) {
+			const { messages } = await Api.Chat.get(id);
+			this.updateMessages(messages || []);
+
+		}
 	}
 
 	private addMessage(message: IMessage) {

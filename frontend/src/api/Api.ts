@@ -1,4 +1,4 @@
-import { IUser } from "./Interfaces";
+import { IMessage, IUser } from "./Interfaces";
 
 export namespace Api {
 
@@ -14,8 +14,25 @@ export namespace Api {
 
 	export namespace Chat {
 
-		export async function list(userId: string): Promise<{ _id: string, title: string }[]> {
+		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string }[]> {
 			return await fetch(`${URL}/chat/list?userId=${userId}`, {
+				method: "GET",
+				headers: Api.ApiHeader(),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid credentials");
+					}
+					return await response.json();;
+				}).catch((error) => {
+					alert(error);
+					return false;
+				});
+		}
+
+		export async function get(chatId: string): Promise<{ _id: string, messages: IMessage[] }> {
+			return await fetch(`${URL}/chat/get?chatId=${chatId}`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
 				redirect: "follow"
