@@ -12,6 +12,45 @@ export namespace Api {
 	}
 
 
+	export namespace Chat {
+
+		export async function list(userId: string): Promise<{ _id: string, title: string }[]> {
+			return await fetch(`${URL}/chat/list?userId=${userId}`, {
+				method: "GET",
+				headers: Api.ApiHeader(),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid credentials");
+					}
+					return await response.json();;
+				}).catch((error) => {
+					alert(error);
+					return false;
+				});
+		}
+
+		export async function create(users: string[]): Promise<string> {
+			const body = JSON.stringify({ users: users });
+			console.log(body);
+			return await fetch(`${URL}/chat/create`, {
+				method: "POST",
+				headers: Api.ApiHeader(),
+				body: body,
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						return "Invalid registration";
+					}
+					return (await response.json())?.message;
+				}).catch((error) => {
+					return error;
+				});
+		}
+	}
+
 	export namespace User {
 
 		export async function login(email: string, password: string): Promise<boolean> {
@@ -122,13 +161,13 @@ export namespace Api {
 				});
 		}
 
-		export async function like(params: { userBeingLikedId: string, userLikingId: string}): Promise<IUser> {
+		export async function like(params: { userBeingLikedId: string, userLikingId: string }): Promise<IUser> {
 			return await fetch(`${URL}/user/like`, {
 				method: "POST",
 				headers: ApiHeader(),
 				body: JSON.stringify(params),
 				redirect: "follow"
-		})
+			})
 				.then(async (response) => {
 					if (!response.ok) {
 						throw new Error("Invalid like");
@@ -140,13 +179,13 @@ export namespace Api {
 				});
 		}
 
-		export async function block(params: { userBlockingId: string, userBlockedId: string}): Promise<IUser> {
+		export async function block(params: { userBlockingId: string, userBlockedId: string }): Promise<IUser> {
 			return await fetch(`${URL}/user/block`, {
 				method: "POST",
 				headers: ApiHeader(),
 				body: JSON.stringify(params),
 				redirect: "follow"
-		})
+			})
 				.then(async (response) => {
 					if (!response.ok) {
 						throw new Error("Invalid block");

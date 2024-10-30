@@ -6,7 +6,7 @@ interface IChat extends Document {
         sender: string;
         content: string;
         date: Date;
-        }[];
+    }[];
     usersId: IUser[];
 };
 
@@ -22,7 +22,7 @@ const chatSchema: Schema<IChat> = new mongoose.Schema({
     usersId: {
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
         validate: {
-            validator: function(usersId: IUser[]) {
+            validator: function (usersId: IUser[]) {
                 return usersId.length === 2; // Ensure the array length is exactly 2
             },
             message: 'A chat must have exactly two users.'

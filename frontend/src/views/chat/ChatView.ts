@@ -2,6 +2,7 @@ import { ButtonElement, Component, DivElement, HBoxElement, ImageElement, ListEl
 import { AppPage } from "@/pages/app/AppPage";
 import { IMessage } from "@/api/Interfaces";
 import { userStore } from "@/store/UserStore";
+import { Api } from "@/api/Api";
 
 
 
@@ -118,6 +119,17 @@ export class ChatView extends Component {
 		center.append(textArea, hbox);
 		this.append(left, center);
 		this.updateMessages(undefined);
+	}
+
+	async onInit(): Promise<void> {
+		const items = await Api.Chat.list(userStore.value._id || "");
+		console.log("items: ", items);
+		this.listUsers.removeItems();
+		for (const item of items)
+			this.listUsers.addItem(new UserMessageView({
+				firstName: item.title,
+			}, item._id
+			));
 	}
 
 	private addMessage(message: IMessage) {

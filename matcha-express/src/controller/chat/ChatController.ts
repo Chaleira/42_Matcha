@@ -1,32 +1,30 @@
 import express, { Request, Response } from 'express';
 
-import { ChatModel, findChatsByUserId } from "../../model/chat/ChatModel";
+import { ChatModel, findChatsByUserId, IChat } from "../../model/chat/ChatModel";
 import { UserModel, findUserByField } from "../../model/user/UserModel";
 
 const router = express.Router();
 
 router.post('/chat/create', async (req: Request, res: Response) => {
     try {
-        const { usersId } = req.body;
-
-        for (let i = 0; i < usersId.length; i++) {
-            const user = UserModel.findById(usersId[i]);
+        const { users } = req.body;
+        for (let i = 0; i < users.length; i++) {
+            const user = UserModel.findById(users[i]);
 
             if (!user) {
-                res.status(400).json({ message: `Invalid user ID: ${usersId[i]}` });
+                res.status(400).json({ message: `Invalid user ID: ${users[i]}` });
                 return;
             }
         }
-        const checkChat = await ChatModel.findOne({ usersId: usersId });
+        const checkChat = await ChatModel.findOne({ usersId: users });
         if (checkChat) {
-            res.status(400).json({ message: 'Chat already exists' });
+            res.status(200).json({ message: checkChat._id });
             return;
         }
         const newChat = new ChatModel({
-            usersId
+            usersId: users
         });
-        await newChat.save();
-        res.status(201).json({ message: 'Chat created successfully' });
+        res.status(201).json({ message: (await newChat.save())._id });
     } catch (err: any) {
         res.status(500).json({ message: err.message });
     }
@@ -45,16 +43,24 @@ router.get('/chat/delete', async (req: Request, res: Response) => {
 });
 
 router.get('/chat/list', async (req: Request, res: Response) => {
-    
 
-    const userId = req.query?.userId as string;
+
+    const userId: string = req.query?.userId as string;
     try {
-        console.log('User ID:', userId);
-        const chats = await findChatsByUserId(userId) || [];
-        chats.length ? res.status(200).json(chats) : res.status(404).json({ message: 'No chats found' });
+        const chats: IChat[] = await findChatsByUserId(userId) || [];
+        const result: any[] = [];
+        for await (const chat of chats) {
+            // @ts-ignore
+            const id = (chat.usersId[0]._id) != userId ? chat.usersId[0]._id : chat.usersId[1]._id;
+            const user = await UserModel.findById(id);
+            chat["title"] = user?.username || "Unknown";
+            // @ts-ignore
+            result.push({ ...(chat._doc), title: user?.username || "Unknown" });
+        }
+        chats.length ? res.status(200).json(result) : res.status(404).json({ message: 'No chats found' });
     } catch (error) {
         res.status(404).json({ message: "invalid userid" });
-  }
+    }
 });
 
 export default router;
