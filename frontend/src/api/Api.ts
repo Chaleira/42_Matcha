@@ -1,4 +1,4 @@
-import { IUser } from "./Interfaces";
+import { IMessage, IUser } from "./Interfaces";
 
 export namespace Api {
 
@@ -11,6 +11,62 @@ export namespace Api {
 		return myHeaders;
 	}
 
+
+	export namespace Chat {
+
+		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string, userId: string }[]> {
+			return await fetch(`${URL}/chat/list?userId=${userId}`, {
+				method: "GET",
+				headers: Api.ApiHeader(),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid credentials");
+					}
+					return await response.json();;
+				}).catch((error) => {
+					alert(error);
+					return false;
+				});
+		}
+
+		export async function get(chatId: string): Promise<{ _id: string, messages: IMessage[] }> {
+			return await fetch(`${URL}/chat/get?chatId=${chatId}`, {
+				method: "GET",
+				headers: Api.ApiHeader(),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid credentials");
+					}
+					return await response.json();;
+				}).catch((error) => {
+					alert(error);
+					return false;
+				});
+		}
+
+		export async function create(users: string[]): Promise<string> {
+			const body = JSON.stringify({ users: users });
+			console.log(body);
+			return await fetch(`${URL}/chat/create`, {
+				method: "POST",
+				headers: Api.ApiHeader(),
+				body: body,
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						return "Invalid registration";
+					}
+					return (await response.json())?.message;
+				}).catch((error) => {
+					return error;
+				});
+		}
+	}
 
 	export namespace User {
 
@@ -121,7 +177,41 @@ export namespace Api {
 					return error;
 				});
 		}
+
+		export async function like(params: { userBeingLikedId: string, userLikingId: string }): Promise<IUser> {
+			return await fetch(`${URL}/user/like`, {
+				method: "POST",
+				headers: ApiHeader(),
+				body: JSON.stringify(params),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid like");
+					}
+					response.json().then((data) => console.log(data.message));
+					return await response.json();
+				}).catch((error) => {
+					return error;
+				});
+		}
+
+		export async function block(params: { userBlockingId: string, userBlockedId: string }): Promise<IUser> {
+			return await fetch(`${URL}/user/block`, {
+				method: "POST",
+				headers: ApiHeader(),
+				body: JSON.stringify(params),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid block");
+					}
+					response.json().then((data) => console.log(data.message));
+					return await response.json();
+				}).catch((error) => {
+					return error;
+				});
+		}
 	}
-
-
 }

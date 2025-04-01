@@ -2,12 +2,13 @@ import { ButtonElement, Component, DivElement, HBox, ImageElement, ListPanel, Pa
 import { AppPage } from "@/pages/app/AppPage";
 import { IMessage } from "@/api/Interfaces";
 import { userStore } from "@/store/UserStore";
+import { Api } from "@/api/Api";
 
 
 
 class UserMessageView extends Component {
 
-	constructor(user: { firstName: string, avatar?: string }, chatId: string) {
+	constructor(user: { firstName: string, avatar?: string, userId: string}, chatId: string) {
 		super({
 			className: "user-message-view",
 
@@ -103,6 +104,7 @@ export class ChatView extends Component {
 		for (let i = 0; i < 10; i++)
 			this.listUsers.addItem(new UserMessageView({
 				firstName: "User " + i,
+				userId: i.toString(),
 			}, "66f44ce9c55a5333fb682ad6"));
 		const hbox = new HBox({ gap: "10px", alignItems: "center" });
 		hbox.append(this.textField, this.sendButton);
@@ -118,6 +120,27 @@ export class ChatView extends Component {
 		center.append(textArea, hbox);
 		this.append(left, center);
 		this.updateMessages(undefined);
+	}
+
+	async onInit(): Promise<void> {
+		const items = await Api.Chat.list(userStore.value._id || "");
+		console.log("items: ", items);
+		this.listUsers.removeItems();
+		for (const item of items) {
+			if (userStore.value.blocked.find(e => e == item.userId) != undefined) continue;
+			this.listUsers.addItem(new UserMessageView({
+				firstName: item.title,
+				avatar: item.icon,
+				userId: item.userId
+			}, item._id
+			));
+		}
+		const id = Router.props.id;
+		if (id) {
+			const { messages } = await Api.Chat.get(id);
+			this.updateMessages(messages || []);
+
+		}
 	}
 
 	private addMessage(message: IMessage) {

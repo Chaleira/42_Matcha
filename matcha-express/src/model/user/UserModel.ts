@@ -54,10 +54,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
       required: true
     }
   },
-  liked: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-  blocked: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-  viewed: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}],
-  matched: [{type: mongoose.Schema.Types.ObjectId, ref: "User"}]
+  liked: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  viewed: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+  matched: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }]
 });
 
 export function hasField(model: mongoose.Model<IUser>, fieldName: string): boolean {
