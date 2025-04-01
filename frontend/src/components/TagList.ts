@@ -1,6 +1,6 @@
-import { ButtonElement, DivElement, HBoxElement, PopUpButton, ref } from "typecomposer";
+import { ButtonElement, DivElement, HBox, PopUpButton, ref } from "typecomposer";
 
-export class TagList extends HBoxElement {
+export class TagList extends HBox {
 
 
 	public static tags: { tag: string, color: string }[] = [
@@ -34,14 +34,14 @@ export class TagList extends HBoxElement {
 		tag1.buttonIcon.style.textAlign = "center";
 		this.append(tag1);
 		const buttons = this.querySelectorAll<ButtonElement>("[tag]");
-		for (const btn of buttons){
-			if (user.value.tags.includes(btn.getAttribute("tag"))){
+		for (const btn of buttons) {
+			if (user.value.tags.includes(btn.getAttribute("tag"))) {
 				btn.click();
 			}
 		}
 	}
 
-	addTag(tag: ButtonElement, item: { tag: string, color: string }, parant?: HTMLElement ) {
+	addTag(tag: ButtonElement, item: { tag: string, color: string }, parant?: HTMLElement) {
 		if (parant == undefined) {
 			tag.disabled = true;
 			this.insertBefore(this.insertTag(item, tag), this.children[this.children.length - 1]);

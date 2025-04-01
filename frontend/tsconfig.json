@@ -30,7 +30,7 @@
     },
 
     /* Type checking */
-    "types": ["vite/client", "typecomposer-plugin/client", "typecomposer/typings"]
+    "types": ["vite/client",  "typecomposer/typings"]
   },
   "include": ["src"]
 }

@@ -78,7 +78,7 @@ export namespace Api {
 					}
 					return await response.json();
 				}).catch((error) => {
-					alert(error);
+					//alert(error);
 					return null;
 				});
 		}

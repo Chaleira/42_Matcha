@@ -1,25 +1,24 @@
-import { AnchorElement, BorderPaneElement, DivElement, Router, RouteView } from 'typecomposer'
+import { AnchorElement, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
 import { Api } from '@/api/Api';
 import { userStore } from '@/store/UserStore';
 import { io, Socket } from "socket.io-client";
 
-export class AppPage extends BorderPaneElement {
+export class AppPage extends BorderPanel {
 
 	static socket: Socket = io("http://localhost:3000");
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });
-	}
-
-	onInit(): void {
 		this.top = new DivElement({ height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
-		this.top.append(new AnchorElement({ text: "Home", rlink: "#/home", color: "#fff", margin: "0 10px" }));
-		this.top.append(new AnchorElement({ text: "Chat", rlink: "#/chat", color: "#fff", margin: "0 10px" }));
-		this.top.append(new AnchorElement({ text: "Profile", rlink: "#/profile?id=" + userStore.value._id, color: "#fff", margin: "0 10px" }));
-		this.top.append(new AnchorElement({ text: "Logout", href: "#" ,onclick: () => {
-			localStorage.removeItem("token");
-			Router.go("#/login");
-		}, color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Home", rlink: "home", color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Chat", rlink: "chat", color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value._id, color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({
+			text: "Logout", href: "#", onclick: () => {
+				localStorage.removeItem("token");
+				Router.go("login");
+			}, color: "#fff", margin: "0 10px"
+		}));
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
 	}
 

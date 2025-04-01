@@ -1,4 +1,4 @@
-import { ButtonElement, Component, DivElement, HBoxElement, ImageElement, ListElement, ParagraphElement, ref, SpanElement, TextFieldElement, VBoxElement } from "typecomposer";
+import { ButtonElement, Component, DivElement, HBox, ImageElement, ListPanel, ParagraphElement, ref, SpanElement, TextField, VBox } from "typecomposer";
 import { AppPage } from "@/pages/app/AppPage";
 import { IMessage } from "@/api/Interfaces";
 import { userStore } from "@/store/UserStore";
@@ -20,9 +20,9 @@ class UserMessageView extends Component {
 			marginRight: "10px"
 		}));
 		avatar.src = user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg";
-		const vbox = this.appendChild(new VBoxElement({ gap: "5px", padding: "5px", width: "100%" }));
+		const vbox = this.appendChild(new VBox({ gap: "5px", padding: "5px", width: "100%" }));
 		vbox.append(new SpanElement({ text: user.firstName || "name" }));
-		const hbox = vbox.appendChild(new HBoxElement({ gap: "5px" }));
+		const hbox = vbox.appendChild(new HBox({ gap: "5px" }));
 		hbox.append(new SpanElement({ text: "👤", title: "Profile", className: "btn" }));
 		hbox.append(new SpanElement({ text: "🚫", title: "Block", className: "btn" }));
 		hbox.append(new SpanElement({ text: "🗑️", title: "Delete Messages", className: "btn" }));
@@ -62,10 +62,10 @@ class MessageItem extends Component {
 
 export class ChatView extends Component {
 
-	private listUsers = new ListElement({ width: "100%" });
-	private listMessages = new ListElement({ className: "message-list", width: "100%" });
+	private listUsers = new ListPanel({ width: "100%" });
+	private listMessages = new ListPanel({ className: "message-list", width: "100%" });
 	private sendButton = new ButtonElement({ width: "18%", height: "55px", backgroundColor: "blue", color: "white", text: "Send", marginBottom: "5px" });
-	private textField = new TextFieldElement({ placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "80%", margin: "auto" });
+	private textField = new TextField({ placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "80%", margin: "auto" });
 	private backgroundImage = ref<string>("")
 
 	constructor() {
@@ -104,7 +104,7 @@ export class ChatView extends Component {
 			this.listUsers.addItem(new UserMessageView({
 				firstName: "User " + i,
 			}, "66f44ce9c55a5333fb682ad6"));
-		const hbox = new HBoxElement({ gap: "10px", alignItems: "center" });
+		const hbox = new HBox({ gap: "10px", alignItems: "center" });
 		hbox.append(this.textField, this.sendButton);
 		const textArea = new DivElement({
 			width: "100%", overflow: "hidden", marginBottom: "15px",

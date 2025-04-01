@@ -1,17 +1,20 @@
-import { RouterGuard } from "typecomposer/dist/esm/core/router/RouterGuard";
+import { GuardResponse, RouterGuard } from "typecomposer";
 import { Api } from "../api/Api";
 import { userStore } from "../store/UserStore";
 
-class RouterGuardHome extends RouterGuard {
-  constructor() {
-    super("login");
-  }
+export class RouterGuardHome extends RouterGuard {
 
-  async beforeEach(): Promise<boolean> {
+
+  async beforeEach(response: GuardResponse) {
     const user = await Api.User.profile();
-    if (user != undefined) userStore.value = user;
-    return user != undefined;
+    if (user != undefined) {
+      if (userStore.value._id != user._id) {
+        userStore.value = user;
+      }
+      response.resolve();
+    }
+    response.redirect("login");
   }
-}
 
-export const routerGuardHome = new RouterGuardHome();
+
+}

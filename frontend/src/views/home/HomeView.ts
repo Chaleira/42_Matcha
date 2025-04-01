@@ -1,4 +1,4 @@
-import { ButtonElement, Component, DivElement, GridElement, HBoxElement, ImageElement, Router, SpanElement, VBoxElement } from "typecomposer";
+import { ButtonElement, Component, DivElement, GridPanel, HBox, ImageElement, Router, SpanElement, VBox } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { IUser } from "@/api/Interfaces";
@@ -9,25 +9,25 @@ class UserView extends Component {
 
 	constructor(user: IUser) {
 		super({ backgroundColor: "white", borderRadius: "5px", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "350px", minHeight: "350px", maxHeight: "350px", padding: "10px", overflow: "hidden" });
-		const vbox = new VBoxElement({ gap: "5px", padding: "5px", width: "100%" });
+		const vbox = new VBox({ gap: "5px", padding: "5px", width: "100%" });
 		const avatar = new ImageElement({ src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "220px" });
 		vbox.append(avatar);
 		vbox.append(new SpanElement({ text: user.firstName || "name" }));
 		vbox.append(new SpanElement({ text: user.email }));
-		const hbox = new HBoxElement({ gap: "5px" });
+		const hbox = new HBox({ gap: "5px" });
 		TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
 		//hbox.append(TagList.createTag(TagList.tags[0], false, () => { }, undefined));
 		//hbox.append(TagList.createTag(TagList.tags[1], false, () => { }, undefined));
 		//hbox.append(TagList.createTag(TagList.tags[2], false, () => { }, undefined));
 		vbox.append(hbox);
-		vbox.append(new ButtonElement({ text: "profile", onclick: () => { Router.go("#/profile", {id: user._id})} }));
+		vbox.append(new ButtonElement({ text: "profile", onclick: () => { Router.go("profile", { id: user._id }) } }));
 		this.append(vbox);
 	}
 }
 
 export class HomeView extends Component {
 
-	private grid = new GridElement({ gap: "10px", padding: "10px", width: "100%", columns: "repeat(4, auto)", marginBottom: "50px" });
+	private grid = new GridPanel({ gap: "10px", padding: "10px", width: "100%", columns: "repeat(4, auto)", marginBottom: "50px" });
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });

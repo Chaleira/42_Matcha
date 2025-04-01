@@ -4,7 +4,7 @@ import { RegisterPage } from '../pages/register/RegisterPage';
 import { ForgotPage } from '../pages/forgot/ForgotPage';
 import { HomeView } from '../views/home/HomeView';
 import { AppPage } from '../pages/app/AppPage';
-import { routerGuardHome } from './RouterGuard';
+import { RouterGuardHome } from './RouterGuard';
 import { ChatView } from '../views/chat/ChatView';
 import { ProfileView } from '../views/profile/ProfileView';
 
@@ -13,12 +13,14 @@ Router.create({
   routes: [
     {
       path: '/',
-      guard: routerGuardHome,
+      guard: new RouterGuardHome(),
       component: AppPage,
       children: [
         { path: 'home', component: HomeView },
         { path: 'chat', component: ChatView },
         { path: 'profile', component: ProfileView },
+        { path: Router.PATH_WILDCARD, redirect: 'home' },
+
       ]
     },
     {
@@ -29,9 +31,13 @@ Router.create({
       path: '/register',
       component: RegisterPage
     },
+    //{
+    //  path: '/forgot',
+    //  component: ForgotPage
+    //}
     {
-      path: '/forgot',
-      component: ForgotPage
+      path: Router.PATH_WILDCARD,
+      redirect: "/login"
     }
   ],
 });

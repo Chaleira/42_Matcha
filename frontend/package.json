@@ -10,15 +10,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "socket.io-client": "^4.8.0",
-    "typecomposer": "^0.0.82"
+    "socket.io-client": "^4.8.1",
+    "typecomposer": "^0.1.32"
   },
   "devDependencies": {
     "@types/socket.io-client": "^3.0.0",
-    "sass": "^1.79.5",
-    "typecomposer-plugin": "^0.0.24",
-    "typescript": "^5.6.3",
-    "vite": "^5.4.9",
+    "sass": "^1.86.1",
+    "typecomposer-plugin": "^0.0.55",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.4",
     "csstype": "^3.1.3"
   }
 }
