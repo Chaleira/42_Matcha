@@ -15,6 +15,7 @@ export namespace Api {
 	export namespace Chat {
 
 		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string, userId: string }[]> {
+			console.log("list", localStorage.getItem("token"));
 			return await fetch(`${URL}/chat/list?userId=${userId}`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
@@ -26,7 +27,8 @@ export namespace Api {
 					}
 					return await response.json();;
 				}).catch((error) => {
-					alert(error);
+					console.error(error);
+					//alert(error);
 					return false;
 				});
 		}

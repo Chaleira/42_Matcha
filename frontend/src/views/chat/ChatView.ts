@@ -1,65 +1,10 @@
-import { ButtonElement, Component, DivElement, HBox, ImageElement, ListPanel, ParagraphElement, ref, SpanElement, TextField, VBox } from "typecomposer";
+import { ButtonElement, Component, DivElement, HBox, ListPanel, ref, Router, TextField } from "typecomposer";
 import { AppPage } from "@/pages/app/AppPage";
 import { IMessage } from "@/api/Interfaces";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
-
-
-
-class UserMessageView extends Component {
-
-	constructor(user: { firstName: string, avatar?: string, userId: string}, chatId: string) {
-		super({
-			className: "user-message-view",
-
-		});
-
-		const avatar = this.appendChild(new ImageElement({
-			width: "70px",
-			height: "50px",
-			borderRadius: "50%",
-			marginRight: "10px"
-		}));
-		avatar.src = user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg";
-		const vbox = this.appendChild(new VBox({ gap: "5px", padding: "5px", width: "100%" }));
-		vbox.append(new SpanElement({ text: user.firstName || "name" }));
-		const hbox = vbox.appendChild(new HBox({ gap: "5px" }));
-		hbox.append(new SpanElement({ text: "👤", title: "Profile", className: "btn" }));
-		hbox.append(new SpanElement({ text: "🚫", title: "Block", className: "btn" }));
-		hbox.append(new SpanElement({ text: "🗑️", title: "Delete Messages", className: "btn" }));
-		hbox.append(new SpanElement({ text: "🚨", title: "Report", className: "btn" }));
-		this.append(new ImageElement({
-			className: "btn-send",
-			src: "/assets/image/3a5a47d3b92c53c060da34a2294453e3.jpg",
-			onclick: () => AppPage.socket.emit("joinRoom", chatId)
-		}));
-	}
-}
-
-
-class MessageItem extends Component {
-
-	constructor(message: IMessage) {
-		super({ width: "100%", display: "flex" });
-		const isUser = userStore.value._id?.toString() == message.sender;
-		const color = isUser ? "rgb(159 201 194)" : "rgb(195 201 203)";
-		const div = new DivElement({ display: "flex", width: "auto", flexDirection: "column", alignItems: "flex-start", padding: "15px", borderRadius: "5px", backgroundColor: color, marginBottom: "5px" });
-		// @ts-ignore
-		div.append(new ParagraphElement({ className: "message-item", text: message.content, maxWidth: "40vw", color: "black" }));
-		div.append(new SpanElement({ text: this.formatTime(new Date(message.date)), fontSize: "10px", color: "#525d62", alignSelf: isUser ? "end" : "start" }));
-		this.style.justifyContent = isUser ? "flex-end" : "flex-start";
-		this.append(div);
-	}
-
-	formatTime(date: Date | undefined): string {
-		if (!date) return "";
-		const hours = date.getHours().toString().padStart(2, '0');
-		const minutes = date.getMinutes().toString().padStart(2, '0');
-		const seconds = date.getSeconds().toString().padStart(2, '0');
-
-		return `${hours}:${minutes}:${seconds}`;
-	}
-}
+import { MessageItem } from "./MessageItem";
+import { UserMessageView } from "./UserMessageView";
 
 export class ChatView extends Component {
 
@@ -100,12 +45,6 @@ export class ChatView extends Component {
 			this.textField.value = "";
 		});
 
-
-		for (let i = 0; i < 10; i++)
-			this.listUsers.addItem(new UserMessageView({
-				firstName: "User " + i,
-				userId: i.toString(),
-			}, "66f44ce9c55a5333fb682ad6"));
 		const hbox = new HBox({ gap: "10px", alignItems: "center" });
 		hbox.append(this.textField, this.sendButton);
 		const textArea = new DivElement({
@@ -122,8 +61,8 @@ export class ChatView extends Component {
 		this.updateMessages(undefined);
 	}
 
-	async onInit(): Promise<void> {
-		const items = await Api.Chat.list(userStore.value._id || "");
+	async onConnected() {
+		const items = await Api.Chat.list(userStore.value._id || "") || [];
 		console.log("items: ", items);
 		this.listUsers.removeItems();
 		for (const item of items) {
