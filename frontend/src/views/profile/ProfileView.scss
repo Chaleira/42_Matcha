@@ -21,8 +21,8 @@
   }
 
   .action-buttons-div {
-    position: absolute !important;
-    right: 20px !important;
+    //position: absolute !important;
+    //right: 20px !important;
     // width: "fill" !important;
     // height: "fill:" !important;
     gap: 50px !important;
@@ -39,4 +39,9 @@
 
   .action-button:hover {
     background-color: #f0f0f0 !important;
+  }
+
+  .username-update-button {
+    display: flex;
+    align-items: center;
   }

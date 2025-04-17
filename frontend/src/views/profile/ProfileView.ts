@@ -3,7 +3,7 @@ import { IUser } from "@/api/Interfaces";
 import { AlbumContainer } from "@/components/AlbumContainer";
 import { TagList } from "@/components/TagList";
 import { userStore } from "@/store/UserStore";
-import { AvatarPanel, BorderPanel, ButtonElement, DialogPanel, DivElement, DropDown, H1Element, H3Element, HBox, ImageElement, Router, TextAreaElement, TextField, VBox } from "typecomposer";
+import { AvatarPanel, BorderPanel, ButtonElement, DialogPanel, DivElement, DropDown, GridPanel, H3Element, HBox, ImageElement, Router, TextAreaElement, TextField, VBox } from "typecomposer";
 import { ActionButtons } from "./components/actionButtons";
 
 
@@ -29,17 +29,19 @@ export class ProfileView extends BorderPanel {
         const isMyUser = user._id == userStore.value._id
 
         const avatar = new propertyItem("", isMyUser ? new AvatarPanel({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "10px", marginRight: "30px", borderRadius: "50px", cursor: "pointer" })
-            : new ImageElement({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(user.avatar?.toString() || "") }));
-        const usernameUpdateButton = new VBox({});
-        usernameUpdateButton.append(new H1Element({ text: user.username.toUpperCase() || "NAME", color: "black", marginTop: "30px", textAlign: "center", marginBottom: "5px" }));
-        if (user._id == userStore.value._id)
-            usernameUpdateButton.append(new ButtonElement({ width: "150px", height: "50px", text: "Update Profile" }))
-        this.top.append(new HBox({ justifyContent: "flex", width: "100%", children: [avatar, usernameUpdateButton] }));
-
-        if (!isMyUser) {
-            const buttonDiv = new ActionButtons(user);
-            this.append(buttonDiv);
-        }
+            : new ImageElement({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", width: "min-content", maxHeight: "150px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(user.avatar?.toString() || "") }));
+        const usernameUpdateButton = new DivElement({
+            className: "username-update-button",
+            flexDirection: !isMyUser ? "column" : "row",
+            children: [
+                !isMyUser ? new ActionButtons(user) : new ButtonElement({ width: "150px", height: "50px", text: "Update Profile" })
+            ]
+        });
+        this.top.append(new GridPanel({
+            position: "relative",
+            gridTemplateColumns: "auto 1fr",
+            width: "100%", children: [avatar, usernameUpdateButton]
+        }));
 
         const userInfo = new VBox({ overflow: "auto", margin: "20px" });
         userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ text: user.firstName + " " + user.lastName, variant: "underlined" }) : user.firstName + " " + user.lastName));

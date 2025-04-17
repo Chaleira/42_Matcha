@@ -49,7 +49,7 @@ export class ActionButtons extends Component {
             userStore.value.blocked.push(this.user._id || "");
         else {
             const index = userStore.value.blocked.indexOf(this.user._id || "");
-            if (index > -1) 
+            if (index > -1)
                 userStore.value.blocked.splice(index, 1);
         }
         console.log("this.blocked: " + userStore.toJSON());
