@@ -1,4 +1,4 @@
-import { userStore } from "@/store/UserStore";
+import { IUser } from "@/api/Interfaces";
 import { Component, ComponentProps, DivElement, ImageElement, InputElement, ref } from "typecomposer";
 
 
@@ -8,13 +8,13 @@ export class AlbumContainer extends Component {
 	private container: DivElement;
 
 	constructor(private props: ComponentProps & {
-		user: ref<any>
+		user: ref<IUser>
 	}) {
 		super({ overflow: "hidden", display: "flex", flexDirection: "column", padding: "0px", ...props });
 		this.container = new DivElement({ className: "album-container" });
 		this.container.append(this.createAddPhoto());
 		this.append(this.container);
-		for(const image of props.user.value.album){
+		for (const image of props.user.value?.album || []) {
 			this.createAlbum(new ImageElement({ src: image.toString() }));
 		}
 	}
@@ -25,7 +25,7 @@ export class AlbumContainer extends Component {
 		const close = new DivElement({ className: "album-close", text: "❌" });
 		close.onclick = () => {
 			const index = (this.props.user.value.album as []).findIndex((e: string) => e.toString() == image.src);
-			this.props.user.value.album.splice(index, 1);
+			this.props.user.value.album?.splice(index, 1);
 			album.remove();
 		}
 		album.append(close);
@@ -38,8 +38,6 @@ export class AlbumContainer extends Component {
 		album.append(input);
 		album.onclick = () => input.click();
 		input.onchange = () => {
-
-
 			const files = input.files;
 			if (files) {
 				for (let i = 0; i < files.length; i++) {
@@ -47,7 +45,7 @@ export class AlbumContainer extends Component {
 					reader.onload = (e: any) => {
 						console.log(e.target.result);
 						this.createAlbum(new ImageElement({ src: e.target.result as string }));
-						this.props.user.value.album.push(e.target.result as string);
+						this.props.user.value.album?.push(e.target.result as string);
 					};
 					reader.readAsDataURL(files[i]);
 				}

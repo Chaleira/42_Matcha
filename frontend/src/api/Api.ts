@@ -11,11 +11,10 @@ export namespace Api {
 		return myHeaders;
 	}
 
-
 	export namespace Chat {
 
 		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string, userId: string }[]> {
-			console.log("list", localStorage.getItem("token"));
+			//console.log("list", localStorage.getItem("token"));
 			return await fetch(`${URL}/chat/list?userId=${userId}`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
@@ -73,6 +72,7 @@ export namespace Api {
 	export namespace User {
 
 		export async function login(email: string, password: string): Promise<boolean> {
+			console.log(email, password);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -92,6 +92,7 @@ export namespace Api {
 						throw new Error("Invalid credentials");
 					}
 					const { token } = await response.json();
+					console.log(token);
 					localStorage.setItem("token", token);
 					return true;
 				}).catch((error) => {

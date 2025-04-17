@@ -13,6 +13,11 @@
     "isolatedModules": true,
     "noEmit": true,
 
+    /* JSX */
+    "jsx": "preserve",
+    "jsxFactory": "TypeComposer.createElement",
+    "jsxFragmentFactory": "TypeComposer.Fragment",
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
@@ -30,7 +35,7 @@
     },
 
     /* Type checking */
-    "types": ["vite/client",  "typecomposer/typings"]
+    "types": ["vite/client", "typecomposer/typings"]
   },
   "include": ["src"]
 }
