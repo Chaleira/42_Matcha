@@ -13,6 +13,8 @@ export class RangeSlider extends Component {
 
   constructor(public min: number = 0, public max: number = 100) {
     super();
+    this.values.value.min = min;
+    this.values.value.max = max;
   }
 
   onInit(): void {
