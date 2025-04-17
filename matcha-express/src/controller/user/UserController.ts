@@ -4,7 +4,7 @@ import express, { Request, Response } from 'express';
 interface AuthenticatedRequest extends Request {
   user?: { id: string };
 }
-import {IUser, UserModel, hasField } from "../../model/user/UserModel";
+import { IUser, UserModel, hasField } from "../../model/user/UserModel";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { authenticateToken } from "../../middleware/AuthMiddleware";
@@ -18,7 +18,7 @@ const SECRET_KEY = 'your_jwt_secret_key';
 router.post('/user/register', async (req: Request, res: Response) => {
   try {
     const { username, email, password, dateBirth, userLocation, avatar, album,
-            firstName, lastName, bio, tags, gender, sexualOrientation} = req.body;
+      firstName, lastName, bio, tags, gender, sexualOrientation } = req.body;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -45,19 +45,19 @@ router.post('/user/register', async (req: Request, res: Response) => {
   }
 });
 
-router.post('/user/login',  async (req: Request, res: Response) => {
+router.post('/user/login', async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
     const user = await UserModel.findOne({ email });
-    
+
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
-    
+
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: '1y' });
 
     res.json({ token, message: 'Login successful' });
   } catch (err: any) {
@@ -67,8 +67,8 @@ router.post('/user/login',  async (req: Request, res: Response) => {
 
 router.get('/user/profile', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   try {
-      const user = await UserModel.findById(req.user?.id).select('-password -isDeleted -__v');
-      res.status(200).json(user);
+    const user = await UserModel.findById(req.user?.id).select('-password -isDeleted -__v');
+    res.status(200).json(user);
   }
   catch (err: any) {
     res.status(500).json({ message: err.message });
@@ -78,18 +78,18 @@ router.get('/user/profile', authenticateToken, async (req: AuthenticatedRequest,
 router.post('/user/update', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
   const updateFields = req.body; // Get the fields to update from the request body
 
-  const {password, ...allowedFields} = updateFields;
+  const { password, ...allowedFields } = updateFields;
 
   try {
     const updatedUser = await UserModel.findByIdAndUpdate(req.user?.id, allowedFields, {
       new: true, // Return the updated document
       runValidators: true, // Ensure validation is applied to updated fields
     }).select('-password -isDeleted -__v');
-    
+
     if (!updatedUser) {
       return res.status(404).json({ message: 'User not found' });
     }
-    
+
     res.status(200).json(updatedUser);
   } catch (err: any) {
     res.status(400).json({ message: err.message });
@@ -112,7 +112,7 @@ router.get('/user/delete', authenticateToken, async (req: AuthenticatedRequest, 
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json({ message: 'User deleted successfully' , deletedUser});
+    res.status(200).json({ message: 'User deleted successfully', deletedUser });
   } catch (err: any) {
     res.status(400).json({ message: err.message });
   }
@@ -125,7 +125,7 @@ router.get('/user/list', authenticateToken, async (req: Request, res: Response) 
     const filters: Record<string, any> = {};
     const invalidFilters: string[] = ['password', 'isDeleted', 'email'];
     const invalidKeys: string[] = [];
-    const validKeys: string[] = ["location", "radius" ]
+    const validKeys: string[] = ["location", "radius"]
 
     // Extract location parameters
     const { location, radius } = req.query;
@@ -152,20 +152,20 @@ router.get('/user/list', authenticateToken, async (req: Request, res: Response) 
         // Handle cases like age where the value needs to be parsed into a number
         if (key === 'age') {
           const ageParam = req.query[key] as string;
-          
+
           // Check if the age parameter contains a range (e.g., '20-30')
           if (ageParam.includes('-')) {
             const [minAge, maxAge] = ageParam.split('-').map(Number);
             filters[key] = { $gte: minAge, $lte: maxAge };
           } else {
             filters[key] = parseInt(ageParam, 10);
-        }
+          }
         } else {
           filters[key] = req.query[key];
         }
       }
       else {
-        if (!validKeys.includes(key)) 
+        if (!validKeys.includes(key))
           invalidKeys.push(key);
       }
     }
@@ -211,7 +211,7 @@ router.post('/user/like', authenticateToken, async (req: AuthenticatedRequest, r
       return res.status(200).json(msg ? msg : { message: 'User liked successfully' });
     }
     else {
-      if (userLiking.matched.includes(userBeingLikedId) && userBeingLiked.matched.includes(userLikingId)){
+      if (userLiking.matched.includes(userBeingLikedId) && userBeingLiked.matched.includes(userLikingId)) {
         const index = userLiking.matched.indexOf(userBeingLikedId);
         if (index > -1) {
           userLiking.matched.splice(index, 1);

@@ -59,6 +59,4 @@ export class AppPage extends BorderPanel {
 		Api.User.update({ userLocation: userStore.value.userLocation })
 	}
 
-
-
 }

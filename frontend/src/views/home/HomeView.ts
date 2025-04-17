@@ -1,9 +1,9 @@
-import { ButtonElement, Component, DivElement, GridPanel, HBox, ImageElement, Router, SpanElement, VBox } from "typecomposer";
+import { ButtonElement, Component, GridPanel, HBox, ImageElement, Router, SpanElement, VBox } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { IUser } from "@/api/Interfaces";
 import { TagList } from "@/components/TagList";
-
+import { FilterUsers } from "@/components/FilterUsers";
 
 class UserView extends Component {
 
@@ -16,9 +16,6 @@ class UserView extends Component {
 		vbox.append(new SpanElement({ text: user.email }));
 		const hbox = new HBox({ gap: "5px" });
 		TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
-		//hbox.append(TagList.createTag(TagList.tags[0], false, () => { }, undefined));
-		//hbox.append(TagList.createTag(TagList.tags[1], false, () => { }, undefined));
-		//hbox.append(TagList.createTag(TagList.tags[2], false, () => { }, undefined));
 		vbox.append(hbox);
 		vbox.append(new ButtonElement({ text: "profile", onclick: () => { Router.go("profile", { id: user._id }) } }));
 		this.append(vbox);
@@ -31,17 +28,11 @@ export class HomeView extends Component {
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });
-		const divFilter = new DivElement({
-			padding: "10px",
-			display: "flex", justifyContent: "flex-start", alignItems: "center",
-			width: "auto", minHeight: "50px", margin: "10px", marginRight: "10px", marginLeft: "10px", backgroundColor: "white", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)"
-		});
-		divFilter.append(new SpanElement({ text: "Filter" }));
-		this.append(divFilter, this.grid);
-		this.update();
+		this.append(new FilterUsers(), this.grid);
+		this.onInit();
 	}
 
-	async update() {
+	async onInit() {
 		this.grid.innerHTML = "";
 		const users = await Api.User.list();
 		users.forEach((user: IUser) => {

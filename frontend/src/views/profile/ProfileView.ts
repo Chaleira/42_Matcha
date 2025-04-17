@@ -7,8 +7,6 @@ import { AvatarPanel, BorderPanel, ButtonElement, DialogPanel, DivElement, DropD
 import { ActionButtons } from "./components/actionButtons";
 
 
-
-
 export class ProfileView extends BorderPanel {
 
     fullScreen = new DialogPanel({ className: "full-screen", zIndex: "10", backgroundColor: "#000000bf" })
@@ -20,14 +18,14 @@ export class ProfileView extends BorderPanel {
 
     }
 
-	async update() {
-		const users = await Api.User.list({ _id: Router.props.id });
+    async update() {
+        const users = await Api.User.list({ _id: Router.props.id });
         if (users.length != 1) {
             console.error("User not found");
             Router.go("home");
             return;
         }
-        const user:IUser = users[0];
+        const user: IUser = users[0];
         const isMyUser = user._id == userStore.value._id
 
         const avatar = new propertyItem("", isMyUser ? new AvatarPanel({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "10px", marginRight: "30px", borderRadius: "50px", cursor: "pointer" })
@@ -38,7 +36,7 @@ export class ProfileView extends BorderPanel {
             usernameUpdateButton.append(new ButtonElement({ width: "150px", height: "50px", text: "Update Profile" }))
         this.top.append(new HBox({ justifyContent: "flex", width: "100%", children: [avatar, usernameUpdateButton] }));
 
-        if (!isMyUser){
+        if (!isMyUser) {
             const buttonDiv = new ActionButtons(user);
             this.append(buttonDiv);
         }
@@ -46,23 +44,23 @@ export class ProfileView extends BorderPanel {
         const userInfo = new VBox({ overflow: "auto", margin: "20px" });
         userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ text: user.firstName + " " + user.lastName, variant: "underlined" }) : user.firstName + " " + user.lastName));
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
-			options: ["male", "female", "develop"],
-			value: userStore.value.gender,
-			// width: "48%",
+            options: ["male", "female", "develop"],
+            value: userStore.value.gender,
+            // width: "48%",
             variant: "underlined"
-		}) : user.gender));
+        }) : user.gender));
         userInfo.append(new propertyItem("Sexual Preference: ", isMyUser ? new DropDown({
-			options: ["heterosexual", "Viado"],
-			value: userStore.value.sexualOrientation,
-			// width: "48%",
+            options: ["heterosexual", "Viado"],
+            value: userStore.value.sexualOrientation,
+            // width: "48%",
             variant: "underlined"
-		}) : user.sexualOrientation));
+        }) : user.sexualOrientation));
         const formattedDate = new Date(user.dateBirth).toLocaleDateString("en-GB");
         userInfo.append(new propertyItem("Birthday: ", formattedDate));
         const hbox = new HBox({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
         userInfo.append(new propertyItem("Tags: ", isMyUser ? new TagList(userStore) : hbox));
-        const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({value: userStore.value.bio, width: "100%", height: "100%"}) : user.bio));
+        const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({ value: userStore.value.bio, width: "100%", height: "100%" }) : user.bio));
         bio.element1.style.marginBottom = 0;
         const album = new HBox({ gap: "20px", width: "100%", marginTop: "0" });
         user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image) })));
@@ -97,9 +95,9 @@ class propertyItem extends HBox {
     constructor(label: string, value: string | IComponent) {
         super({ className: "property-item", gap: "10px" });
         if (value === undefined)
-                value = "";
-        this.element1 = new H3Element({text: label, color: "white", fontFamily: "initial"});
-        this.element2 = typeof value === "string" ? new H3Element({text: value, color: "black"}) : value;
-        this.append(this.element1,  this.element2);
+            value = "";
+        this.element1 = new H3Element({ text: label, color: "white", fontFamily: "initial" });
+        this.element2 = typeof value === "string" ? new H3Element({ text: value, color: "black" }) : value;
+        this.append(this.element1, this.element2);
     }
 }
