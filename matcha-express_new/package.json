@@ -1,0 +1,36 @@
+{
+  "name": "matcha-express_new",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "npm run build && node dist/index.js",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "migration:create": "node-pg-migrate create $npm_config_name -f ./migrations/.migration.config.json",
+    "migration:up": "node-pg-migrate up -f ./migrations/.migration.config.json",
+    "migration:down": "node-pg-migrate down -f ./migrations/.migration.config.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "config": "^3.3.12",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.11.3",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.1",
+    "@types/pg": "^8.11.13",
+    "node-pg-migrate": "^7.9.1",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}

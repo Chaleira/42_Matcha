@@ -1,0 +1,4 @@
+{
+  "MigrationFileLanguage": "ts",
+  "tsconfig": "tsconfig.json"
+}
