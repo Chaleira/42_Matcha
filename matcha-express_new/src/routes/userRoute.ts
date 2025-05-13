@@ -11,7 +11,7 @@ const router = Router();
 router.post('/profile/update', validateQueryParams(null), validateBodyParams(allowedUpdateParams),  catchAsync(userController.updateUserProfile));
 router.post('/delete', validateQueryParams(null), validateBodyParams(null), catchAsync(userController.deleteUser));
 
-router.get('/profile', validateQueryParams(["id"], ["id"]), validateBodyParams(null), catchAsync(userController.getUserProfile));
+router.get('/profile', validateQueryParams(["id"]), validateBodyParams(null), catchAsync(userController.getUserProfile));
 router.get('/get', validateQueryParams(["id"], ["id"]), validateBodyParams(null), catchAsync(userController.getUserById));
 router.get('/list', validateQueryParams(allowedListParams), validateBodyParams(null), catchAsync(userController.listUsers));
 

@@ -1,4 +1,6 @@
 import { profileModel, IProfile } from "../model/profileModel";
+import { likeService } from "./likeService";
+import { blockService } from "./blockService";
 import { userModel, IUser } from "../model/userModel";
 import { Condition, ConditionOperator } from "../database/sqlHelper";
 import { NotFoundError, ValidationError } from "../utils/errors";
@@ -70,10 +72,15 @@ export const userService = {
 		}
 	},
 
-	async getUserProfile(userId: number): Promise<IProfile | null> {
+	async getUserProfile(myId: number, userId: number): Promise<IProfile | null> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
+			if (myId === userId) return userProfile;
+			const like = await likeService.getLike(myId, userId);
+			userProfile.like = like;
+			const block = await blockService.getBlock(myId, userId);
+			userProfile.block = block;
 			return userProfile;
 		} catch (error: any) {
 			throw mapDbError.user(error);
