@@ -46,6 +46,19 @@ export const blockService = {
 			throw mapDbError.block(error);
 		}
 	},
+
+	async getBlock(blockerId: number, blockedId: number): Promise<{ i_blocked: boolean; he_blocked: boolean }> {
+		try {
+			const existingUser = await userService.getUserById(blockerId);
+			if (!existingUser) throw new NotFoundError("User not found");
+			const i_blocked = await blockModel.findByBlockerAndBlocked(blockerId, blockedId);
+			const he_blocked = await blockModel.findByBlockerAndBlocked(blockedId, blockerId);
+			return { i_blocked: !!i_blocked, he_blocked: !!he_blocked };
+		} catch (error: any) {
+			throw mapDbError.block(error);
+		}
+	},
+
 	async deleteBlock(blockerId: number, blockedId: number): Promise<void> {
 		try {
 			const block = await blockModel.findByBlockerAndBlocked(blockerId, blockedId);

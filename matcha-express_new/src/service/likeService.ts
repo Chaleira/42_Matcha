@@ -53,6 +53,18 @@ export const likeService = {
 		}
 	},
 
+	async getLike(likerId: number, likedId: number): Promise<{ i_liked: boolean; he_liked: boolean }> {
+		try {
+			const existisUser = await userService.getUserById(likerId);
+			if (!existisUser) throw new NotFoundError("User not found");
+			const i_liked = await likeModel.findByLikerAndLiked(likerId, likedId);
+			const he_liked = await likeModel.findByLikerAndLiked(likedId, likerId);
+			return { i_liked: !!i_liked, he_liked: !!he_liked };
+		} catch (error: any) {
+			throw mapDbError.like(error);
+		}
+	},
+
 	async deleteLike(likerId: number, likedId: number): Promise<void> {
 		try {
 			const like = await likeModel.findByLikerAndLiked(likerId, likedId);

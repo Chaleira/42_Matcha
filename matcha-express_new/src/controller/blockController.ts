@@ -20,6 +20,14 @@ export const blockController = {
 		const blocks = await blockService.getBlocksByBlocked(blockedId);
 		res.status(200).json(blocks);
 	},
+
+	async getBlock(req: AuthenticatedRequest, res: Response) {
+		const blockerId = req.user.id;
+		const blockedId = parseInt(req.query.user_id as string);
+		const block = await blockService.getBlock(blockerId, blockedId);
+		res.status(200).json(block);
+	},
+
 	async deleteBlock(req: AuthenticatedRequest, res: Response) {
 		const blockerId = req.user.id;
 		const blockedId = parseInt(req.query.blocked_id as string);

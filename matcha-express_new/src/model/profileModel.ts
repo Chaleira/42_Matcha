@@ -13,6 +13,14 @@ export interface IProfile {
 	longitude?: number;
 	first_name?: string;
 	last_name?: string;
+	like?: {
+		i_liked: boolean;
+		he_liked: boolean;
+	},
+	block?: {
+		i_blocked: boolean;
+		he_blocked: boolean;
+	},
 	created_at?: Date;
 }
 
