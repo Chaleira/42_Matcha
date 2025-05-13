@@ -1,3 +1,4 @@
+import { IUser } from "@/api/Interfaces";
 import { ButtonElement, DivElement, HBox, PopUpButton, ref } from "typecomposer";
 
 export class TagList extends HBox {
@@ -26,7 +27,7 @@ export class TagList extends HBox {
 		{ tag: "💼 Entrepreneur", color: "#708090" }
 	];
 
-	constructor(private user: ref<any>) {
+	constructor(private user: ref<IUser>) {
 		super({ display: "flex", gap: "5px", flexWrap: "wrap" });
 		const grid = new DivElement({ className: "tag-grid" });
 		TagList.tags.forEach(tag => grid.append(this.insertTag(tag)));
@@ -35,7 +36,7 @@ export class TagList extends HBox {
 		this.append(tag1);
 		const buttons = this.querySelectorAll<ButtonElement>("[tag]");
 		for (const btn of buttons) {
-			if (user.value.tags.includes(btn.getAttribute("tag"))) {
+			if (user.value.tags.includes(btn.getAttribute("tag") || "")) {
 				btn.click();
 			}
 		}
@@ -62,7 +63,7 @@ export class TagList extends HBox {
 	public static convertTags(tagNames: string[]): { tag: string, color: string }[] {
 		const tags: { tag: string, color: string }[] = [];
 		TagList.tags.forEach(tag => {
-			if (tagNames.includes(tag.tag))
+			if (tagNames && tagNames.includes(tag.tag))
 				tags.push(tag);
 		});
 		return tags;

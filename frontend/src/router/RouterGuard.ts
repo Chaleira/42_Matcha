@@ -8,7 +8,7 @@ export class RouterGuardHome extends RouterGuard {
     const user = await Api.User.profile();
     console.log(user);
     if (user != undefined) {
-      if (userStore.value._id != user._id) {
+      if (userStore.value.user_id != user.user_id) {
         userStore.value = user;
       }
       response.resolve();

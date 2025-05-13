@@ -6,7 +6,7 @@ export class MessageItem extends Component {
 
 	constructor(message: IMessage) {
 		super({ width: "100%", display: "flex" });
-		const isUser = userStore.value._id?.toString() == message.sender;
+		const isUser = userStore.value.user_id?.toString() == message.sender;
 		const color = isUser ? "rgb(159 201 194)" : "rgb(195 201 203)";
 		const div = new DivElement({ display: "flex", width: "auto", flexDirection: "column", alignItems: "flex-start", padding: "15px", borderRadius: "5px", backgroundColor: color, marginBottom: "5px" });
 		// @ts-ignore

@@ -36,8 +36,8 @@ export class ChatView extends Component {
 			console.log("joinRoom", chat);
 			this.updateMessages(chat.messages);
 			this.sendButton.onclick = () => {
-				console.log("send", chat._id, " / ", userStore.value._id, " / ", this.textField.value.toString());
-				AppPage.socket.emit("message", chat._id, userStore.value._id, this.textField.value.toString());
+				console.log("send", chat.user_id, " / ", userStore.value.user_id, " / ", this.textField.value.toString());
+				AppPage.socket.emit("message", chat.user_id, userStore.value.user_id, this.textField.value.toString());
 			}
 		});
 
@@ -75,7 +75,7 @@ export class ChatView extends Component {
 	}
 
 	async onConnected() {
-		const items = await Api.Chat.list(userStore.value._id || "") || [];
+		const items = await Api.Chat.list(userStore.value.user_id || "") || [];
 		this.listUsers.removeItems();
 		for (const item of items) {
 			if (userStore.value.blocked.find(e => e == item.userId) != undefined) continue;
@@ -83,7 +83,7 @@ export class ChatView extends Component {
 				firstName: item.title,
 				avatar: item.icon,
 				userId: item.userId
-			}, item._id
+			}, item.user_id
 			));
 		}
 		const id = Router.props.id;

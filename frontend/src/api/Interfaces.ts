@@ -1,27 +1,26 @@
 
 export interface IUser {
-	_id?: string,
+	user_id?: string,
 	username: string;
 	email: string;
 	avatar?: string;
 	album?: string[];
 	password: string;
 	dateBirth: Date;
-	firstName: string;
-	lastName: string;
+	first_name: string;
+	last_name: string;
 	bio: string
 	tags: string[];
 	gender: string;
 	sexualOrientation: string;
-	userLocation: {
-		"type": "Point",
-		"coordinates": number[]
-	}
 	isDeleted?: boolean;
-	liked: string[],
+	//liked: string[],
 	blocked: string[],
 	viewd: IUser[],
 	matched: IUser[],
+	latitude: number,
+	longitude: number
+
 }
 
 

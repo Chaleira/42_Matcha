@@ -13,7 +13,7 @@ export namespace Api {
 
 	export namespace Chat {
 
-		export async function list(userId: string): Promise<{ _id: string, title: string, icon: string, userId: string }[]> {
+		export async function list(userId: string): Promise<{ user_id: string, title: string, icon: string, userId: string }[]> {
 			//console.log("list", localStorage.getItem("token"));
 			return await fetch(`${URL}/chat/list?userId=${userId}`, {
 				method: "GET",
@@ -32,7 +32,7 @@ export namespace Api {
 				});
 		}
 
-		export async function get(chatId: string): Promise<{ _id: string, messages: IMessage[] }> {
+		export async function get(chatId: string): Promise<{ user_id: string, messages: IMessage[] }> {
 			return await fetch(`${URL}/chat/get?chatId=${chatId}`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
@@ -77,11 +77,11 @@ export namespace Api {
 			myHeaders.append("Content-Type", "application/json");
 
 			const body = JSON.stringify({
-				"email": email,
+				"username": email,
 				"password": password
 			});
 
-			return await fetch(`${URL}/user/login`, {
+			return await fetch(`${URL}/auth/login`, {
 				method: "POST",
 				headers: myHeaders,
 				body: body,
@@ -125,11 +125,12 @@ export namespace Api {
 				});
 		}
 
-		export async function profile(): Promise<IUser> {
+		export async function profile(userId?: string): Promise<IUser> {
 			return await fetch(`${URL}/user/profile`, {
 				method: "GET",
 				headers: ApiHeader(),
-				redirect: "follow"
+				redirect: "follow",
+				params: userId ? { id: userId } : undefined,
 			})
 				.then(async (response) => {
 					if (!response.ok) {
@@ -148,7 +149,6 @@ export namespace Api {
 				headers: ApiHeader(),
 				redirect: "follow",
 				params,
-				refKey: "params",
 			})
 				.then(async (response) => {
 					if (!response.ok) {
@@ -163,7 +163,7 @@ export namespace Api {
 
 		export async function update(params: { [key: string]: any } = {}): Promise<IUser> {
 			const body = JSON.stringify(params);
-			return await fetch(`${URL}/user/update`, {
+			return await fetch(`${URL}/user/profile/update`, {
 				method: "POST",
 				headers: ApiHeader(),
 				body: body,

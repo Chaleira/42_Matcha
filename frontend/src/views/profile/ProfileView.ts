@@ -19,14 +19,13 @@ export class ProfileView extends BorderPanel {
     }
 
     async update() {
-        const users = await Api.User.list({ _id: Router.props.id });
-        if (users.length != 1) {
+        const user: IUser = await Api.User.profile(Router.props.id);
+        if (!user) {
             console.error("User not found");
             Router.go("home");
             return;
         }
-        const user: IUser = users[0];
-        const isMyUser = user._id == userStore.value._id
+        const isMyUser = user.user_id == userStore.value.user_id
 
         const avatar = new propertyItem("", isMyUser ? new AvatarPanel({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "10px", marginRight: "30px", borderRadius: "50px", cursor: "pointer" })
             : new ImageElement({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", width: "min-content", maxHeight: "150px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(user.avatar?.toString() || "") }));
@@ -44,7 +43,7 @@ export class ProfileView extends BorderPanel {
         }));
 
         const userInfo = new VBox({ overflow: "auto", margin: "20px" });
-        userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ text: user.firstName + " " + user.lastName, variant: "underlined" }) : user.firstName + " " + user.lastName));
+        userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ text: user.first_name + " " + user.last_name, variant: "underlined" }) : user.first_name + " " + user.last_name));
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
             options: ["male", "female", "develop"],
             value: userStore.value.gender,

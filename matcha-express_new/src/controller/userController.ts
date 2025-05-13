@@ -11,7 +11,7 @@ export const userController = {
 	},
 
 	async getUserProfile(req: AuthenticatedRequest, res: Response): Promise<void> {
-		const userId = parseInt(req.query.id as string);
+		const userId = parseInt((req?.query?.id || req.user.id) as string);
 		const userProfile = await userService.getUserProfile(userId);
 		res.status(200).json(userProfile);
 	},
