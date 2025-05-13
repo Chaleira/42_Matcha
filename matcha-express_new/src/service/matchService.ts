@@ -18,6 +18,7 @@ export const matchService = {
 		try {
 			const match = await matchModel.getMatch(user1Id, user2Id);
 			if (!match) throw new NotFoundError("Match not found");
+			await chatService.deleteChat(user1Id, user2Id);
 			await matchModel.delete(user1Id, user2Id);
 		} catch (error: any) {
 			throw mapDbError.match(error);
