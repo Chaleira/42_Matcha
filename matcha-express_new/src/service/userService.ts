@@ -112,8 +112,6 @@ export const userService = {
 	},
 
 	async listUsers(filters: UserSearchFilters): Promise<IProfile[] | null> {
-		console.log("Age MIN: ", filters.age_min);
-		console.log("Age MAX: ", filters.age_max);
 		try {
 			const conditions: Condition[] = [];
 
@@ -145,6 +143,7 @@ export const userService = {
 					operator: "<=",
 					value: filters.radius_km,
 				});
+			
 			}
 
 			return await profileModel.listWithFilter(conditions);
