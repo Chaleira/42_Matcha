@@ -14,13 +14,18 @@ export interface IUser {
 	gender: string;
 	sexualOrientation: string;
 	isDeleted?: boolean;
-	//liked: string[],
-	blocked: string[],
 	viewd: IUser[],
 	matched: IUser[],
 	latitude: number,
-	longitude: number
-
+	longitude: number,
+	like: {
+		i_liked: boolean,
+		he_liked: boolean
+	},
+	block: {
+		i_blocked: boolean,
+		he_blocked: boolean
+	}
 }
 
 

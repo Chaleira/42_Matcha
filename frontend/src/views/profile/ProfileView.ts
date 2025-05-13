@@ -20,6 +20,7 @@ export class ProfileView extends BorderPanel {
 
     async update() {
         const user: IUser = await Api.User.profile(Router.props.id);
+        console.log("get:user", user);
         if (!user) {
             console.error("User not found");
             Router.go("home");

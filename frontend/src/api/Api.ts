@@ -125,6 +125,77 @@ export namespace Api {
 				});
 		}
 
+		// /like/get?user_id=59
+		export async function getLikes(userId: string): Promise<IUser[]> {
+			return await fetch(`${URL}/user/profile`, {
+				method: "GET",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: userId ? { id: userId } : undefined,
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid token");
+					}
+					return await response.json();
+				}).catch((error) => {
+					//alert(error);
+					return null;
+				});
+		}
+
+		export async function createBlocks(userId: string): Promise<boolean> {
+			return await fetch(`${URL}/block/create`, {
+				method: "POST",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: { blocked_id: userId },
+			}).then(async (response) => {
+				return response.ok
+			}).catch(() => {
+				return false;
+			});
+		}
+
+		export async function deleteBlocks(userId: string): Promise<boolean> {
+			return await fetch(`${URL}/block/delete`, {
+				method: "POST",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: { blocked_id: userId },
+			}).then(async (response) => {
+				return response.ok
+			}).catch(() => {
+				return false;
+			});
+		}
+
+		export async function createLike(userId: string): Promise<boolean> {
+			return await fetch(`${URL}/like/create`, {
+				method: "POST",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: { liked_id: userId },
+			}).then(async (response) => {
+				return response.ok
+			}).catch(() => {
+				return false;
+			});
+		}
+
+		export async function deleteLike(userId: string): Promise<boolean> {
+			return await fetch(`${URL}/like/delete`, {
+				method: "POST",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: { liked_id: userId },
+			}).then(async (response) => {
+				return response.ok
+			}).catch(() => {
+				return false;
+			});
+		}
+
 		export async function profile(userId?: string): Promise<IUser> {
 			return await fetch(`${URL}/user/profile`, {
 				method: "GET",
@@ -197,22 +268,22 @@ export namespace Api {
 				});
 		}
 
-		export async function block(params: { userBlockingId: string, userBlockedId: string }): Promise<IUser> {
-			return await fetch(`${URL}/user/block`, {
-				method: "POST",
-				headers: ApiHeader(),
-				body: JSON.stringify(params),
-				redirect: "follow"
-			})
-				.then(async (response) => {
-					if (!response.ok) {
-						throw new Error("Invalid block");
-					}
-					response.json().then((data) => console.log(data.message));
-					return await response.json();
-				}).catch((error) => {
-					return error;
-				});
-		}
+		//export async function block(params: { userBlockingId: string, userBlockedId: string }): Promise<IUser> {
+		//	return await fetch(`${URL}/user/block`, {
+		//		method: "POST",
+		//		headers: ApiHeader(),
+		//		body: JSON.stringify(params),
+		//		redirect: "follow"
+		//	})
+		//		.then(async (response) => {
+		//			if (!response.ok) {
+		//				throw new Error("Invalid block");
+		//			}
+		//			response.json().then((data) => console.log(data.message));
+		//			return await response.json();
+		//		}).catch((error) => {
+		//			return error;
+		//		});
+		//}
 	}
 }
