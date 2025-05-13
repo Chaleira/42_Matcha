@@ -1,9 +1,9 @@
-import { ButtonElement, Component, GridPanel, HBox, ImageElement, Router, SpanElement, VBox } from "typecomposer";
+import { ButtonElement, Component, GridPanel, HBox, ImageElement, ref, Router, SpanElement, VBox } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { IUser } from "@/api/Interfaces";
 import { TagList } from "@/components/TagList";
-import { FilterUsers } from "@/components/FilterUsers";
+import { FilterUsers } from "@/components/FilterUsers.ts";
 
 class UserView extends Component {
 
@@ -22,21 +22,24 @@ class UserView extends Component {
 	}
 }
 
-export class HomeView extends Component {
+export default class HomeView extends Component {
 
 	private grid = new GridPanel({ className: "grid-users", gap: "10px", padding: "10px", width: "100%", columns: "repeat(4, auto)", marginBottom: "50px" });
+	params = ref([], "params");
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });
 		this.append(new FilterUsers(), this.grid);
-		this.onInit();
+		this.params.subscribe((items: IUser[]) => {
+			this.grid.innerHTML = "";
+			items.forEach((user: IUser) => {
+				if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
+			});
+			console.log("params:", items);
+		});
 	}
 
 	async onInit() {
-		this.grid.innerHTML = "";
-		const users = await Api.User.list();
-		users.forEach((user: IUser) => {
-			if (user._id != userStore.value._id?.toString()) this.grid.append(new UserView(user));
-		});
+		//await Api.User.list();
 	}
 }

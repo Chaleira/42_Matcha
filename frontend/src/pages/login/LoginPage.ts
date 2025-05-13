@@ -1,6 +1,5 @@
-import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, H4Element, ref, Router, TextField, VBox } from "typecomposer";
+import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, H4Element, ref, Register, Router, TextField, VBox } from "typecomposer";
 import { Api } from "@/api/Api";
-
 
 export class LoginPage extends Component {
 

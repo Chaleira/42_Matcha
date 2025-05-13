@@ -142,15 +142,13 @@ export namespace Api {
 				});
 		}
 
-		export async function list(filter: { [key: string]: any } = {}): Promise<IUser[]> {
-			const urlParams = new URLSearchParams();
-			for (const key in filter) {
-				urlParams.append(key, filter[key]);
-			}
-			return await fetch(`${URL}/user/list?${urlParams.toString()}`, {
+		export async function list(params: { [key: string]: any } = {}): Promise<IUser[]> {
+			return await fetch(`${URL}/user/list`, {
 				method: "GET",
 				headers: ApiHeader(),
-				redirect: "follow"
+				redirect: "follow",
+				params,
+				refKey: "params",
 			})
 				.then(async (response) => {
 					if (!response.ok) {

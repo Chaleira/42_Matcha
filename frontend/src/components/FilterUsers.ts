@@ -1,5 +1,7 @@
-import { Component, SpanElement, VBox } from "typecomposer";
+import { ButtonElement, Component, SpanElement, VBox } from "typecomposer";
 import { RangeSlider } from "./RangeSlider";
+import HomeView from "@/views/home/HomeView";
+import { Api } from "@/api/Api";
 
 
 class FilterRangeSlider extends VBox {
@@ -22,5 +24,11 @@ export class FilterUsers extends Component {
 		});
 		this.append(new FilterRangeSlider("Age"));
 		this.append(new FilterRangeSlider("Range", 1, 5));
+		this.append(new ButtonElement({
+			text: "Filter", onclick: () => {
+				Api.User.list();
+				console.log("Filter")
+			}
+		}));
 	}
 }

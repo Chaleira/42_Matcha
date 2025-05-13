@@ -4,7 +4,6 @@ import { userStore } from "../store/UserStore";
 
 export class RouterGuardHome extends RouterGuard {
 
-
   async beforeEach(response: GuardResponse) {
     const user = await Api.User.profile();
     console.log(user);
@@ -16,6 +15,5 @@ export class RouterGuardHome extends RouterGuard {
     }
     response.redirect("login");
   }
-
 
 }
