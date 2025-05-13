@@ -3,6 +3,7 @@ import db from "../database/db";
 
 export interface IProfile {
 	user_id: number;
+	age?: number;
 	bio?: string;
 	tags?: string[];
 	gender?: string;

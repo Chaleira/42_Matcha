@@ -1,4 +1,5 @@
 import { chatModel, IChat, IChatMessage } from "../model/chatModel";
+import { userService } from "./userService";
 import { NotFoundError, UnauthorizedError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
 
@@ -43,10 +44,17 @@ export const chatService = {
 		}
 	},
 
-	async getUserChats(user_id: number): Promise<IChat[]| null> {
+	async getUserChats(user_id: number): Promise<IChat[] | null> {
 		try {
 			const chats = await chatModel.getUserChats(user_id);
 			if (!chats) throw new NotFoundError("No chats found");
+			for (const chat of chats) {
+				const user = await userService.getUserById(chat.user2_id);
+				if (user) {
+					chat.first_name = user.first_name;
+					chat.last_name = user.last_name;
+				}
+			}
 			return chats;
 		} catch (error: any) {
 			throw mapDbError.chat(error);
