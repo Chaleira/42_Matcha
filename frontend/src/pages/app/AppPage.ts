@@ -12,7 +12,7 @@ export class AppPage extends BorderPanel {
 		this.top = new DivElement({ height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
 		this.top.append(new AnchorElement({ text: "Home", rlink: "home", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Chat", rlink: "chat", color: "#fff", margin: "0 10px" }));
-		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value._id, color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value.user_id, color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({
 			text: "Logout", href: "#", onclick: () => {
 				localStorage.removeItem("token");
@@ -54,9 +54,12 @@ export class AppPage extends BorderPanel {
 	}
 
 	updateLocation(location: { latitude: number, longitude: number }) {
-		userStore.value.userLocation.coordinates[0] = location.latitude;
-		userStore.value.userLocation.coordinates[1] = location.longitude
-		Api.User.update({ userLocation: userStore.value.userLocation })
+		userStore.value.latitude = location.latitude;
+		userStore.value.longitude = location.longitude
+		Api.User.update({
+			latitude: location.latitude,
+			longitude: location.longitude,
+		})
 	}
 
 }

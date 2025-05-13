@@ -1,15 +1,15 @@
 import { Router } from 'typecomposer'
 import { LoginPage } from '../pages/login/LoginPage';
 import { RegisterPage } from '../pages/register/RegisterPage';
-import { ForgotPage } from '../pages/forgot/ForgotPage';
-import { HomeView } from '../views/home/HomeView';
 import { AppPage } from '../pages/app/AppPage';
 import { RouterGuardHome } from './RouterGuard';
 import { ChatView } from '../views/chat/ChatView';
 import { ProfileView } from '../views/profile/ProfileView';
+import { ForgotPage } from '@/pages/forgot/ForgotPage';
+import HomeView from '@/views/home/HomeView';
 
 Router.create({
-  history: 'hash',
+  //history: 'hash',
   routes: [
     {
       path: '/',
@@ -31,10 +31,10 @@ Router.create({
       path: '/register',
       component: RegisterPage
     },
-    //{
-    //  path: '/forgot',
-    //  component: ForgotPage
-    //}
+    {
+      path: '/forgot',
+      component: ForgotPage
+    },
     {
       path: Router.PATH_WILDCARD,
       redirect: "/login"

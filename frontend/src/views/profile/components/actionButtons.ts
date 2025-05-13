@@ -7,14 +7,14 @@ import { IUser } from "@/api/Interfaces";
 export class ActionButtons extends Component {
 
     private container: DivElement;
-    private liked: boolean;
+    private liked: ref<boolean> = ref(false);
     private blocked: boolean;
     private visible = ref(false);
 
     constructor(private user: IUser) {
         super({ className: "action-buttons-div" });
-        this.liked = userStore.value.liked.find(e => e == this.user._id) != undefined;
-        this.blocked = userStore.value.blocked.find(e => e == this.user._id) != undefined;
+        //this.liked = userStore.value.liked.find(e => e == this.user.user_id) != undefined;
+        this.blocked = userStore.value.blocked.find(e => e == this.user.user_id) != undefined;
         this.visible.value = this.blocked
         this.container = new DivElement();
         this.createButtons([
@@ -24,6 +24,10 @@ export class ActionButtons extends Component {
             { name: "report", color: "#ffc72a", image: "/assets/image/report.png", action: () => { this.report() } }
         ]);
         this.append(this.container);
+    }
+
+    async onInit() {
+        //const 
     }
 
     createButtons(actions: { name: string, color: string; image: string; action: Function; hidden?: ref<boolean> }[]) {
@@ -39,33 +43,33 @@ export class ActionButtons extends Component {
 
     block(button: ButtonElement) {
         Api.User.block({
-            userBlockingId: userStore.value._id || "",
-            userBlockedId: this.user._id || ""
+            userBlockingId: userStore.value.user_id || "",
+            userBlockedId: this.user.user_id || ""
         });
         button.style.backgroundColor = button.style.backgroundColor == "red" ? "blue" : "red";
         this.blocked = !this.blocked;
         this.visible.value = this.blocked;
         if (this.blocked)
-            userStore.value.blocked.push(this.user._id || "");
+            userStore.value.blocked.push(this.user.user_id || "");
         else {
-            const index = userStore.value.blocked.indexOf(this.user._id || "");
-            if (index > -1) 
+            const index = userStore.value.blocked.indexOf(this.user.user_id || "");
+            if (index > -1)
                 userStore.value.blocked.splice(index, 1);
         }
         console.log("this.blocked: " + userStore.toJSON());
         console.log("this.visible: " + this.visible.value);
-        console.log("User Blocking ID: " + userStore.value._id + "(" + userStore.value.username + ")");
-        console.log("User Being Blocked ID: " + this.user._id + "(" + this.user.username + ")");
+        console.log("User Blocking ID: " + userStore.value.user_id + "(" + userStore.value.username + ")");
+        console.log("User Being Blocked ID: " + this.user.user_id + "(" + this.user.username + ")");
     }
 
     like(button: ButtonElement) {
         Api.User.like({
-            userLikingId: userStore.value._id || "",
-            userBeingLikedId: this.user._id || ""
+            userLikingId: userStore.value.user_id || "",
+            userBeingLikedId: this.user.user_id || ""
         });
         button.style.backgroundColor = button.style.backgroundColor == "red" ? "green" : "red";
-        console.log("User Liking ID: " + userStore.value._id + "(" + userStore.value.username + ")");
-        console.log("User Being Liked ID: " + this.user._id + "(" + this.user.username + ")");
+        console.log("User Liking ID: " + userStore.value.user_id + "(" + userStore.value.username + ")");
+        console.log("User Being Liked ID: " + this.user.user_id + "(" + this.user.username + ")");
     }
 
     report() {
@@ -73,7 +77,7 @@ export class ActionButtons extends Component {
     }
 
     async msg() {
-        const a = await Api.Chat.create([userStore.value._id || "", this.user._id || ""]);
+        const a = await Api.Chat.create([userStore.value.user_id || "", this.user.user_id || ""]);
         console.log(a);
         if (a)
             Router.go("/chat", { id: a });

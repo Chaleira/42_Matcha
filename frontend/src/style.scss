@@ -209,6 +209,49 @@ list-element ul li {
   white-space: normal; /* Permite a quebra de linha no texto */
 }
 
+.btn-chat-minimize{
+  display: none;
+  font-size: xx-large;
+  color: white;
+  top: 0rem;
+  height: 50px;
+  left: 1rem;
+  margin-top: 5px;
+  position: fixed;
+  width: 20px;
+  text-align: left;
+}
+
 .settings {
   background-color: white;
+}
+
+@media (max-width: 768px) {
+  .grid-users {
+    grid-template-columns: repeat(2, 1fr) !important
+  }
+  .list-users {
+    display: none;
+  }
+
+  .list-users.open {
+    position: absolute;
+    width: 100vw !important;
+    height: 100% !important;
+    left: 0;
+    top: 0px;
+    right: 0px;
+    bottom: 0px !important;
+    display: block;
+  }
+
+  .message-div {
+    width: 100% !important;
+  }
+  .message-input {
+    margin: 0 !important;
+  }
+  .btn-chat-minimize {
+    display: block !important;
+  }
 }

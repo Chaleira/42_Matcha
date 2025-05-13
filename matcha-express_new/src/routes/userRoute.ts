@@ -8,7 +8,7 @@ const allowedUpdateParams = ["bio", "tags", "gender", "sexual_preference", "pict
 
 const router = Router();
 
-router.post('/profile/update', validateQueryParams(null), validateBodyParams(allowedUpdateParams),  catchAsync(userController.updateUserProfile));
+router.post('/profile/update', validateQueryParams(null), validateBodyParams(allowedUpdateParams), catchAsync(userController.updateUserProfile));
 router.post('/delete', validateQueryParams(null), validateBodyParams(null), catchAsync(userController.deleteUser));
 
 router.get('/profile', validateQueryParams(["id"]), validateBodyParams(null), catchAsync(userController.getUserProfile));

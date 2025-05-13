@@ -1,7 +1,6 @@
 import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, H4Element, ref, Router, TextField, VBox } from "typecomposer";
 import { Api } from "@/api/Api";
 
-
 export class LoginPage extends Component {
 
 	user = ref({ email: Router.props["email"] || "", password: "" });

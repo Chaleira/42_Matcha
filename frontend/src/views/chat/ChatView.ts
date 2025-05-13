@@ -10,13 +10,13 @@ export class ChatView extends Component {
 
 	private listUsers = new ListPanel({ width: "100%" });
 	private listMessages = new ListPanel({ className: "message-list", width: "100%" });
-	private sendButton = new ButtonElement({ width: "18%", height: "55px", backgroundColor: "blue", color: "white", text: "Send", marginBottom: "5px" });
-	private textField = new TextField({ placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "80%", margin: "auto" });
+	private sendButton = new ButtonElement({ className: "message-input", width: "18%", height: "55px", backgroundColor: "blue", color: "white", text: "Send", marginBottom: "5px" });
+	private textField = new TextField({ className: "message-input", placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "100%", margin: "auto" });
 	private backgroundImage = ref<string>("")
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "row" });
-		const left = new DivElement({ width: "300px", backgroundColor: "#f0f0f0", overflow: "hidden", height: "calc(100% - 50px)" });
+		const left = new DivElement({ className: "list-users", width: "300px", backgroundColor: "#f0f0f0", overflow: "hidden", height: "calc(100% - 50px)" });
 		left.append(this.listUsers);
 		const center = new DivElement({
 			overflow: "hidden",
@@ -24,6 +24,7 @@ export class ChatView extends Component {
 			height: "calc(100% - 50px)",
 			padding: "10px",
 			display: "grid", gridTemplateRows: "1fr auto",
+			className: "message-div",
 
 		});
 		AppPage.socket.on("joinRoom", (chat) => {
@@ -31,11 +32,12 @@ export class ChatView extends Component {
 				alert("Chat not found");
 				return;
 			}
+			left.classList.remove("open");
 			console.log("joinRoom", chat);
 			this.updateMessages(chat.messages);
 			this.sendButton.onclick = () => {
-				console.log("send", chat._id, " / ", userStore.value._id, " / ", this.textField.value.toString());
-				AppPage.socket.emit("message", chat._id, userStore.value._id, this.textField.value.toString());
+				console.log("send", chat.user_id, " / ", userStore.value.user_id, " / ", this.textField.value.toString());
+				AppPage.socket.emit("message", chat.user_id, userStore.value.user_id, this.textField.value.toString());
 			}
 		});
 
@@ -59,11 +61,21 @@ export class ChatView extends Component {
 		center.append(textArea, hbox);
 		this.append(left, center);
 		this.updateMessages(undefined);
+		this.append(new DivElement({
+			className: "btn-chat-minimize", position: "fixed", width: "20px", text: "=", onclick: () => {
+				left.classList.toggle("open");
+			}
+		}));
+	}
+
+	onDisconnected(): void {
+		AppPage.socket.off("message");
+		AppPage.socket.off("joinRoom");
+		console.log("disconnected");
 	}
 
 	async onConnected() {
-		const items = await Api.Chat.list(userStore.value._id || "") || [];
-		console.log("items: ", items);
+		const items = await Api.Chat.list(userStore.value.user_id || "") || [];
 		this.listUsers.removeItems();
 		for (const item of items) {
 			if (userStore.value.blocked.find(e => e == item.userId) != undefined) continue;
@@ -71,7 +83,7 @@ export class ChatView extends Component {
 				firstName: item.title,
 				avatar: item.icon,
 				userId: item.userId
-			}, item._id
+			}, item.user_id
 			));
 		}
 		const id = Router.props.id;

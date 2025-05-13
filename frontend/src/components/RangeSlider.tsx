@@ -17,6 +17,7 @@ export class RangeSlider extends Component {
     this.values.value.max = max;
   }
 
+
   onInit(): void {
     this.sliderMaxValue = parseInt(this.sliderOne.max);
     this.inputSlideOne();
