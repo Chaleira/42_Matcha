@@ -23,6 +23,15 @@ export const likeController = {
 		res.status(200).json(likes);
 	},
 
+	async getLike(req: AuthenticatedRequest, res: Response) {
+		const likerId = req.user.id;
+		const likedId = parseInt(req.query.user_id as string);
+		const i_liked = await likeService.findByLikerAndLiked(likerId, likedId);
+		const he_liked = await likeService.findByLikerAndLiked(likedId, likerId);
+		const like = {i_liked: !!i_liked, he_liked: !!he_liked};
+		res.status(200).json(like);
+	},
+
 	async deleteLike(req: AuthenticatedRequest, res: Response) {
 		const likerId = req.user.id;
 		const likedId = parseInt(req.query.liked_id as string);
