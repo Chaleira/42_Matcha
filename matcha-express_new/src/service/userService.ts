@@ -8,6 +8,8 @@ import mapDbError from "../utils/mapDbError";
 
 export interface UserSearchFilters {
 	name?: string;
+	age_min?: number;
+	age_max?: number;
 	gender?: string;
 	sexual_preference?: string;
 	fame_min?: number;
@@ -110,6 +112,8 @@ export const userService = {
 	},
 
 	async listUsers(filters: UserSearchFilters): Promise<IProfile[] | null> {
+		console.log("Age MIN: ", filters.age_min);
+		console.log("Age MAX: ", filters.age_max);
 		try {
 			const conditions: Condition[] = [];
 
@@ -117,15 +121,19 @@ export const userService = {
 			const allProvided = filters.latitude && filters.longitude && filters.radius_km;
 			if (anyProvided && !allProvided) throw new ValidationError("Latitude, longitude, and radius_km must all be provided together.");
 
-			if (filters.gender) conditions.push({ column: "gender", operator: "=" as ConditionOperator, value: filters.gender });
+			if (filters?.age_min) conditions.push({ column: "age", operator: ">=" as ConditionOperator, value: filters.age_min });
 
-			if (filters.sexual_preference) conditions.push({ column: "sexual_preference", operator: "=" as ConditionOperator, value: filters.sexual_preference });
+			if (filters?.age_max) conditions.push({ column: "age", operator: "<=" as ConditionOperator, value: filters.age_max });
 
-			if (typeof filters.fame_min === "number") conditions.push({ column: "fame_score", operator: ">" as ConditionOperator, value: filters.fame_min });
+			if (filters?.gender) conditions.push({ column: "gender", operator: "=" as ConditionOperator, value: filters.gender });
 
-			if (filters.tags && filters.tags.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
+			if (filters?.sexual_preference) conditions.push({ column: "sexual_preference", operator: "=" as ConditionOperator, value: filters.sexual_preference });
 
-			if (filters.name) conditions.push({ column: "first_name || ' ' || last_name", operator: "ILIKE" as ConditionOperator, value: `%${filters.name}%` });
+			if (filters?.fame_min) conditions.push({ column: "fame_score", operator: ">" as ConditionOperator, value: filters.fame_min });
+
+			if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
+
+			if (filters?.name) conditions.push({ column: "first_name || ' ' || last_name", operator: "ILIKE" as ConditionOperator, value: `%${filters.name}%` });
 
 			if (allProvided) {
 				conditions.push({

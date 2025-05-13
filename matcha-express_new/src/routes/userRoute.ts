@@ -3,8 +3,8 @@ import { userController } from '../controller/userController';
 import { catchAsync } from '../utils/catchAsync';
 import { validateQueryParams, validateBodyParams } from '../middleware/validationMiddleware';
 
-const allowedListParams = ["gender", "sexual_preference", "fame_min", "tags", "name", "latitude", "longitude", "radius_km"];
-const allowedUpdateParams = ["bio", "tags", "gender", "sexual_preference", "pictures", "fame_score", "latitude", "longitude", "first_name", "last_name"];
+const allowedListParams = ["age_min", "age_max", "gender", "sexual_preference", "fame_min", "tags", "name", "latitude", "longitude", "radius_km"];
+const allowedUpdateParams = ["bio", "age", "tags", "gender", "sexual_preference", "pictures", "fame_score", "latitude", "longitude", "first_name", "last_name"];
 
 const router = Router();
 
