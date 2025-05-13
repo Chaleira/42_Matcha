@@ -49,7 +49,8 @@ export const chatService = {
 			const chats = await chatModel.getUserChats(user_id);
 			if (!chats) throw new NotFoundError("No chats found");
 			for (const chat of chats) {
-				const user = await userService.getUserById(chat.user2_id);
+				const otherUserId = chat.user1_id === user_id ? chat.user2_id : chat.user1_id;
+				const user = await userService.getUserById(otherUserId);
 				if (user) {
 					chat.first_name = user.first_name;
 					chat.last_name = user.last_name;
