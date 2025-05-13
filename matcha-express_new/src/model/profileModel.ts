@@ -9,6 +9,7 @@ export interface IProfile {
 	gender?: string;
 	sexual_preference?: string;
 	pictures?: string[];
+	avatar?: string;
 	fame_score?: number;
 	latitude?: number;
 	longitude?: number;
