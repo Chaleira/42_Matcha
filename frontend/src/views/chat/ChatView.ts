@@ -27,21 +27,26 @@ export class ChatView extends Component {
 			className: "message-div",
 
 		});
-		AppPage.socket.on("joinRoom", (chat) => {
+		AppPage.socket.on("join", (chat) => {
 			if (chat == undefined) {
 				alert("Chat not found");
 				return;
 			}
 			left.classList.remove("open");
-			console.log("joinRoom", chat);
+			console.log("join", chat);
 			this.updateMessages(chat.messages);
 			this.sendButton.onclick = () => {
-				console.log("send", chat.user_id, " / ", userStore.value.user_id, " / ", this.textField.value.toString());
-				AppPage.socket.emit("message", chat.user_id, userStore.value.user_id, this.textField.value.toString());
+				console.log("send", chat.id, " / ", userStore.value.user_id, " / ", this.textField.value.toString());
+				AppPage.socket.emit("send-message", { chat_id: chat.id, text: this.textField.value.toString() });
+				this.textField.value = "";
 			}
 		});
 
-		AppPage.socket.on("message", (chat) => {
+		AppPage.socket.on("receive-message", (chat) => {
+			if (Array.isArray(chat)) {
+				this.updateMessages(chat);
+				return
+			}
 			console.log("message", chat);
 			this.addMessage(chat);
 			this.textField.value = "";
@@ -69,22 +74,16 @@ export class ChatView extends Component {
 	}
 
 	onDisconnected(): void {
-		AppPage.socket.off("message");
-		AppPage.socket.off("joinRoom");
+		AppPage.socket.off("receive-message");
+		AppPage.socket.off("join");
 		console.log("disconnected");
 	}
 
 	async onConnected() {
-		const items = await Api.Chat.list(userStore.value.user_id || "") || [];
+		const items = await Api.Chat.list();
 		this.listUsers.removeItems();
 		for (const item of items) {
-			if (userStore.value.blocked.find(e => e == item.userId) != undefined) continue;
-			this.listUsers.addItem(new UserMessageView({
-				firstName: item.title,
-				avatar: item.icon,
-				userId: item.userId
-			}, item.user_id
-			));
+			this.listUsers.addItem(new UserMessageView(item));
 		}
 		const id = Router.props.id;
 		if (id) {

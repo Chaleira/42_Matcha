@@ -1,4 +1,4 @@
-import { IMessage, IUser } from "./Interfaces";
+import { IChat, IMessage, IUser } from "./Interfaces";
 
 export namespace Api {
 
@@ -13,9 +13,9 @@ export namespace Api {
 
 	export namespace Chat {
 
-		export async function list(userId: string): Promise<{ user_id: string, title: string, icon: string, userId: string }[]> {
+		export async function list(): Promise<IChat[]> {
 			//console.log("list", localStorage.getItem("token"));
-			return await fetch(`${URL}/chat/list?userId=${userId}`, {
+			return await fetch(`${URL}/chat/get/user-chats`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
 				redirect: "follow"
@@ -24,11 +24,11 @@ export namespace Api {
 					if (!response.ok) {
 						throw new Error("Invalid credentials");
 					}
-					return await response.json();;
+					return await response.json();
 				}).catch((error) => {
 					console.error(error);
 					//alert(error);
-					return false;
+					return [];
 				});
 		}
 
@@ -207,7 +207,13 @@ export namespace Api {
 					if (!response.ok) {
 						throw new Error("Invalid token");
 					}
-					return await response.json();
+					const user = await response.json();
+					if (user) {
+						user.tags = user.tags || [];
+						user.viewd = user.viewd || [];
+						user.avatar = user.avatar || "https://pbs.twimg.com/media/FieRMdBUAAAEzmI?format=jpg&name=medium";
+					}
+					return user
 				}).catch((error) => {
 					//alert(error);
 					return null;

@@ -15,15 +15,14 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 	});
 
 	socket.on("send-message", async ({ chat_id, text }) => {
+		console.log("send-message", chat_id, text);
 		try {
 			const message = await chatService.createMessage(chat_id, userId, text);
-
-			const receiverId = await chatService.getOtherUserId(chat_id, userId);
-			const receiverSocket = onlineUsers.get(receiverId);
-
-			if (receiverSocket) {
-				io.to(receiverSocket).emit("receive-message", message);
-			}
+			//const receiverId = await chatService.getOtherUserId(chat_id, userId);
+			//const receiverSocket = onlineUsers.get(receiverId);
+			//if (receiverSocket) {
+			io.to(chat_id).emit("receive-message", message);
+			//}
 		} catch (error: any) {
 			mapDbError.chat(error);
 			console.log("Error:", error.message);
@@ -31,10 +30,18 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 		}
 	});
 
-	socket.on("get-messages", async ({ chat_id }) => {
+	socket.on("leave", ({ chat_id }) => {
+		socket.leave(chat_id);
+	});
+
+	socket.on("join", async ({ chat_id }) => {
+		console.log("join", chat_id);
 		try {
+			if (socket.data?.chatId) socket.leave(socket.data.chatId);
 			const messages = await chatService.getChatMessages(chat_id, userId);
-			socket.emit("chat-history", messages);
+			socket.join(chat_id);
+			socket.data.chatId = chat_id;
+			socket.emit("join", { id: chat_id, messages: messages });
 		} catch (error: any) {
 			mapDbError.chat(error);
 			console.log("Error:", error.message);

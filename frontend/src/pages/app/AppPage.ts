@@ -5,7 +5,11 @@ import { io, Socket } from "socket.io-client";
 
 export class AppPage extends BorderPanel {
 
-	static socket: Socket = io("http://localhost:3000");
+	static socket: Socket = io("http://localhost:3000", {
+		extraHeaders: {
+			"token": localStorage.getItem("token") || "",
+		}
+	});
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });

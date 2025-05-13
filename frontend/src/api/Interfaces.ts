@@ -30,7 +30,22 @@ export interface IUser {
 
 
 export interface IMessage {
-	sender: string;
-	content: string;
-	date: Date;
+	chat_id: number;
+	created_at: Date;
+	id: number;
+	is_read: boolean;
+	sender_id: number;
+	text: string;
+}
+
+
+
+export interface IChat {
+	id: string;
+	user1_id: string;
+	user2_id: string;
+	created_at: Date;
+	first_name: string;
+	last_name: string;
+	avatar?: string;
 }
