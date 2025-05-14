@@ -7,11 +7,9 @@ export const authController = {
 	async register(req: Request, res: Response): Promise<void | any> {
 		const { username, email, first_name, last_name, password } = req.body;
 
-		if (!username || !email || !first_name || !last_name || !password) throw new ValidationError("All fields are required");
-
 		const user = { username, email, first_name, last_name, password };
 
-		const newUser: IUser = await authService.register(user);
+		const newUser: Omit<IUser, "password"> = await authService.register(user);
 
 		res.status(201).json(newUser);
 	},
@@ -19,9 +17,16 @@ export const authController = {
 	async login(req: Request, res: Response): Promise<void | any> {
 		const { username, password } = req.body;
 
-		if (!username || !password) throw new ValidationError("Username and Password required");
-
 		const response = await authService.login(username, password);
 		res.status(202).json(response);
+	},
+
+	async verifyEmail(req: Request, res: Response): Promise<void | any> {
+		const { token } = req.query;
+
+		if (!token) throw new ValidationError("Token is required");
+
+		const response = await authService.verifyEmail(token as string);
+		res.status(200).json(response);
 	},
 };

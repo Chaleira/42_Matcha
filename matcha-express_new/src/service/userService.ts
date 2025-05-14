@@ -74,7 +74,7 @@ export const userService = {
 			throw mapDbError.user(error);
 		}
 	},
-
+	
 	async getUserProfile(myId: number, userId: number): Promise<IProfile | null> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
@@ -90,6 +90,16 @@ export const userService = {
 		}
 	},
 
+	async updateUser(userId: number, updates: Partial<IUser>): Promise<IUser> {
+		try {
+			const user = await userModel.findById(userId);
+			if (!user) throw new NotFoundError("User not found");
+			return await userModel.update(userId, updates);
+		} catch (error: any) {
+			throw mapDbError.user(error);
+		}
+	},
+	
 	async updateUserProfile(userId: number, updates: Partial<IProfile>): Promise<IProfile> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);

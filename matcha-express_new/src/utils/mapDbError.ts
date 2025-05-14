@@ -74,6 +74,10 @@ const mapDbError = {
 		if (error.code === "23505") return new NotFoundError("Chat already exists.");
 		return error;
 	},
+
+	emailVerification(error: any): Error {
+		return error;
+	},
 };
 
 export default mapDbError;

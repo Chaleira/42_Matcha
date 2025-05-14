@@ -11,4 +11,6 @@ const router = Router();
 router.post("/register", validateQueryParams(null), validateBodyParams(allowedRegisterParams), catchAsync(authController.register));
 router.post("/login", validateQueryParams(null), validateBodyParams(allowedLoginParams), catchAsync(authController.login));
 
+router.get("/verify-email", validateQueryParams(["token"]), validateBodyParams(null), catchAsync(authController.verifyEmail));
+
 export default router;
