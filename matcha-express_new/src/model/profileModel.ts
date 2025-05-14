@@ -49,8 +49,8 @@ export const profileModel = {
 		await db.query(text, values);
 	},
 
-	async listWithFilter(conditions: Condition[]): Promise<IProfile[] | null> {
-		const { text, values } = selectWhereFlexible("profiles", conditions);
+	async listWithFilter(conditions: Condition[], reqUserId: number): Promise<IProfile[] | null> {
+		const { text, values } = selectWhereFlexible("profiles", conditions, reqUserId);
 		const result = await db.query(text, values);
 		return result.rows.length > 0 ? result.rows : null;
 	  },

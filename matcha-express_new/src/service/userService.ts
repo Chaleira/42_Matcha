@@ -7,6 +7,7 @@ import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
 
 export interface UserSearchFilters {
+	currentUserId: number;
 	name?: string;
 	age_min?: number;
 	age_max?: number;
@@ -119,6 +120,8 @@ export const userService = {
 			const allProvided = filters.latitude && filters.longitude && filters.radius_km;
 			if (anyProvided && !allProvided) throw new ValidationError("Latitude, longitude, and radius_km must all be provided together.");
 
+			if (filters?.currentUserId) conditions.push({ column: "user_id", operator: "!=" as ConditionOperator, value: filters.currentUserId });
+
 			if (filters?.age_min) conditions.push({ column: "age", operator: ">=" as ConditionOperator, value: filters.age_min });
 
 			if (filters?.age_max) conditions.push({ column: "age", operator: "<=" as ConditionOperator, value: filters.age_max });
@@ -143,10 +146,9 @@ export const userService = {
 					operator: "<=",
 					value: filters.radius_km,
 				});
-			
 			}
 
-			return await profileModel.listWithFilter(conditions);
+			return await profileModel.listWithFilter(conditions, filters.currentUserId);
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}
