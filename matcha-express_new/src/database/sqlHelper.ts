@@ -6,7 +6,7 @@ export interface Condition {
 	value: any;
 }
 
-export function selectWhereFlexible(table: string, conditions: Condition[]) {
+export function selectWhereFlexible(table: string, conditions: Condition[], currentUserId?: number) {
 	const values: any[] = [];
 	const whereClauses = conditions.map((cond, i) => {
 		const placeholder = `$${i + 1}`;
@@ -14,9 +14,18 @@ export function selectWhereFlexible(table: string, conditions: Condition[]) {
 		return `${cond.column} ${cond.operator} ${placeholder}`;
 	});
 
-	const text = conditions.length > 0
-	? `SELECT * FROM ${table} WHERE ${whereClauses.join(" AND ")}`
-	: `SELECT * FROM ${table}`;
+	let text = `SELECT * FROM ${table}`;
+
+	if (conditions.length > 0 || currentUserId !== undefined) text += " WHERE ";
+
+	if (conditions.length > 0) text += whereClauses.join(" AND ");
+
+	if (currentUserId !== undefined) {
+		if (conditions.length > 0) text += " AND ";
+		text += `user_id NOT IN (SELECT blocker_id FROM blocks WHERE blocked_id = $${values.length + 1})`;
+		values.push(currentUserId);
+	}
+
 	return { text, values };
 }
 
@@ -34,9 +43,7 @@ export function selectWhere<T extends Record<string, any>>(table: string, condit
 	const values = Object.values(conditions);
 	const whereClause = keys.map((k, i) => `${k} = $${i + 1}`).join(" AND ");
 
-	const text = keys.length > 0
-	? `SELECT * FROM ${table} WHERE ${whereClause}`
-	: `SELECT * FROM ${table}`;
+	const text = keys.length > 0 ? `SELECT * FROM ${table} WHERE ${whereClause}` : `SELECT * FROM ${table}`;
 	return { text, values };
 }
 

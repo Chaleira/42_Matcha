@@ -30,7 +30,13 @@ export const userController = {
 	},
 
 	async listUsers(req: AuthenticatedRequest, res: Response): Promise<void> {
-		const users = await userService.listUsers(req.query as UserSearchFilters);
+
+		const filters: UserSearchFilters = {
+			currentUserId: req.user.id,
+			...req.query,
+		};
+
+		const users = await userService.listUsers(filters);
 		res.status(200).json(users);
 	},
 };
