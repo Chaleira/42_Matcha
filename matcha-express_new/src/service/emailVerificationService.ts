@@ -2,7 +2,7 @@ import { emailVerificationModel, IEmailVerification } from "../model/emailVerifi
 import mapDbError from "../utils/mapDbError";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import { EMAIL_PASS, EMAIL_USER } from "../config/config";
+import { EMAIL_PASS, EMAIL_USER, URL_FRONTEND } from "../config/config";
 
 export const emailVerificationService = {
 	async createEmailVerification(userId: number, token: string): Promise<IEmailVerification> {
@@ -70,7 +70,7 @@ export const emailVerificationService = {
 				from: '"Your App" <noreply@yourapp.com>',
 				to: email,
 				subject: "Verify your email",
-				html: `<p>Click <a href="http://localhost:3000/api/auth/verify-email?token=${token}">here</a> to verify your email.</p>`,
+				html: `<p>Click <a href="http://${URL_FRONTEND}/verify-email?token=${token}">here</a> to verify your email.</p>`,
 			});
 		} catch (error: any) {
 			throw mapDbError.emailVerification(error);
