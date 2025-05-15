@@ -104,7 +104,6 @@ export const userService = {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
-
 			return await profileModel.update(userId, updates);
 		} catch (error: any) {
 			throw mapDbError.user(error);
