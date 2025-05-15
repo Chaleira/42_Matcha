@@ -44,15 +44,16 @@ export const authService = {
 		}
 	},
 
-	async verifyEmail(token: string): Promise<{ message: string }> {
+	async verifyEmail(token: string): Promise<{ message: string, username: string }> {
 		const emailVerification = await emailVerificationService.findByToken(token);
 		if (!emailVerification) throw new UnauthorizedError("Invalid or expired token");
 		if (!emailVerification.id) throw new UnauthorizedError("Invalid token");
-		if (emailVerification.expires_at && emailVerification.expires_at < new Date()) throw new UnauthorizedError("Token expired");
+		// if (emailVerification.expires_at && emailVerification.expires_at < new Date()) throw new UnauthorizedError("Token expired");
 		const userId = emailVerification.user_id;
+		const user = await userService.getUserById(userId)
 		await userService.updateUser(userId, { email_verified: true });
 		await emailVerificationService.deleteEmailVerification(emailVerification.id);
-		return { message: "Email verified successfully" };
+		return { message: "Email verified successfully", username: user?.username! };
 	},
 
 };
