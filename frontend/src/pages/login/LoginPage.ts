@@ -11,7 +11,7 @@ export class LoginPage extends Component {
 		const card = new CardPanel({ width: "400px", zIndex: "2" });
 		const vbox = new VBox({ padding: "10px", gap: "15px" });
 		vbox.append(new H4Element({ text: "48 - Matcha", className: "login_header" }));
-		vbox.append(new TextField({ placeholder: "Email", value: this.user.value.email }));
+		vbox.append(new TextField({ placeholder: "UserName", value: this.user.value.email }));
 		vbox.append(new TextField({ placeholder: "Password", type: "password", value: this.user.value.password }));
 		vbox.append(new ButtonElement({ text: "Login", width: "200px", height: "50px", margin: "0 auto", onclick: () => this.login() }));
 		const div = new DivElement({ display: "flex", justifyContent: "space-between" });

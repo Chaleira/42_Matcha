@@ -1,31 +1,46 @@
 
 export interface IUser {
-	user_id?: string,
+	id?: number;
+	user_id: string;
 	username: string;
 	email: string;
-	avatar?: string;
-	album?: string[];
-	password: string;
-	dateBirth: Date;
 	first_name: string;
 	last_name: string;
-	bio: string
+	password: string;
+	email_verified?: boolean;
+	age: number;
+	bio: string;
 	tags: string[];
 	gender: string;
-	sexualOrientation: string;
-	isDeleted?: boolean;
-	viewd: IUser[],
-	matched: IUser[],
-	latitude: number,
-	longitude: number,
-	like: {
-		i_liked: boolean,
-		he_liked: boolean
+	sexual_preference: string;
+	pictures: string[];
+	avatar: string;
+	fame_score?: number;
+	latitude?: number;
+	longitude?: number;
+	like?: {
+		i_liked: boolean;
+		he_liked: boolean;
 	},
-	block: {
-		i_blocked: boolean,
-		he_blocked: boolean
-	}
+	block?: {
+		i_blocked: boolean;
+		he_blocked: boolean;
+	},
+	created_at?: Date;
+}
+
+export interface IFilter {
+	name: string;
+	gender: string;
+	sexual_preference: string;
+	fame_min: number;
+	fame_max: number;
+	tags: string[];
+	latitude: number;
+	longitude: number;
+	radius_km: number;
+	age_min: number;
+	age_max: number;
 }
 
 

@@ -1,3 +1,4 @@
+import { AlertPanel } from "typecomposer";
 import { IChat, IMessage, IUser } from "./Interfaces";
 
 export namespace Api {
@@ -14,7 +15,6 @@ export namespace Api {
 	export namespace Chat {
 
 		export async function list(): Promise<IChat[]> {
-			//console.log("list", localStorage.getItem("token"));
 			return await fetch(`${URL}/chat/get/user-chats`, {
 				method: "GET",
 				headers: Api.ApiHeader(),
@@ -88,44 +88,45 @@ export namespace Api {
 				redirect: "follow"
 			})
 				.then(async (response) => {
-					if (!response.ok) {
-						throw new Error("Invalid credentials");
-					}
+					if (!response.ok)
+						throw new Error((await response.json()).message);
 					const { token } = await response.json();
 					console.log(token);
 					localStorage.setItem("token", token);
 					return true;
 				}).catch((error) => {
-					alert(error);
+					AlertPanel.error(error);
 					return false;
 				});
 		}
 
-		export async function register(user: IUser): Promise<string> {
+		export async function register(user: IUser): Promise<{ msg: string, ok: boolean }> {
 			console.log(user);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
 			const body = JSON.stringify(user);
 
-			return await fetch(`${URL}/user/register`, {
+			return await fetch(`${URL}/auth/register`, {
 				method: "POST",
 				headers: myHeaders,
 				body: body,
 				redirect: "follow"
 			})
 				.then(async (response) => {
+					localStorage.removeItem("token");
+					console.log("register: ", response);
 					if (!response.ok) {
-						return "Invalid registration";
+						return { msg: "Invalid registration", ok: response.ok };
 					}
 					localStorage.removeItem("token");
-					return "Registration successful";
+					return { msg: "Registration successful", ok: response.ok };
 				}).catch((error) => {
-					return error;
+					console.error(error);
+					return { msg: "Invalid registration", ok: false };
 				});
 		}
 
-		// /like/get?user_id=59
 		export async function getLikes(userId: string): Promise<IUser[]> {
 			return await fetch(`${URL}/user/profile`, {
 				method: "GET",
@@ -211,21 +212,23 @@ export namespace Api {
 					if (user) {
 						user.tags = user.tags || [];
 						user.viewd = user.viewd || [];
+						user.latitude = user.latitude || 0;
+						user.longitude = user.longitude || 0;
 						user.avatar = user.avatar || "https://pbs.twimg.com/media/FieRMdBUAAAEzmI?format=jpg&name=medium";
 					}
 					return user
-				}).catch((error) => {
-					//alert(error);
+				}).catch(() => {
+					AlertPanel.error("Invalid token");
 					return null;
 				});
 		}
 
 		export async function list(params: { [key: string]: any } = {}): Promise<IUser[]> {
 			return await fetch(`${URL}/user/list`, {
-				method: "GET",
+				method: "POST",
 				headers: ApiHeader(),
 				redirect: "follow",
-				params,
+				body: JSON.stringify(params),
 			})
 				.then(async (response) => {
 					if (!response.ok) {

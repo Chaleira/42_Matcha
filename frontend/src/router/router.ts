@@ -7,6 +7,7 @@ import { ChatView } from '../views/chat/ChatView';
 import { ProfileView } from '../views/profile/ProfileView';
 import { ForgotPage } from '@/pages/forgot/ForgotPage';
 import HomeView from '@/views/home/HomeView';
+import { VerifyEmail } from '@/pages/register/VerifyEmail';
 
 Router.create({
   //history: 'hash',
@@ -24,8 +25,16 @@ Router.create({
       ]
     },
     {
+      path: '/registerprofile',
+      component: ForgotPage
+    },
+    {
       path: '/login',
       component: LoginPage
+    },
+    {
+      path: "/verify-email",
+      component: VerifyEmail
     },
     {
       path: '/register',

@@ -53,20 +53,20 @@ export class ProfileView extends BorderPanel {
         }) : user.gender));
         userInfo.append(new propertyItem("Sexual Preference: ", isMyUser ? new DropDown({
             options: ["heterosexual", "Viado"],
-            value: userStore.value.sexualOrientation,
+            value: userStore.value.sexual_preference,
             // width: "48%",
             variant: "underlined"
-        }) : user.sexualOrientation));
-        const formattedDate = new Date(user.dateBirth).toLocaleDateString("en-GB");
-        userInfo.append(new propertyItem("Birthday: ", formattedDate));
+        }) : user.sexual_preference));
+        //const formattedDate = new Date(user.dateBirth).toLocaleDateString("en-GB");
+        userInfo.append(new propertyItem("Age: ", user.age.toString()));
         const hbox = new HBox({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
         userInfo.append(new propertyItem("Tags: ", isMyUser ? new TagList(userStore) : hbox));
         const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({ value: userStore.value.bio, width: "100%", height: "100%" }) : user.bio));
         bio.element1.style.marginBottom = 0;
-        const album = new HBox({ gap: "20px", width: "100%", marginTop: "0" });
-        user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image) })));
-        userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "15px", maxHeight: "200px", width: "100%", user: userStore }) : album));
+        //const album = new HBox({ gap: "20px", width: "100%", marginTop: "0" });
+        //user.album?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image) })));
+        //userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "15px", maxHeight: "200px", width: "100%", user: userStore }) : album));
         const div = new DivElement({ maxHeight: "85%", padding: "5px", margin: "20px", backgroundColor: "#808080b2", borderRadius: "20px", backgroundBlendMode: "darken", marginTop: "0px", children: [userInfo], overflow: "auto" });
         this.center.append(div);
     }

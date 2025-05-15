@@ -1,20 +1,17 @@
-import { Component, DivElement, InputElement, ref } from "typecomposer";
+import { Component, DivElement, InputElement, refNumber } from "typecomposer";
 
 
 
 export class RangeSlider extends Component {
 
-  values = ref({ min: 0, max: 100 });
   sliderOne!: InputElement;
   sliderTwo!: InputElement;
   minGap = 0;
   sliderTrack!: DivElement;
   sliderMaxValue = 0;
 
-  constructor(public min: number = 0, public max: number = 100) {
+  constructor(public valueMin: refNumber, public valueMax: refNumber, public min: number = 0, public max: number = 100) {
     super();
-    this.values.value.min = min;
-    this.values.value.max = max;
   }
 
 
@@ -46,13 +43,13 @@ export class RangeSlider extends Component {
 
   template() {
     return (<div class="wrapper">
-      <span text={this.values.value.min} />
+      <span text={this.valueMin} />
       <div class="container">
         <div ref={this.sliderTrack} class="slider-track"></div>
-        <input style={{ paddingLeft: "0" }} type="range" min={this.min} max={this.max} value={this.values.value.min} ref={this.sliderOne} oninput={this.inputSlideOne} />
-        <input type="range" min={this.min} max={this.max} ref={this.sliderTwo} value={this.values.value.max} oninput={this.inputSlideTwo} />
+        <input style={{ paddingLeft: "0" }} type="range" min={this.min} max={this.max} value={this.valueMin} ref={this.sliderOne} oninput={this.inputSlideOne} />
+        <input type="range" min={this.min} max={this.max} ref={this.sliderTwo} value={this.valueMax} oninput={this.inputSlideTwo} />
       </div>
-      <span text={this.values.value.max} />
+      <span text={this.valueMax} />
     </div>
     )
   }

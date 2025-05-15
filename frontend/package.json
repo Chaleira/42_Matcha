@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "socket.io-client": "^4.8.1",
-    "typecomposer": "^0.1.40",
-    "vite-plugin-dynamic-import": "^1.6.0"
+    "typecomposer": "^0.1.41"
   },
   "devDependencies": {
     "@types/socket.io-client": "^3.0.0",

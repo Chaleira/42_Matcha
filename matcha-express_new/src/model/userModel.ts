@@ -1,6 +1,6 @@
-import { insertQuery, updateQuery, deleteQuery, selectWhere} from "../database/sqlHelper";
+import { insertQuery, updateQuery, deleteQuery, selectWhere } from "../database/sqlHelper";
 import db from "../database/db";
-import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/config";
+import { JWT_SECRET } from "../config/config";
 import jwt from "jsonwebtoken";
 
 export interface IUser {

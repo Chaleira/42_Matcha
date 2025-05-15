@@ -1,7 +1,7 @@
 import { ButtonElement, Component, GridPanel, HBox, ImageElement, ref, Router, SpanElement, VBox } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
-import { IUser } from "@/api/Interfaces";
+import { IFilter, IUser } from "@/api/Interfaces";
 import { TagList } from "@/components/TagList";
 import { FilterUsers } from "@/components/FilterUsers.ts";
 
@@ -36,11 +36,31 @@ export default class HomeView extends Component {
 			items.forEach((user: IUser) => {
 				if (user.user_id != userStore.value.user_id?.toString()) this.grid.append(new UserView(user));
 			});
-			console.log("params:", items);
 		});
+		this.listerUsers();
 	}
 
-	async onInit() {
-		this.params.value = await Api.User.list();
+	async listerUsers(filter?: IFilter) {
+		const clearFilter: { [key: string]: any } = {}
+		if (filter?.tags && filter.tags.length > 0) {
+			clearFilter["tags"] = filter.tags.map((tag: string) => tag.toLowerCase());
+		}
+		for (const key in filter) {
+			// @ts-ignore
+			if (filter[key] != "") {
+				// @ts-ignore
+				clearFilter[key] = filter[key];
+
+			}
+		}
+		if (clearFilter?.radius_km == undefined) {
+			delete clearFilter.latitude;
+			delete clearFilter.longitude;
+		}
+		else {
+			clearFilter.latitude = userStore.value.latitude;
+			clearFilter.longitude = userStore.value.longitude;
+		}
+		this.params.value = await Api.User.list(clearFilter);
 	}
 }

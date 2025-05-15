@@ -14,6 +14,7 @@ export interface UserSearchFilters {
 	gender?: string;
 	sexual_preference?: string;
 	fame_min?: number;
+	fame_max?: number;
 	tags?: string[];
 	latitude?: number;
 	longitude?: number;
@@ -124,6 +125,7 @@ export const userService = {
 	async listUsers(filters: UserSearchFilters): Promise<IProfile[] | null> {
 		try {
 			const conditions: Condition[] = [];
+			console.log("filters", filters);
 
 			const anyProvided = filters.latitude || filters.longitude || filters.radius_km;
 			const allProvided = filters.latitude && filters.longitude && filters.radius_km;
@@ -139,7 +141,9 @@ export const userService = {
 
 			if (filters?.sexual_preference) conditions.push({ column: "sexual_preference", operator: "=" as ConditionOperator, value: filters.sexual_preference });
 
-			if (filters?.fame_min) conditions.push({ column: "fame_score", operator: ">" as ConditionOperator, value: filters.fame_min });
+			if (filters?.fame_min) conditions.push({ column: "fame_score", operator: ">=" as ConditionOperator, value: filters.fame_min });
+
+			if (filters?.fame_max) conditions.push({ column: "fame_score", operator: "<=" as ConditionOperator, value: filters.fame_max });
 
 			if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
 

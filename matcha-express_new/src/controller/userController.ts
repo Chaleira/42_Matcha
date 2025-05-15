@@ -33,10 +33,10 @@ export const userController = {
 
 		const filters: UserSearchFilters = {
 			currentUserId: req.user.id,
-			...req.query,
+			...req.body,
 		};
 
 		const users = await userService.listUsers(filters);
-		res.status(200).json(users);
+		res.status(200).json(users || []);
 	},
 };

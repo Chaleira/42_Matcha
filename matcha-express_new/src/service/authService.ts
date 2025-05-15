@@ -29,7 +29,7 @@ export const authService = {
 			if (!user) throw new UnauthorizedError("Invalid credentials");
 
 			// Uncomment this line to add email verification login
-			// if (!user.email_verified) throw new UnauthorizedError("Verify your email first!");
+			if (!user.email_verified) throw new UnauthorizedError("Verify your email first!");
 
 			const match = await bcrypt.compare(password, user.password);
 			if (!match) throw new UnauthorizedError("Invalid credentials");
