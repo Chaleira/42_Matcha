@@ -8,7 +8,9 @@ import { TagList } from "./TagList";
 class FilterRangeSlider extends VBox {
 
 	constructor(title: string, valueMin: refNumber, valueMax: refNumber, min: number = 0, max: number = 100) {
-		super()
+		super({
+			className: "filter-range-slider",
+		})
 		this.append(new SpanElement({ text: title, textAlign: "center" }), new RangeSlider(valueMin, valueMax, min, max));
 	}
 
@@ -33,6 +35,7 @@ export class FilterUsers extends Component {
 	constructor() {
 		super({
 			gap: "10px",
+			className: "filter-users",
 			width: "auto", margin: "10px", marginRight: "10px", marginLeft: "10px", backgroundColor: "white", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)"
 		});
 		const vbox = this.appendChild(new HBox({ gap: "10px", padding: "10px", width: "100%", alignItems: "center" }));
@@ -52,6 +55,7 @@ export class FilterUsers extends Component {
 					new TagList(this.filter as any)]
 			}));
 		vbox.append(new ButtonElement({
+			className: "btn-filter",
 			text: "Filter", onclick: () => this.getParent<HomeView>()?.listerUsers(this.filter.toJSON())
 		}));
 	}

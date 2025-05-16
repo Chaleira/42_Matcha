@@ -62,8 +62,6 @@ register-page {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    //margin: 50px;
-    // posicao da image no background
     position: absolute;
     top: 5px;
     left: -85px;
@@ -235,8 +233,24 @@ list-element ul li {
     display: none;
   }
 
+  .filter-users {
+    display: none;
+  }
+
   .webcam {
     display: none;
+  }
+
+  .filter-users.open {
+    position: absolute;
+    width: 100vw !important;
+    height: 100% !important;
+    margin: 0 !important;
+    left: 0;
+    top: 0px;
+    right: 0px;
+    bottom: 0px !important;
+    display: block;
   }
 
   .list-users.open {
@@ -250,6 +264,52 @@ list-element ul li {
     display: block;
   }
 
+  .tag-grid {
+    gap: 1px;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .pop-up-button {
+    position: absolute;
+    left: 0;
+    padding-bottom: 20px;
+  
+    .button {
+      position: absolute;
+      top: -10px;
+      left: 80px;
+    }
+
+    .options-container {
+      border: none !important;
+    }
+  }
+
+  body {
+    overflow: hidden;
+  }
+
+  .filter-distance {
+    width: 100%;
+  }
+
+  .btn-filter {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 0;
+    height: 50px;
+    padding: 0 !important;
+  }
+  .filter-range-slider {
+        width: 100%;
+        range-slider {
+          .wrapper {
+            width: 100%;
+          }
+        }
+  }
+  
   .message-div {
     width: 100% !important;
   }

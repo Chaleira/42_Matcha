@@ -1,4 +1,4 @@
-import { ButtonElement, Component, GridPanel, HBox, ImageElement, ref, Router, SpanElement, VBox } from "typecomposer";
+import { ButtonElement, Component, DivElement, GridPanel, HBox, ImageElement, ref, Router, SpanElement, VBox } from "typecomposer";
 import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { IFilter, IUser } from "@/api/Interfaces";
@@ -29,7 +29,8 @@ export default class HomeView extends Component {
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });
-		this.append(new FilterUsers(), this.grid);
+		const filter = this.appendChild(new FilterUsers());
+		this.append(this.grid);
 		this.params.subscribe((items: any) => {
 			console.log("items:", items);
 			this.grid.innerHTML = "";
@@ -38,6 +39,11 @@ export default class HomeView extends Component {
 			});
 		});
 		this.listerUsers();
+		this.append(new DivElement({
+			className: "btn-chat-minimize", position: "fixed", width: "20px", text: "=", onclick: () => {
+				filter.classList.toggle("open");
+			}
+		}));
 	}
 
 	async listerUsers(filter?: IFilter) {
