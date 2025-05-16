@@ -3,12 +3,17 @@ import { userService } from "../service/userService";
 import { chatService } from "../service/chatService";
 import { NotFoundError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import { notificationService } from "./notificationService";
 
 export const matchService = {
 	async createMatch(user1Id: number, user2Id: number): Promise<IMatch> {
 		try {
 			const match = await matchModel.create(user1Id, user2Id);
 			await chatService.createChat(user1Id, user2Id);
+			const user1 = await userService.getUserById(user1Id);
+			const user2 = await userService.getUserById(user2Id);
+			await notificationService.createNotification(user1Id, user2Id, "match", "You have a new match with " + user2?.first_name + " " + user2?.last_name + "!");
+			await notificationService.createNotification(user2Id, user1Id, "match", "You have a new match with " + user1?.first_name + " " + user1?.last_name + "!");
 			return match;
 		} catch (error: any) {
 			throw mapDbError.match(error);
