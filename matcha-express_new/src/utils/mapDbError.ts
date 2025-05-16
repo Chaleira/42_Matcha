@@ -78,6 +78,10 @@ const mapDbError = {
 	emailVerification(error: any): Error {
 		return error;
 	},
+	notification(error: any): Error {
+		if (error.code === "23514") return new ValidationError("Invalid notification type.");
+		return error;
+	},
 };
 
 export default mapDbError;
