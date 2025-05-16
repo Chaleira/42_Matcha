@@ -5,19 +5,33 @@ import { userStore } from "@/store/UserStore";
 import { Api } from "@/api/Api";
 import { MessageItem } from "./MessageItem";
 import { UserMessageView } from "./UserMessageView";
+import { VideoView } from "./VideoView";
 
 export class ChatView extends Component {
 
 	private listUsers = new ListPanel({ width: "100%" });
 	private listMessages = new ListPanel({ className: "message-list", width: "100%" });
 	private sendButton = new ButtonElement({ className: "message-input", width: "18%", height: "55px", backgroundColor: "blue", color: "white", text: "Send", marginBottom: "5px" });
-	private textField = new TextField({ className: "message-input", placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false, width: "100%", margin: "auto" });
+	private textField = new TextField({ className: "message-input", placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false });
 	private backgroundImage = ref<string>("")
+	private chatId = ""
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "row" });
 		const left = new DivElement({ className: "list-users", width: "300px", backgroundColor: "#f0f0f0", overflow: "hidden", height: "calc(100% - 50px)" });
 		left.append(this.listUsers);
+		const hbox = new HBox({ gap: "10px", alignItems: "center", display: "none", width: "100%", className: "message-div-input" });
+		const toolbar = new DivElement({
+			width: "100%", children: [
+				new ButtonElement({
+					text: "call",
+					onclick: () => {
+						toolbar.append(new VideoView(this.chatId));
+					}
+				})
+			], display: "none"
+		});
+
 		const center = new DivElement({
 			overflow: "hidden",
 			width: "calc(100% - 300px)",
@@ -32,6 +46,9 @@ export class ChatView extends Component {
 				alert("Chat not found");
 				return;
 			}
+			this.chatId = chat.id;
+			hbox.style.display = "flex";
+			toolbar.style.display = "flex";
 			left.classList.remove("open");
 			console.log("join", chat);
 			this.updateMessages(chat.messages);
@@ -52,17 +69,18 @@ export class ChatView extends Component {
 			this.textField.value = "";
 		});
 
-		const hbox = new HBox({ gap: "10px", alignItems: "center" });
 		hbox.append(this.textField, this.sendButton);
 		const textArea = new DivElement({
 			width: "100%", overflow: "hidden", marginBottom: "15px",
 			border: "1px solid #ccc", borderRadius: "5px",
 			display: "flex",
+			flexDirection: "column",
 			backgroundImage: this.backgroundImage,
 			backgroundSize: "cover",
 			backgroundPosition: "center",
 		});
-		textArea.append(this.listMessages);
+		//textArea.append(new DivElement({ text: "Chat", fontSize: "20px", fontWeight: "bold", textAlign: "center", width: "100%", padding: "10px" }));
+		textArea.append(toolbar, this.listMessages);
 		center.append(textArea, hbox);
 		this.append(left, center);
 		this.updateMessages(undefined);

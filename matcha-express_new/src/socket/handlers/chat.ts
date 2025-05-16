@@ -34,6 +34,14 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 		socket.leave(chat_id);
 	});
 
+	socket.on("send-message-video", async ({ chat_id, data }) => {
+		socket.to(chat_id).emit("receive-message-video", { chat_id, data });
+	});
+
+	socket.on("send-message-audio", async ({ chat_id, data }) => {
+		socket.to(chat_id).emit("receive-message-audio", { chat_id, data });
+	});
+
 	socket.on("join", async ({ chat_id }) => {
 		console.log("join", chat_id);
 		try {
