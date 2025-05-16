@@ -1,5 +1,6 @@
 import { profileModel, IProfile } from "../model/profileModel";
 import { likeService } from "./likeService";
+import { notificationService } from "./notificationService";
 import { blockService } from "./blockService";
 import { userModel, IUser } from "../model/userModel";
 import { Condition, ConditionOperator } from "../database/sqlHelper";
@@ -85,6 +86,8 @@ export const userService = {
 			userProfile.like = like;
 			const block = await blockService.getBlock(myId, userId);
 			userProfile.block = block;
+			const user = await profileModel.findByUserId(myId);
+			await notificationService.createNotification(userId, myId, "visit", `${user?.first_name} ${user?.last_name} visited your profile`);
 			return userProfile;
 		} catch (error: any) {
 			throw mapDbError.user(error);

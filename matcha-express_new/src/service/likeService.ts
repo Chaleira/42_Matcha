@@ -4,6 +4,7 @@ import { blockService } from "./blockService";
 import { userService } from "../service/userService";
 import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import { notificationService } from "./notificationService";
 
 export const likeService = {
 	async createLike(likerId: number, likedId: number): Promise<ILike> {
@@ -16,6 +17,8 @@ export const likeService = {
 
 			const checkMatch = await likeModel.findByLikerAndLiked(likedId, likerId);
 			if (checkMatch) await matchService.createMatch(likerId, likedId);
+			const liker = await userService.getUserById(likerId);
+			await notificationService.createNotification(likedId, likerId, "like", `${liker?.first_name} ${liker?.last_name} liked you!`);
 			return like;
 		} catch (error: any) {
 			throw mapDbError.like(error);
