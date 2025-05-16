@@ -235,6 +235,10 @@ list-element ul li {
     display: none;
   }
 
+  .webcam {
+    display: none;
+  }
+
   .list-users.open {
     position: absolute;
     width: 100vw !important;
@@ -249,6 +253,7 @@ list-element ul li {
   .message-div {
     width: 100% !important;
   }
+  
   .message-input {
     margin: 0 !important;
   }
@@ -256,3 +261,17 @@ list-element ul li {
     display: block !important;
   }
 }
+
+ .message-input {
+    width: -webkit-fill-available;
+  }
+
+.message-div-input {
+    gap: 10px;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: space-between;
+    }
