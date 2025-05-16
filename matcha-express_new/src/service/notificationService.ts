@@ -1,11 +1,18 @@
 import { notificationModel, INotification } from "../model/noficatonModel";
 import { NotFoundError, ValidationError, UnauthorizedError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import { onlineUsers } from "../socket/connection";
+import { io } from "../socket/index";
+
 
 export const notificationService = {
 	async createNotification(user_id: number, triggered_by_id: number, type: string, content: string): Promise<INotification> {
 		try {
-			return await notificationModel.create(user_id, triggered_by_id, type, content);
+			const notification = await notificationModel.create(user_id, triggered_by_id, type, content);
+			const socket_id = onlineUsers.get(user_id);
+			if (socket_id)
+				io.to(socket_id).emit("notification", notification);
+			return notification;
 		} catch (error: any) {
 			throw mapDbError.notification(error);
 		}
