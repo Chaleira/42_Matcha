@@ -2,7 +2,6 @@ import { Router } from "express";
 import { chatController } from "../controller/chatController";
 import { catchAsync } from "../utils/catchAsync";
 import { validateQueryParams, validateBodyParams } from "../middleware/validationMiddleware";
-import { AuthenticatedRequest } from "../types/request";
 
 const router = Router();
 

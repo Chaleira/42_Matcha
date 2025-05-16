@@ -10,6 +10,7 @@ import likeRoutes from "./routes/likeRoute";
 import chatRoutes from "./routes/chatRoute";
 import matchRoutes from "./routes/matchRoute";
 import blockRoutes from "./routes/blockRoute";
+import notificationRoutes from "./routes/notificationRoute";
 import { errorHandler } from "./middleware/errorHandler";
 import { authenticateUser } from "./middleware/authMiddleware";
 
@@ -26,6 +27,7 @@ app.use("/api/block", authenticateUser, blockRoutes);
 app.use("/api/like", authenticateUser, likeRoutes);
 app.use("/api/match", authenticateUser, matchRoutes);
 app.use("/api/chat", authenticateUser, chatRoutes);
+app.use("/api/notification", authenticateUser, notificationRoutes);
 
 (async () => {
 	try {
