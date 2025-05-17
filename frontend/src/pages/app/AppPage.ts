@@ -1,4 +1,4 @@
-import { AnchorElement, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
+import { AlertPanel, AnchorElement, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
 import { Api } from '@/api/Api';
 import { userStore } from '@/store/UserStore';
 import { io, Socket } from "socket.io-client";
@@ -28,6 +28,23 @@ export class AppPage extends BorderPanel {
 
 	onConnected(): void {
 		this.getUserLocation();
+		AppPage.socket.off("notification");
+		AppPage.socket.off("user-connected");
+		// notification
+		AppPage.socket.on("notification", (data: any) => {
+			console.log("Notification:", data);
+			AlertPanel.info(data.content)
+		});
+
+		AppPage.socket.on("user-connected", (data: any) => {
+			console.log("User Connected:", data.username);
+			AlertPanel.info("User Connected: " + data.username)
+		});
+	}
+
+	onDisconnected(): void {
+		AppPage.socket.off("notification");
+		AppPage.socket.off("user-connected");
 	}
 
 	getUserLocation() {

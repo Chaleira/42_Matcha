@@ -45,6 +45,7 @@ export class FilterUsers extends Component {
 			type: "number",
 			min: "10",
 			label: "Distance (km)",
+			className: "filter-distance",
 			value: this.filter.value.radius_km,
 		}))
 		this.append(

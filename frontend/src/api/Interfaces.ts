@@ -64,3 +64,14 @@ export interface IChat {
 	last_name: string;
 	avatar?: string;
 }
+
+
+export interface INotification {
+	id?: number,
+	user_id: number,
+	triggered_by_id: number,
+	type: string,
+	content: string,
+	seen: boolean,
+	created_at?: Date
+}
