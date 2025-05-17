@@ -1,52 +1,57 @@
 import { Router } from 'typecomposer'
-import { LoginPage } from '../pages/login/LoginPage';
-import { RegisterPage } from '../pages/register/RegisterPage';
-import { AppPage } from '../pages/app/AppPage';
-import { RouterGuardHome } from './RouterGuard';
-import { ChatView } from '../views/chat/ChatView';
-import { ProfileView } from '../views/profile/ProfileView';
-import { ForgotPage } from '@/pages/forgot/ForgotPage';
-import HomeView from '@/views/home/HomeView';
-import { VerifyEmail } from '@/pages/register/VerifyEmail';
+//import { LoginPage } from '../pages/login/LoginPage';
+//import { RegisterPage } from '../pages/register/RegisterPage';
+//import { AppPage } from '../pages/app/AppPage';
+//import { RouterGuardHome } from './RouterGuard';
+//import { ChatView } from '../views/chat/ChatView';
+//import { ProfileView } from '../views/profile/ProfileView';
+//import { ForgotPage } from '@/pages/forgot/ForgotPage';
+//import HomeView from '@/views/home/HomeView';
+//import { VerifyEmail } from '@/pages/register/VerifyEmail';
+import { TestDbPage } from '@/pages/testDB/TestDbPage';
 
 Router.create({
   //history: 'hash',
   routes: [
-    {
-      path: '/',
-      guard: new RouterGuardHome(),
-      component: AppPage,
-      children: [
-        { path: 'home', component: HomeView },
-        { path: 'chat', component: ChatView },
-        { path: 'profile', component: ProfileView },
-        { path: Router.PATH_WILDCARD, redirect: 'home' },
+    //{
+    //  path: '/',
+    //  guard: new RouterGuardHome(),
+    //  component: AppPage,
+    //  children: [
+    //    { path: 'home', component: HomeView },
+    //    { path: 'chat', component: ChatView },
+    //    { path: 'profile', component: ProfileView },
+    //    { path: Router.PATH_WILDCARD, redirect: 'home' },
 
-      ]
-    },
+    //  ]
+    //},
+    //{
+    //  path: '/registerprofile',
+    //  component: ForgotPage
+    //},
+    //{
+    //  path: '/login',
+    //  component: LoginPage
+    //},
+    //{
+    //  path: "/verify-email",
+    //  component: VerifyEmail
+    //},
+    //{
+    //  path: '/register',
+    //  component: RegisterPage
+    //},
+    //{
+    //  path: '/forgot',
+    //  component: ForgotPage
+    //},
+    //{
+    //  path: Router.PATH_WILDCARD,
+    //  redirect: "/login"
+    //},
     {
-      path: '/registerprofile',
-      component: ForgotPage
-    },
-    {
-      path: '/login',
-      component: LoginPage
-    },
-    {
-      path: "/verify-email",
-      component: VerifyEmail
-    },
-    {
-      path: '/register',
-      component: RegisterPage
-    },
-    {
-      path: '/forgot',
-      component: ForgotPage
-    },
-    {
-      path: Router.PATH_WILDCARD,
-      redirect: "/login"
+      path: "/test",
+      component: TestDbPage
     }
   ],
 });
