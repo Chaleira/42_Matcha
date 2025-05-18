@@ -33,7 +33,7 @@ wss.on("connection", (ws: WebSocket) => {
 		const dataJson: { table: string, items: any[] } = JSON.parse(data.toString());
 		console.log("🟢  synchronize:", dataJson);
 		// Responde para o mesmo cliente
-		ws.send(`🟢  synchronize: ${dataJson.table} ${dataJson.items.length} items`);
+		ws.send(JSON.stringify({ table: dataJson.table, items: dataJson.items }));
 	});
 
 	// Quando o cliente desconecta
