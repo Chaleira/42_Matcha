@@ -6,20 +6,19 @@ import { userModel, IUser } from "../model/userModel";
 import { Condition, ConditionOperator } from "../database/sqlHelper";
 import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import { get } from "http";
 
 export interface UserSearchFilters {
 	currentUserId: number;
-	name?: string;
 	age_min?: number;
 	age_max?: number;
-	gender?: string;
-	sexual_preference?: string;
 	fame_min?: number;
 	fame_max?: number;
 	tags?: string[];
 	latitude?: number;
 	longitude?: number;
 	radius_km?: number;
+	order_by?: string;
 }
 
 export const userService = {
@@ -76,7 +75,7 @@ export const userService = {
 			throw mapDbError.user(error);
 		}
 	},
-	
+
 	async getUserProfile(myId: number, userId: number): Promise<IProfile | null> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
@@ -103,7 +102,7 @@ export const userService = {
 			throw mapDbError.user(error);
 		}
 	},
-	
+
 	async updateUserProfile(userId: number, updates: Partial<IProfile>): Promise<IProfile> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
@@ -127,46 +126,73 @@ export const userService = {
 
 	async listUsers(filters: UserSearchFilters): Promise<IProfile[] | null> {
 		try {
-			const conditions: Condition[] = [];
-			console.log("filters", filters);
+			const user = await profileModel.findByUserId(filters.currentUserId);
+			if (!user) throw new NotFoundError("User profile not found");
+			filters.radius_km = filters.radius_km || 30;
+			filters.tags = filters.tags;
+			filters.latitude = user.latitude;
+			filters.longitude = user.longitude;
+			const conditions: Condition[] = getBaseConditions();
+			conditions.push(...getMatchConditions({ gender: user?.gender, preference: user?.sexual_preference }));
+			conditions.push(...getFiltersConditions(filters));
 
-			const anyProvided = filters.latitude || filters.longitude || filters.radius_km;
-			const allProvided = filters.latitude && filters.longitude && filters.radius_km;
-			if (anyProvided && !allProvided) throw new ValidationError("Latitude, longitude, and radius_km must all be provided together.");
-
-			if (filters?.currentUserId) conditions.push({ column: "user_id", operator: "!=" as ConditionOperator, value: filters.currentUserId });
-
-			if (filters?.age_min) conditions.push({ column: "age", operator: ">=" as ConditionOperator, value: filters.age_min });
-
-			if (filters?.age_max) conditions.push({ column: "age", operator: "<=" as ConditionOperator, value: filters.age_max });
-
-			if (filters?.gender) conditions.push({ column: "gender", operator: "=" as ConditionOperator, value: filters.gender });
-
-			if (filters?.sexual_preference) conditions.push({ column: "sexual_preference", operator: "=" as ConditionOperator, value: filters.sexual_preference });
-
-			if (filters?.fame_min) conditions.push({ column: "fame_score", operator: ">=" as ConditionOperator, value: filters.fame_min });
-
-			if (filters?.fame_max) conditions.push({ column: "fame_score", operator: "<=" as ConditionOperator, value: filters.fame_max });
-
-			if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
-
-			if (filters?.name) conditions.push({ column: "first_name || ' ' || last_name", operator: "ILIKE" as ConditionOperator, value: `%${filters.name}%` });
-
-			if (allProvided) {
-				conditions.push({
-					column: `6371 * acos(
-						cos(radians(${filters.latitude})) * cos(radians(profiles.latitude)) *
-						cos(radians(profiles.longitude) - radians(${filters.longitude})) +
-						sin(radians(${filters.latitude})) * sin(radians(profiles.latitude))
-						)`,
-					operator: "<=",
-					value: filters.radius_km,
-				});
-			}
-
-			return await profileModel.listWithFilter(conditions, filters.currentUserId);
+			return await profileModel.listWithFilter(conditions, { id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! }, filters.order_by);
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}
 	},
 };
+
+function getFiltersConditions(filters: UserSearchFilters): Condition[] {
+	const conditions: Condition[] = [];
+
+	if (filters?.currentUserId) conditions.push({ column: "user_id", operator: "!=" as ConditionOperator, value: filters.currentUserId });
+
+	if (filters?.age_min) conditions.push({ column: "age", operator: ">=" as ConditionOperator, value: filters.age_min });
+
+	if (filters?.age_max) conditions.push({ column: "age", operator: "<=" as ConditionOperator, value: filters.age_max });
+
+	if (filters?.fame_min) conditions.push({ column: "fame_score", operator: ">=" as ConditionOperator, value: filters.fame_min });
+
+	if (filters?.fame_max) conditions.push({ column: "fame_score", operator: "<=" as ConditionOperator, value: filters.fame_max });
+
+	if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
+
+	conditions.push({
+		column: `6371 * acos(
+					LEAST(1.0, GREATEST(-1.0,
+					cos(radians(${filters.latitude})) * cos(radians(profiles.latitude)) *
+					cos(radians(profiles.longitude) - radians(${filters.longitude})) +
+					sin(radians(${filters.latitude})) * sin(radians(profiles.latitude))
+					))
+				)`,
+		operator: "<=",
+		value: filters.radius_km,
+	});
+	return conditions;
+}
+
+function getBaseConditions(): Condition[] {
+	return [{ column: "users.email_verified", operator: "=" as ConditionOperator, value: true }];
+}
+
+function getMatchConditions(user: { gender: string | undefined; preference: string | undefined }): Condition[] {
+	const oppositeGender = user.gender === "male" ? "female" : "male";
+
+	if (user.preference && user.preference === "heterosexual") {
+		return [
+			{ column: "gender", operator: "=" as ConditionOperator, value: oppositeGender },
+			{ column: "sexual_preference", operator: "IN" as ConditionOperator, value: ["heterosexual", "bisexual"] },
+		];
+	}
+	if (user.preference && user.preference === "homosexual") {
+		return [
+			{ column: "gender", operator: "=" as ConditionOperator, value: user.gender },
+			{ column: "sexual_preference", operator: "IN" as ConditionOperator, value: ["homosexual", "bisexual"] },
+		];
+	}
+	return [
+		{ column: "gender", operator: "IN" as ConditionOperator, value: ["male", "female"] },
+		{ column: "sexual_preference", operator: "IN" as ConditionOperator, value: ["bisexual", "heterosexual", "homosexual"] }, // or refine based on gender
+	];
+}

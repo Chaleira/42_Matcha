@@ -13,11 +13,12 @@ export const likeService = {
 			const existingBlockReverse = await blockService.findByBlockerAndBlocked(likedId, likerId);
 			if (existingBlockReverse || existingBlock) throw new ValidationError("You cannot like a blocked user");
 
+			const liker = await userService.getUserProfile(likerId, likerId);
+			if (!liker?.avatar) throw new ValidationError("You need to upload an avatar before liking someone");
 			const like = await likeModel.create({ liker_id: likerId, liked_id: likedId });
 
 			const checkMatch = await likeModel.findByLikerAndLiked(likedId, likerId);
 			if (checkMatch) await matchService.createMatch(likerId, likedId);
-			const liker = await userService.getUserById(likerId);
 			await notificationService.createNotification(likedId, likerId, "like", `${liker?.first_name} ${liker?.last_name} liked you!`);
 			return like;
 		} catch (error: any) {

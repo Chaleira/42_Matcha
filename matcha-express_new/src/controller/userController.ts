@@ -23,6 +23,13 @@ export const userController = {
 		res.status(200).json(updatedUserProfile);
 	},
 
+	async updateUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+		const userId = req.user.id;
+		const updates = req.body;
+		const updatedUser = await userService.updateUser(userId, updates);
+		res.status(200).json(updatedUser);
+	},
+
 	async deleteUser(req: AuthenticatedRequest, res: Response): Promise<void> {
 		const userId = req.user.id;
 		await userService.deleteUser(userId);
@@ -35,7 +42,6 @@ export const userController = {
 			currentUserId: req.user.id,
 			...req.body,
 		};
-
 		const users = await userService.listUsers(filters);
 		res.status(200).json(users || []);
 	},
