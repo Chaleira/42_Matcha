@@ -1,5 +1,5 @@
 import { notificationModel, INotification } from "../model/noficatonModel";
-import { NotFoundError, ValidationError, UnauthorizedError } from "../utils/errors";
+import { NotFoundError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
 import { onlineUsers } from "../socket/connection";
 import { io } from "../socket/index";
@@ -10,6 +10,7 @@ export const notificationService = {
 		try {
 			const notification = await notificationModel.create(user_id, triggered_by_id, type, content);
 			const socket_id = onlineUsers.get(user_id);
+			console.log("Socket ID:", socket_id);
 			if (socket_id)
 				io.to(socket_id).emit("notification", notification);
 			return notification;

@@ -1,6 +1,11 @@
-import { App, AsyncComponentLoader } from 'typecomposer'
 import './style.scss'
-import { LoginPage } from './pages/login/LoginPage.ts';
+
+import { Buffer } from 'buffer'
+(window as any).Buffer = Buffer
+
+//import process from 'process'
+//(window as any).process = process
+
 //import { HomeView } from './views/home/HomeView'
 
 

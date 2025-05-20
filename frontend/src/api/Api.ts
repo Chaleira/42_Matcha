@@ -1,5 +1,5 @@
 import { AlertPanel } from "typecomposer";
-import { IChat, IMessage, IUser } from "./Interfaces";
+import { IChat, IMessage, INotification, IUser } from "./Interfaces";
 
 export namespace Api {
 
@@ -10,6 +10,28 @@ export namespace Api {
 		myHeaders.append("Content-Type", "application/json");
 		myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
 		return myHeaders;
+	}
+
+	export namespace Notification {
+
+		//	export async function create(n: INotification): Promise<string> {
+		//	const body = JSON.stringify({ users: users });
+		//	console.log(body);
+		//	return await fetch(`${URL}/notification/create`, {
+		//		method: "POST",
+		//		headers: Api.ApiHeader(),
+		//		body: body,
+		//		redirect: "follow"
+		//	})
+		//		.then(async (response) => {
+		//			if (!response.ok) {
+		//				return "Invalid registration";
+		//			}
+		//			return (await response.json())?.message;
+		//		}).catch((error) => {
+		//			return error;
+		//		});
+		//}
 	}
 
 	export namespace Chat {
@@ -216,7 +238,15 @@ export namespace Api {
 						user.longitude = user.longitude || 0;
 						user.avatar = user.avatar || "https://pbs.twimg.com/media/FieRMdBUAAAEzmI?format=jpg&name=medium";
 					}
-					return user
+					const clearUser: { [key: string]: any } = {}
+					for (const key in user) {
+						// @ts-ignore
+						if (user[key]) {
+							// @ts-ignore
+							clearUser[key] = user[key];
+						}
+					}
+					return clearUser as any;
 				}).catch(() => {
 					AlertPanel.error("Invalid token");
 					return null;

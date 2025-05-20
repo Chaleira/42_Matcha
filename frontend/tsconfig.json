@@ -28,6 +28,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
+    "allowSyntheticDefaultImports": true,
+
     /* Path aliases */
     "baseUrl": ".",
     "paths": {

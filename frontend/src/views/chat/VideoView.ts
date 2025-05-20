@@ -1,64 +1,73 @@
 import { AppPage } from "@/pages/app/AppPage";
-import { CanvasElement, Component, VideoElement } from "typecomposer";
+import { Component, VideoElement } from "typecomposer";
 
 export class VideoView extends Component {
 
 	private video = new VideoElement({ className: "webcam", width: "250px", height: "200px", autoplay: true, controls: false, muted: true, borderRadius: "5px", backgroundColor: "black" });
-	private video2 = new CanvasElement({ width: "250", height: "200", borderRadius: "5px", backgroundColor: "black" });
+	private video3 = new VideoElement({ className: "webcam", width: "250px", height: "200px", autoplay: true, controls: false, muted: false, borderRadius: "5px", backgroundColor: "black" });
 
-	private canvas = new CanvasElement({ width: "250", height: "200", backgroundColor: "black", display: "none" });
-	private ctx!: CanvasRenderingContext2D;
 	private isRecording: number = 0;
 	private streamAudio: MediaStream | null = null;
 	private streamVideo: MediaStream | null = null;
+	private mediaRecorder!: MediaRecorder;
 
 	constructor(private chatId: string) {
 		super({ display: "flex", flexDirection: "row", gap: "10px", padding: "10px", width: "100%", backgroundColor: "#f0f0f0", borderRadius: "5px", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)" });
 		console.log("VideoView", chatId);
-		this.append(this.video, this.video2, this.canvas);
-		this.ctx = this.canvas.getContext("2d")!;
+		this.append(this.video, this.video3);
 		this.startWebcam();
-		if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))
-			this.startAudio();
 	}
 
 	async startWebcam() {
-		this.streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, });
+		this.streamVideo = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 		this.video.srcObject = this.streamVideo;
-
-		this.video.addEventListener('loadedmetadata', () => {
-			console.log("Video metadata loaded");
-			this.canvas.width = this.video.videoWidth;
-			this.canvas.height = this.video.videoHeight;
-			this.sendFrames()
+		// @ts-ignore
+		const peer = new SimplePeer({
+			initiator: true,
+			stream: this.streamVideo,
+			trickle: false
 		});
 
-		AppPage.socket.on("receive-message-video", (data) => {
-			if (data.chat_id === this.chatId) {
-				const img = new Image();
-				img.onload = () => {
-					this.video2.getContext("2d")?.drawImage(img, 0, 0, this.video2.width, this.video2.height);
-				};
-				img.src = data.data;
+		peer.on('signal', (data: any) => {
+			console.log("Enviando sinal", data);
+			AppPage.socket.emit('send-message-video', { chatId: this.chatId, signal: data });
+		});
 
+		peer.on('stream', (remoteStream: MediaStream) => {
+			console.log("Stream remoto recebido");
+			this.video3.srcObject = remoteStream;
+			this.video3.play();
+		});
+
+		AppPage.socket.on('receive-message-video', (data) => {
+			if (data.chatId === this.chatId) {
+				console.log("Recebido sinal remoto", data.signal);
+				peer.signal(data.signal);
 			}
 		});
 	}
 
 	async startAudio() {
 		this.streamAudio = await navigator.mediaDevices.getUserMedia({ audio: true });
-		const mediaRecorder = new MediaRecorder(this.streamAudio, { mimeType: 'audio/webm;codecs=opus' });
-
-		mediaRecorder.ondataavailable = (event) => {
-			const reader = new FileReader();
-			reader.onloadend = () => {
-				const base64Audio = reader.result;
-				AppPage.socket.emit("send-message-audio", { chat_id: this.chatId, data: base64Audio });
-			};
-			reader.readAsDataURL(event.data);
+		this.mediaRecorder = new MediaRecorder(this.streamAudio, { mimeType: 'audio/webm;codecs=opus' });
+		console.log("MediaRecorder", MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? "supported" : "not supported");
+		this.mediaRecorder.ondataavailable = (event) => {
+			//const reader = new FileReader();
+			//reader.onloadend = () => {
+			//	const base64Audio = reader.result;
+			//	AppPage.socket.emit("send-message-audio", { chat_id: this.chatId, data: base64Audio });
+			//};
+			//reader.readAsDataURL(event.data);
+			if (event.data.size > 0) {
+				event.data.arrayBuffer().then(arrayBuffer => {
+					AppPage.socket.emit("send-message-audio", { chat_id: this.chatId, data: arrayBuffer });
+				});
+			}
 		};
+		//const audioChunks: Blob[] = [];
+		const audioContext = new AudioContext();
 
-		AppPage.socket.on("receive-message-audio", (data) => {
+		AppPage.socket.on("receive-message-audio", async (data) => {
 			if (data.chat_id === this.chatId) {
 				try {
 					//// data.data é o dataURL: "data:audio/webm;codecs=opus;base64,..."
@@ -77,49 +86,70 @@ export class VideoView extends Component {
 					//const blob = new Blob([byteArray], { type: mime });
 					//const audioUrl = URL.createObjectURL(blob);
 
+					//const audio = new Audio();
+					//this.append(audio);
+					//audio.src = data.data; // data.data é o dataURL
+					//audio.play().catch((err) => console.error('Erro ao tocar áudio:', err));
+					const chunk: ArrayBuffer = data.data;
+					console.log('Chunk recebido:', chunk.byteLength);
+
+					if (chunk.byteLength === 0) return; // evita blobs vazios
+					//try {
+					//	const buffer = await audioContext.decodeAudioData(chunk.slice(0)); // slice evita erro de buffer compartilhado
+					//	const source = audioContext.createBufferSource();
+					//	source.buffer = buffer;
+					//	source.connect(audioContext.destination);
+					//	source.start();
+					//} catch (err) {
+					//	console.error('Erro ao decodificar e tocar áudio:', err);
+					//}
+					//console.log("chunk", chunk);
+					const blob = new Blob([chunk], { type: 'audio/webm; codecs=opus' });
 					const audio = new Audio();
-					this.append(audio);
-					audio.src = data.data; // data.data é o dataURL
-					audio.play().catch((err) => console.error('Erro ao tocar áudio:', err));
+					audio.src = URL.createObjectURL(blob);
+					audio.play().catch(err => console.error('Erro ao reproduzir:', err));
+					//this.stopWebcam();
+					//const blob = new Blob([chunk], { type: 'audio/webm;codecs=opus' });
+					//const audio = new Audio(URL.createObjectURL(blob));
+					//audio.play()
 				} catch (e) {
 					console.error('Erro ao processar áudio recebido:', e);
 				}
 			}
 		})
 
-		mediaRecorder.start(100);
+		this.mediaRecorder.start(250);
 	}
 
 	stopWebcam() {
+		if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+			this.mediaRecorder.stop();
+		}
+
+		if (this.streamAudio) {
+			this.streamAudio.getTracks().forEach(track => track.stop());
+			this.streamAudio = null;
+		}
+
+		if (this.streamVideo) {
+			this.streamVideo.getTracks().forEach(track => track.stop());
+			this.streamVideo = null;
+		}
+
+		this.video.srcObject = null;
+		this.video.src = "";
+
+		this.video3.srcObject = null;
+		this.video3.src = "";
+
 		if (this.isRecording) {
 			clearInterval(this.isRecording);
 			this.isRecording = 0;
 		}
-		if (this.streamAudio) {
-			const tracks = this.streamAudio.getTracks();
-			tracks.forEach(track => track.stop());
-		}
-		if (this.streamVideo) {
-			const tracks = this.streamVideo.getTracks();
-			tracks.forEach(track => track.stop());
-		}
-		this.video.srcObject = null;
-		this.video.src = "";
 
+		console.log("Webcam e microfone desligados.");
 	}
 
-	private sendFrames() {
-		this.isRecording = setInterval(() => {
-			if (this.ctx && this.video.readyState === this.video.HAVE_ENOUGH_DATA) {
-				this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
-				const dataUrl = this.canvas.toDataURL('image/jpeg', 0.5);
-				AppPage.socket.emit("send-message-video", { chat_id: this.chatId, data: dataUrl });
-			}
-		}, 100);
-	}
-
-	onDisconnected(): void {
-		this.stopWebcam();
-	}
+	onDisconnected(): void { this.stopWebcam(); }
 
 }
