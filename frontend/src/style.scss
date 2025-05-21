@@ -244,6 +244,7 @@ list-element ul li {
 }
 
 
+
 @media (max-width: 768px) {
 
   .app-top {
@@ -358,6 +359,42 @@ list-element ul li {
 
   .btn-chat-minimize {
     display: block !important;
+  }
+
+
+  login-page,
+  verify-email,
+  forgot-page,
+  reset-password,
+  register-page {
+    card-element {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .tc-tf-d input {
+      background-color: white;
+    }
+
+    .tc-tf-d label {
+      font-size: large;
+    }
+
+    .login_header {
+      color: black;
+    }
+
+
+    drop-down[variant=outline] fieldset {
+      background-color: white;
+      z-index: -1;
+    }
+
+    .pop-up-button .button {
+      top: -33px !important
+    }
+
   }
 }
 
