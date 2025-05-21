@@ -90,7 +90,10 @@ export const userService = {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
-			if (myId === userId) return userProfile;
+			if (myId === userId) {
+				userProfile.email = (await userModel.findById(userId))?.email;
+				return userProfile;
+			}
 			const like = await likeService.getLike(myId, userId);
 			userProfile.like = like;
 			const block = await blockService.getBlock(myId, userId);
@@ -117,6 +120,10 @@ export const userService = {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
+			if (updates.email) {
+				await userModel.update(userId, { email: updates.email });
+				delete updates.email;
+			}
 			return await profileModel.update(userId, updates);
 		} catch (error: any) {
 			throw mapDbError.user(error);

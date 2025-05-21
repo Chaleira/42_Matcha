@@ -14,24 +14,21 @@ export namespace Api {
 
 	export namespace Notification {
 
-		//	export async function create(n: INotification): Promise<string> {
-		//	const body = JSON.stringify({ users: users });
-		//	console.log(body);
-		//	return await fetch(`${URL}/notification/create`, {
-		//		method: "POST",
-		//		headers: Api.ApiHeader(),
-		//		body: body,
-		//		redirect: "follow"
-		//	})
-		//		.then(async (response) => {
-		//			if (!response.ok) {
-		//				return "Invalid registration";
-		//			}
-		//			return (await response.json())?.message;
-		//		}).catch((error) => {
-		//			return error;
-		//		});
-		//}
+		export async function list(): Promise<INotification[]> {
+			return await fetch(`${URL}/notification/get`, {
+				method: "GET",
+				headers: Api.ApiHeader(),
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						return "Invalid registration";
+					}
+					return (await response.json());
+				}).catch((error) => {
+					return error;
+				});
+		}
 	}
 
 	export namespace Chat {
@@ -272,6 +269,9 @@ export namespace Api {
 		}
 
 		export async function update(params: { [key: string]: any } = {}): Promise<IUser> {
+			delete params?.user_id;
+			delete params?.created_at;
+			delete params?.viewd;
 			const body = JSON.stringify(params);
 			return await fetch(`${URL}/user/profile/update`, {
 				method: "POST",
@@ -285,6 +285,7 @@ export namespace Api {
 					}
 					return await response.json();
 				}).catch((error) => {
+					AlertPanel.error("Invalid update");
 					return error;
 				});
 		}
@@ -307,22 +308,44 @@ export namespace Api {
 				});
 		}
 
-		//export async function block(params: { userBlockingId: string, userBlockedId: string }): Promise<IUser> {
-		//	return await fetch(`${URL}/user/block`, {
-		//		method: "POST",
-		//		headers: ApiHeader(),
-		//		body: JSON.stringify(params),
-		//		redirect: "follow"
-		//	})
-		//		.then(async (response) => {
-		//			if (!response.ok) {
-		//				throw new Error("Invalid block");
-		//			}
-		//			response.json().then((data) => console.log(data.message));
-		//			return await response.json();
-		//		}).catch((error) => {
-		//			return error;
-		//		});
-		//}
+		export async function sendResetPassword(email: string): Promise<{ message: string }> {
+			return await fetch(`${URL}/auth/send-reset-password-email`, {
+				method: "GET",
+				headers: ApiHeader(),
+				redirect: "follow",
+				params: { email },
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid token");
+					}
+					AlertPanel.info("Check your email for the reset password link");
+					return await response.json();
+				}).catch((error) => {
+					//alert(error);
+					return null;
+				});
+		}
+
+		export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
+			return await fetch(`${URL}/auth/reset-password`, {
+				method: "POST",
+				headers: ApiHeader(),
+				redirect: "follow",
+				body: JSON.stringify({ password }),
+				params: { token },
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid token");
+					}
+					return await response.json();
+				}).catch((error) => {
+					//alert(error);
+					return null;
+				});
+		}
 	}
+
+
 }

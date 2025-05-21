@@ -41,8 +41,8 @@ export interface IFilter {
 	radius_km: number;
 	age_min: number;
 	age_max: number;
+	order_by: "distance" | "fame_score" | "age" | "shared_tags";
 }
-
 
 export interface IMessage {
 	chat_id: number;
@@ -52,8 +52,6 @@ export interface IMessage {
 	sender_id: number;
 	text: string;
 }
-
-
 
 export interface IChat {
 	id: string;
@@ -65,13 +63,14 @@ export interface IChat {
 	avatar?: string;
 }
 
+export type NotificationType = 'match' | 'like' | 'visit' | 'message' | 'unlike';
 
 export interface INotification {
 	id?: number,
 	user_id: number,
 	triggered_by_id: number,
-	type: string,
+	type: NotificationType;
 	content: string,
 	seen: boolean,
-	created_at?: Date
+	created_at?: string
 }

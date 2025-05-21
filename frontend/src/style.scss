@@ -28,11 +28,14 @@ h1 {
   width: auto;
   height: 150px;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
 
 login-page,
+forgot-page,
+reset-password,
 register-page {
   h4 {
     font-family: "Libre Caslon Text";
@@ -44,8 +47,12 @@ register-page {
   }
 }
 
+
+
 login-page,
 verify-email,
+forgot-page,
+reset-password,
 register-page {
   height: 100vh;
   z-index: 0;
@@ -54,6 +61,7 @@ register-page {
   display: flex;
   justify-content: center;
   align-items: center;
+
   .background {
     height: 100vh;
     width: 100vw;
@@ -146,7 +154,8 @@ button:hover {
 }
 
 .album-close:hover {
-  transform: scale(1.2); /* Slight zoom on hover */
+  transform: scale(1.2);
+  /* Slight zoom on hover */
 }
 
 list-element ul li {
@@ -169,6 +178,7 @@ list-element ul li {
 
 .user-message-view:hover {
   background-color: #e0e0e0 !important;
+
   .btn-send {
     cursor: pointer;
     visibility: visible !important;
@@ -203,12 +213,15 @@ list-element ul li {
 }
 
 .message-item {
-  word-wrap: break-word; /* Permite que o texto seja quebrado */
-  overflow-wrap: break-word; /* Versão mais moderna para quebrar o texto */
-  white-space: normal; /* Permite a quebra de linha no texto */
+  word-wrap: break-word;
+  /* Permite que o texto seja quebrado */
+  overflow-wrap: break-word;
+  /* Versão mais moderna para quebrar o texto */
+  white-space: normal;
+  /* Permite a quebra de linha no texto */
 }
 
-.btn-chat-minimize{
+.btn-chat-minimize {
   display: none;
   font-size: xx-large;
   color: white;
@@ -225,16 +238,39 @@ list-element ul li {
   background-color: white;
 }
 
+.profile-button {
+  width: 150px;
+  height: 50px;
+}
+
+
 @media (max-width: 768px) {
+
+  .app-top {
+    padding-left: 20px;
+  }
+
+  .profile-button {
+    width: 100px;
+    height: 60px;
+  }
+
   .grid-users {
     grid-template-columns: repeat(2, 1fr) !important
   }
+
   .list-users {
     display: none;
   }
 
   .filter-users {
     display: none;
+  }
+
+  .notification-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .webcam {
@@ -273,7 +309,7 @@ list-element ul li {
     position: absolute;
     left: 0;
     padding-bottom: 20px;
-  
+
     .button {
       position: absolute;
       top: -10px;
@@ -301,37 +337,72 @@ list-element ul li {
     height: 50px;
     padding: 0 !important;
   }
+
   .filter-range-slider {
+    width: 100%;
+
+    range-slider {
+      .wrapper {
         width: 100%;
-        range-slider {
-          .wrapper {
-            width: 100%;
-          }
-        }
+      }
+    }
   }
-  
+
   .message-div {
     width: 100% !important;
   }
-  
+
   .message-input {
     margin: 0 !important;
   }
+
   .btn-chat-minimize {
     display: block !important;
   }
 }
 
- .message-input {
-    width: -webkit-fill-available;
-  }
+.message-input {
+  width: -webkit-fill-available;
+}
 
 .message-div-input {
-    gap: 10px;
-    align-items: center;
-    display: flex;
-    width: 100%;
-    flex-wrap: nowrap;
-    flex-direction: row;
-    justify-content: space-between;
-    }
+  gap: 10px;
+  align-items: center;
+  display: flex;
+  width: 100%;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 8px;
+}
+
+.custom-checkbox input {
+  display: none;
+}
+
+.custom-checkbox span {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #4f46e5;
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+}
+
+.custom-checkbox input:checked+span::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 0px;
+  width: 6px;
+  height: 12px;
+  border: solid #4f46e5;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
