@@ -1,4 +1,4 @@
-import { ButtonElement, Component, HBox, ref, refNumber, SpanElement, TextField, VBox } from "typecomposer";
+import { ButtonElement, Component, DropDown, HBox, ref, refNumber, SpanElement, TextField, VBox } from "typecomposer";
 import { RangeSlider } from "./RangeSlider";
 import HomeView from "@/views/home/HomeView";
 import { IFilter } from "@/api/Interfaces";
@@ -27,9 +27,10 @@ export class FilterUsers extends Component {
 		tags: [],
 		latitude: 0,
 		longitude: 0,
-		radius_km: 10,
+		radius_km: 30,
 		age_min: 18,
-		age_max: 100
+		age_max: 100,
+		order_by: "distance"
 	})
 
 	constructor() {
@@ -48,6 +49,7 @@ export class FilterUsers extends Component {
 			className: "filter-distance",
 			value: this.filter.value.radius_km,
 		}))
+
 		this.append(
 			new HBox({
 				gap: "10px", padding: "10px", width: "100%", alignItems: "center",
@@ -59,5 +61,27 @@ export class FilterUsers extends Component {
 			className: "btn-filter",
 			text: "Filter", onclick: () => this.getParent<HomeView>()?.listerUsers(this.filter.toJSON())
 		}));
+		vbox.append(new DropDown({
+			placeholder: "Sort",
+			value: this.filter.value.order_by,
+			textValue: (value) => {
+				console.log("value", value)
+				switch (value) {
+					case "distance":
+						return "Distance";
+					case "fame_score":
+						return "Fame";
+					case "age":
+						return "Age";
+					case "shared_tags":
+						return "Tags";
+				}
+				return ""
+			},
+			options: ["distance", "fame_score", "age", "shared_tags"],
+			onchange: (e) => {
+				this.getParent<HomeView>()?.listerUsers(this.filter.toJSON())
+			}
+		}))
 	}
 }

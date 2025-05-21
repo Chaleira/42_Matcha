@@ -11,6 +11,6 @@ export function initSocket(server: HTTPServer) {
 			methods: ["GET", "POST"],
 		}
 	});
-	
+
 	io.on("connection", handleConnection);
 }

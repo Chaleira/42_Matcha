@@ -47,7 +47,7 @@ export const chatService = {
 	async getUserChats(user_id: number): Promise<IChat[] | null> {
 		try {
 			const chats = await chatModel.getUserChats(user_id);
-			if (!chats) throw new NotFoundError("No chats found");
+			if (!chats) return [];
 			for (const chat of chats) {
 				const otherUserId = chat.user1_id === user_id ? chat.user2_id : chat.user1_id;
 				chat.user1_id = user_id;

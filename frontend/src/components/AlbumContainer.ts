@@ -1,8 +1,6 @@
 import { IUser } from "@/api/Interfaces";
 import { Component, ComponentProps, DivElement, ImageElement, InputElement, ref } from "typecomposer";
 
-
-
 export class AlbumContainer extends Component {
 
 	private container: DivElement;
@@ -14,7 +12,8 @@ export class AlbumContainer extends Component {
 		this.container = new DivElement({ className: "album-container" });
 		this.container.append(this.createAddPhoto());
 		this.append(this.container);
-		for (const image of props.user.value?.album || []) {
+		console.log("user", this.props.user.toJSON());
+		for (const image of props.user.value?.pictures || []) {
 			this.createAlbum(new ImageElement({ src: image.toString() }));
 		}
 	}
@@ -24,8 +23,8 @@ export class AlbumContainer extends Component {
 		album.append(image);
 		const close = new DivElement({ className: "album-close", text: "❌" });
 		close.onclick = () => {
-			const index = (this.props.user.value.album as []).findIndex((e: string) => e.toString() == image.src);
-			this.props.user.value.album?.splice(index, 1);
+			const index = (this.props.user.value.pictures as []).findIndex((e: string) => e.toString() == image.src);
+			this.props.user.value.pictures?.splice(index, 1);
 			album.remove();
 		}
 		album.append(close);
@@ -42,10 +41,16 @@ export class AlbumContainer extends Component {
 			if (files) {
 				for (let i = 0; i < files.length; i++) {
 					const reader = new FileReader();
-					reader.onload = (e: any) => {
-						console.log(e.target.result);
-						this.createAlbum(new ImageElement({ src: e.target.result as string }));
-						this.props.user.value.album?.push(e.target.result as string);
+					reader.onload = async (e: any) => {
+						try {
+							const file = files[i];
+							const resizedDataUrl = await this.resizeImageTo720p(file);
+							console.log(resizedDataUrl);
+							this.createAlbum(new ImageElement({ src: resizedDataUrl }));
+							this.props.user.value.pictures?.push(resizedDataUrl);
+						} catch (error) {
+							console.error('Erro ao redimensionar imagem:', error);
+						}
 					};
 					reader.readAsDataURL(files[i]);
 				}
@@ -53,4 +58,29 @@ export class AlbumContainer extends Component {
 		}
 		return album;
 	}
+
+	async resizeImageTo720p(file: File): Promise<string> {
+		const imageBitmap = await createImageBitmap(file);
+		const maxWidth = 1280;
+		const maxHeight = 720;
+
+		let { width, height } = imageBitmap;
+
+		// Redimensionar mantendo a proporção
+		if (width > maxWidth || height > maxHeight) {
+			const ratio = Math.min(maxWidth / width, maxHeight / height);
+			width = Math.round(width * ratio);
+			height = Math.round(height * ratio);
+		}
+
+		const canvas = document.createElement('canvas');
+		canvas.width = width;
+		canvas.height = height;
+		const ctx = canvas.getContext('2d');
+		if (!ctx) throw new Error("Canvas context inválido.");
+
+		ctx.drawImage(imageBitmap, 0, 0, width, height);
+		return canvas.toDataURL('image/jpeg', 0.9); // Qualidade ajustável
+	}
+
 }

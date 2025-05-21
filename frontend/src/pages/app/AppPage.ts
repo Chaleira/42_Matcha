@@ -13,10 +13,12 @@ export class AppPage extends BorderPanel {
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });
-		this.top = new DivElement({ height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
+		this.top = new DivElement({ className: "app-top", height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
 		this.top.append(new AnchorElement({ text: "Home", rlink: "home", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Chat", rlink: "chat", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value.user_id, color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({ text: "Notifications", rlink: "notifications", color: "#fff", margin: "0 10px" }));
+
 		this.top.append(new AnchorElement({
 			text: "Logout", href: "#", onclick: () => {
 				localStorage.removeItem("token");

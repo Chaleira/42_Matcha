@@ -24,6 +24,7 @@ export interface IProfile {
 		he_blocked: boolean;
 	};
 	created_at?: Date;
+	email?: string;
 }
 
 export const profileModel = {

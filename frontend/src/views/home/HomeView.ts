@@ -46,6 +46,7 @@ export default class HomeView extends Component {
 		}));
 	}
 
+
 	async listerUsers(filter?: IFilter) {
 		const clearFilter: { [key: string]: any } = {}
 		if (filter?.tags && filter.tags.length > 0) {
@@ -59,14 +60,16 @@ export default class HomeView extends Component {
 
 			}
 		}
-		if (clearFilter?.radius_km == undefined) {
-			delete clearFilter.latitude;
-			delete clearFilter.longitude;
-		}
-		else {
-			clearFilter.latitude = userStore.value.latitude;
-			clearFilter.longitude = userStore.value.longitude;
-		}
+		delete clearFilter?.latitude;
+		delete clearFilter?.longitude;
+		//if (clearFilter?.radius_km == undefined) {
+		//	delete clearFilter.latitude;
+		//	delete clearFilter.longitude;
+		//}
+		//else {
+		//	clearFilter.latitude = userStore.value.latitude;
+		//	clearFilter.longitude = userStore.value.longitude;
+		//}
 		this.params.value = await Api.User.list(clearFilter);
 	}
 }

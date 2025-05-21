@@ -50,8 +50,12 @@ export class TagList extends HBox {
 		} else {
 			this.removeChild(tag);
 			parant.disabled = false;
-			const index = (this.user.value.tags as []).findIndex((e: string) => e.toString() == item.tag);
-			this.user.value.tags.splice(index, 1);
+			//const index = (this.user.value.tags as []).findIndex((e: string) => e.toString() == item.tag);
+			// @ts-ignore
+			const tags = this.user.value.tags.value.filter((e: string) => e.toString() != item.tag);
+			console.log("tagas", tags);
+			this.user.value.tags.value = tags;
+			//this.user.value.tags.value.splice(index, 1);
 		}
 	}
 

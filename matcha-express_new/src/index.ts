@@ -14,33 +14,13 @@ import notificationRoutes from "./routes/notificationRoute";
 import { errorHandler } from "./middleware/errorHandler";
 import { authenticateUser } from "./middleware/authMiddleware";
 import { WebSocketServer, WebSocket } from "ws";
+import bodyParser from 'body-parser';
 
 const app = express();
 app.use(cors());
-
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 const server = http.createServer(app);
-
-const wss = new WebSocketServer({ server });
-
-wss.on("connection", (ws: WebSocket) => {
-	console.log("🟢 Novo cliente conectado via WebSocket");
-
-	// Enviar mensagem inicial
-	//ws.send("👋 Bem-vindo ao servidor!");
-
-	// Quando uma mensagem é recebida
-	ws.on("message", (data) => {
-		const dataJson: { table: string, items: any[] } = JSON.parse(data.toString());
-		console.log("🟢  synchronize:", dataJson);
-		// Responde para o mesmo cliente
-		ws.send(JSON.stringify({ table: dataJson.table, items: dataJson.items }));
-	});
-
-	// Quando o cliente desconecta
-	ws.on("close", () => {
-		console.log("🔴 Cliente desconectado");
-	});
-});
 
 initSocket(server);
 

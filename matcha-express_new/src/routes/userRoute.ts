@@ -4,7 +4,7 @@ import { catchAsync } from '../utils/catchAsync';
 import { validateQueryParams, validateBodyParams } from '../middleware/validationMiddleware';
 
 const allowedListBody = ["age_min", "age_max", "fame_min", "fame_max", "tags", "radius_km", "order_by"];
-const allowedUpdateProfileParams = ["bio", "age", "tags", "gender", "sexual_preference", "pictures", "avatar", "fame_score", "latitude", "longitude", "first_name", "last_name"];
+const allowedUpdateProfileParams = ["bio", "age", "tags", "gender", "sexual_preference", "pictures", "avatar", "fame_score", "latitude", "longitude", "first_name", "last_name", "email"];
 
 const router = Router();
 
