@@ -2,6 +2,7 @@ import { chatModel, IChat, IChatMessage } from "../model/chatModel";
 import { userService } from "./userService";
 import { NotFoundError, UnauthorizedError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import { notificationService } from "./notificationService";
 
 export const chatService = {
 	async createChat(user1_id: number, user2_id: number): Promise<IChat> {
@@ -16,6 +17,11 @@ export const chatService = {
 		try {
 			const chat = await chatModel.getChat(chat_id);
 			if (chat?.user1_id !== sender_id && chat?.user2_id !== sender_id) throw new UnauthorizedError("User is not part of the chat");
+			const otherUserId = chat?.user1_id === sender_id ? chat?.user2_id : chat?.user1_id;
+			const sender = await userService.getUserById(sender_id);
+			await notificationService.createNotification(otherUserId, sender_id, "message",
+				`${sender?.first_name} ${sender?.last_name}:
+				${message}`);
 			return await chatModel.createMessage(chat_id, sender_id, message);
 		} catch (error: any) {
 			throw mapDbError.chat(error);
@@ -59,6 +65,16 @@ export const chatService = {
 				}
 			}
 			return chats;
+		} catch (error: any) {
+			throw mapDbError.chat(error);
+		}
+	},
+
+	async getChatByUsers(user1_id: number, user2_id: number): Promise<IChat> {
+		try {
+			const chat = await chatModel.findChat(user1_id, user2_id);
+			if (!chat) throw new NotFoundError("Chat not found");
+			return chat;
 		} catch (error: any) {
 			throw mapDbError.chat(error);
 		}
