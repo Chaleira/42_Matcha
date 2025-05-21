@@ -1,8 +1,8 @@
 import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, ref, VBox } from "typecomposer";
 import { DataBase, WebSocketSyncAdapter } from "indexed-db-adapter";
+import { TestComponent } from "./tesAp";
 //import { DataBase, TableStore } from "./db/DataBase";
 //import { WebSocketSyncAdapter } from "./db/adapter";
-
 
 
 const db = new DataBase("testDB", { syncAdapter: WebSocketSyncAdapter, version: 1 });
@@ -50,7 +50,7 @@ export class TestDbPage extends Component {
 		vbox.append(new ButtonElement({ text: "Login", width: "200px", height: "50px", margin: "0 auto", onclick: () => this.login() }));
 		vbox.append(new ButtonElement({ text: "Get", width: "200px", height: "50px", margin: "0 auto", onclick: () => this.get() }));
 		//vbox.append(new ButtonElement({ text: "synchronize", width: "200px", height: "50px", margin: "0 auto", onclick: () => db.synchronize() }));
-
+		vbox.append(new TestComponent())
 		const div = new DivElement({ display: "flex", justifyContent: "space-between" });
 		div.append(new AnchorElement({ text: this.test.value.n, rlink: "register", zIndex: "" }));
 		div.append(new AnchorElement({ text: "forgot password?", rlink: "forgot" }));

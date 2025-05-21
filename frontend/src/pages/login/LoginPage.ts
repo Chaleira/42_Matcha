@@ -14,11 +14,9 @@ export class LoginPage extends Component {
 		vbox.append(new TextField({ placeholder: "UserName", value: this.user.value.email }));
 		vbox.append(new TextField({ placeholder: "Password", type: "password", value: this.user.value.password }));
 		vbox.append(new ButtonElement({ text: "Login", width: "200px", height: "50px", margin: "0 auto", onclick: () => this.login() }));
-		const div = new DivElement({ display: "flex", justifyContent: "space-between" });
+		const div = vbox.appendChild(new DivElement({ display: "flex", justifyContent: "space-between" }));
 		div.append(new AnchorElement({ text: "register", rlink: "register", zIndex: "" }));
 		div.append(new AnchorElement({ text: "forgot password?", rlink: "forgot" }));
-		vbox.append(div);
-		card.append(vbox);
 		this.append(card);
 	}
 

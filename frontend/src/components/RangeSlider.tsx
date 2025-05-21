@@ -43,7 +43,7 @@ export class RangeSlider extends Component {
 
   template() {
     return (<div class="wrapper">
-      <span text={this.valueMin} />
+      {<span text={this.valueMin} />}
       <div class="container">
         <div ref={this.sliderTrack} class="slider-track"></div>
         <input style={{ paddingLeft: "0" }} type="range" min={this.min} max={this.max} value={this.valueMin} ref={this.sliderOne} oninput={this.inputSlideOne} />
