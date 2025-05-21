@@ -92,6 +92,7 @@ class MyDiv extends Component {
 
 
 const root = new MyDiv();
+root.style.padding = "20px";
 document.body.appendChild(root);
 
 const h1start = document.createElement('h2');

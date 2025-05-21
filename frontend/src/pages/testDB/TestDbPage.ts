@@ -1,11 +1,11 @@
 import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, ref, VBox } from "typecomposer";
-import { DataBase, WebSocketSyncAdapter } from "indexed-db-adapter";
+//import { DataBase, WebSocketSyncAdapter } from "indexed-db-adapter";
 import { TestComponent } from "./tesAp";
 //import { DataBase, TableStore } from "./db/DataBase";
 //import { WebSocketSyncAdapter } from "./db/adapter";
 
 
-const db = new DataBase("testDB", { syncAdapter: WebSocketSyncAdapter, version: 1 });
+//const db = new DataBase("testDB", { syncAdapter: WebSocketSyncAdapter, version: 1 });
 
 //class UserTable extends TableStore {
 
