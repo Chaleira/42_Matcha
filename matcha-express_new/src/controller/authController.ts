@@ -27,9 +27,22 @@ export const authController = {
 	async verifyEmail(req: Request, res: Response): Promise<void | any> {
 		const { token } = req.query;
 
-		if (!token) throw new ValidationError("Token is required");
-
 		const response = await authService.verifyEmail(token as string);
 		res.status(200).json(response);
 	},
+
+	async resetPassword(req: Request, res: Response): Promise<void | any> {
+		const { email } = req.query;
+
+		const response = await authService.resetPassword(email as string);
+		res.status(200).json(response);
+	},
+
+	async verifyResetPassword(req: Request, res: Response): Promise<void | any> {
+		const { token } = req.query;
+		const { password } = req.body;
+		const response = await authService.verifyResetPassword(token as string, password);
+		res.status(200).json(response);
+	}
+
 };

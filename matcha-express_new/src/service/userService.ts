@@ -6,8 +6,8 @@ import { userModel, IUser } from "../model/userModel";
 import { Condition, ConditionOperator } from "../database/sqlHelper";
 import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
-import { get } from "http";
-
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 export interface UserSearchFilters {
 	currentUserId: number;
 	age_min?: number;
@@ -33,6 +33,16 @@ export const userService = {
 			await profileModel.create({ user_id: createdUser.id });
 
 			return createdUser;
+		} catch (error: any) {
+			throw mapDbError.user(error);
+		}
+	},
+
+	async getUserByEmail(email: string): Promise<IUser | null> {
+		try {
+			const user = await userModel.findByEmail(email);
+			if (!user) throw new NotFoundError("User not found");
+			return user;
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}

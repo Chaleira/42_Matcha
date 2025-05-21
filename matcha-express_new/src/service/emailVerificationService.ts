@@ -56,7 +56,7 @@ export const emailVerificationService = {
 		}
 	},
 
-	async sendVerificationEmail(email: string, token: string): Promise<void> {
+	async sendVerificationEmail(email: string, token: string, emailVars: {text: string, subject: string, url: string}): Promise<void> {
 		try {
 			const transporter = nodemailer.createTransport({
 				service: "gmail", // or use a real SMTP service like Mailgun/SendGrid
@@ -69,8 +69,8 @@ export const emailVerificationService = {
 			await transporter.sendMail({
 				from: '"Your App" <noreply@yourapp.com>',
 				to: email,
-				subject: "Verify your email",
-				html: `<p>Click <a href="http://${URL_FRONTEND}/verify-email?token=${token}">here</a> to verify your email.</p>`,
+				subject: emailVars.subject,
+				html: `<p>Click <a href="http://${URL_FRONTEND}/${emailVars.url}?token=${token}">here</a>${emailVars.text}</p>`,
 			});
 		} catch (error: any) {
 			throw mapDbError.emailVerification(error);
