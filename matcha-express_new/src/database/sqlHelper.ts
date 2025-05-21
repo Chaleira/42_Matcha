@@ -1,30 +1,56 @@
-export type ConditionOperator = "=" | ">" | "<" | ">=" | "<=" | "!=" | "ILIKE" | "IN" | "&&";
+export type ConditionOperator = "" | "=" | ">" | "<" | ">=" | "<=" | "!=" | "ILIKE" | "IN" | "&&" | "IS NOT NULL";
 
 export interface Condition {
-	column: string;
-	operator: ConditionOperator;
+	column?: string;
+	operator?: ConditionOperator;
 	value: any;
 }
 
-export function selectWhereFlexible(table: string, conditions: Condition[], currentUserId?: number) {
+export function selectWhereFlexible(table: string, conditions: Condition[], user: {id: number, latitude: number, longitude: number, tags?: string[]}, orderBy?: string) {
 	const values: any[] = [];
 	const whereClauses = conditions.map((cond, i) => {
-		const placeholder = `$${i + 1}`;
+		const placeholder = `$${values.length + 1}`;
+		let clause = "";
+
+		if (!cond.column) {
+			values.push(cond.value);
+			return;
+		}
+		if (cond.operator === "IN" && Array.isArray(cond.value)) clause = `${cond.column} = ANY(${placeholder}::text[])`;
+		else if (cond.operator === "IS NOT NULL") return `${cond.column} ${cond.operator}`;
+		else clause = `${cond.column} ${cond.operator} ${placeholder}`;
 		values.push(cond.value);
-		return `${cond.column} ${cond.operator} ${placeholder}`;
+		return clause;
 	});
 
-	let text = `SELECT * FROM ${table}`;
+	let selectFields = [`${table}.*`];
+	selectFields.push(`6371 * acos(LEAST(GREATEST(
+						cos(radians(${user.latitude})) * cos(radians(profiles.latitude)) *
+						cos(radians(profiles.longitude) - radians(${user.longitude})) +
+						sin(radians(${user.latitude})) * sin(radians(profiles.latitude))
+						, -1), 1)) AS distance`);
 
-	if (conditions.length > 0 || currentUserId !== undefined) text += " WHERE ";
+	selectFields.push(`cardinality(ARRAY(
+			SELECT UNNEST(profiles.tags)
+			INTERSECT SELECT UNNEST($${values.length + 2}::text[])
+		)) AS shared_tags`);
+	let text = `SELECT ${selectFields.join(", ")} FROM ${table}`;
+	text += " JOIN users ON users.id = profiles.user_id";
 
+	if (conditions.length > 0 || user.id !== undefined) text += " WHERE ";
 	if (conditions.length > 0) text += whereClauses.join(" AND ");
-
-	if (currentUserId !== undefined) {
+	if (user.id !== undefined) {
 		if (conditions.length > 0) text += " AND ";
 		text += `user_id NOT IN (SELECT blocker_id FROM blocks WHERE blocked_id = $${values.length + 1})`;
-		values.push(currentUserId);
+		values.push(user.id);
 	}
+	if (orderBy === "distance")
+		text += ` ORDER BY ${orderBy} ASC, shared_tags DESC, fame_score DESC`;
+	else if (orderBy === "shared_tags")
+		text += ` ORDER BY ${orderBy} DESC, distance ASC, fame_score DESC`;
+	else if (orderBy === "fame_score")
+		text += ` ORDER BY ${orderBy} DESC, distance ASC, shared_tags DESC`;
+	else text += ` ORDER BY distance ASC, shared_tags DESC, fame_score DESC`;
 
 	return { text, values };
 }

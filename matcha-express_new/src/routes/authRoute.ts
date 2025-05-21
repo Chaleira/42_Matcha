@@ -12,6 +12,8 @@ const router = Router();
 router.post("/register", validateQueryParams(null), validateBodyParams(allowedRegisterParams, requiredRegisterParams), catchAsync(authController.register));
 router.post("/login", validateQueryParams(null), validateBodyParams(allowedLoginParams, allowedLoginParams), catchAsync(authController.login));
 
-router.get("/verify-email", validateQueryParams(["token"]), validateBodyParams(null), catchAsync(authController.verifyEmail));
+router.get("/verify-email", validateQueryParams(["token"], ["token"]), validateBodyParams(null), catchAsync(authController.verifyEmail));
+router.get("/send-reset-password-email", validateQueryParams(["email"], ["email"]), validateBodyParams(null), catchAsync(authController.resetPassword));
+router.post("/reset-password", validateQueryParams(["token"], ["token"]), validateBodyParams(["password"], ["password"]), catchAsync(authController.verifyResetPassword));
 
 export default router;

@@ -18,11 +18,11 @@ export interface IProfile {
 	like?: {
 		i_liked: boolean;
 		he_liked: boolean;
-	},
+	};
 	block?: {
 		i_blocked: boolean;
 		he_blocked: boolean;
-	},
+	};
 	created_at?: Date;
 }
 
@@ -49,9 +49,12 @@ export const profileModel = {
 		await db.query(text, values);
 	},
 
-	async listWithFilter(conditions: Condition[], reqUserId: number): Promise<IProfile[] | null> {
-		const { text, values } = selectWhereFlexible("profiles", conditions, reqUserId);
+	async listWithFilter(conditions: Condition[], user: { id: number; latitude: number; longitude: number; tags: string[] }, orderBy: string | undefined): Promise<IProfile[] | null> {
+		const { text, values } = selectWhereFlexible("profiles", conditions, user, orderBy);
+		values.push(user.tags);
+		console.log("SQL Query:", text);
+		console.log("SQL Values:", values);
 		const result = await db.query(text, values);
 		return result.rows.length > 0 ? result.rows : null;
-	  },
+	},
 };
