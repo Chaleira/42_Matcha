@@ -50,6 +50,8 @@ export function selectWhereFlexible(table: string, conditions: Condition[], user
 		text += ` ORDER BY ${orderBy} DESC, distance ASC, fame_score DESC`;
 	else if (orderBy === "fame_score")
 		text += ` ORDER BY ${orderBy} DESC, distance ASC, shared_tags DESC`;
+	else if (orderBy === "age")
+		text += ` ORDER BY ${orderBy} ASC, distance ASC, shared_tags DESC, fame_score DESC`;
 	else text += ` ORDER BY distance ASC, shared_tags DESC, fame_score DESC`;
 
 	return { text, values };
