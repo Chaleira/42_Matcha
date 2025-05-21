@@ -66,12 +66,16 @@ export function insertQuery<T extends Record<string, any>>(table: string, data: 
 	return { text, values };
 }
 
-export function selectWhere<T extends Record<string, any>>(table: string, conditions: T) {
+export function selectWhere<T extends Record<string, any>>(table: string, conditions: T, orderBy?: string) {
+	const orderByClause = orderBy
+		? `ORDER BY ${orderBy}`
+		: "";
 	const keys = Object.keys(conditions);
 	const values = Object.values(conditions);
 	const whereClause = keys.map((k, i) => `${k} = $${i + 1}`).join(" AND ");
 
-	const text = keys.length > 0 ? `SELECT * FROM ${table} WHERE ${whereClause}` : `SELECT * FROM ${table}`;
+	let text = keys.length > 0 ? `SELECT * FROM ${table} WHERE ${whereClause}` : `SELECT * FROM ${table}`;
+	text += ` ${orderByClause}`;
 	return { text, values };
 }
 

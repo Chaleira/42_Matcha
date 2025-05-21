@@ -19,7 +19,7 @@ export const notificationModel = {
 	},
 
 	async findByUserId(user_id: number): Promise<INotification[]> {
-		const { text, values } = selectWhere("notifications", { user_id });
+		const { text, values } = selectWhere("notifications", { user_id }, "created_at DESC");
 		const result = await db.query(text, values);
 		if (result.rows.length === 0) return [];
 		return result.rows;
