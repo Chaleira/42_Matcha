@@ -157,7 +157,8 @@ export const userService = {
 				const like = await likeService.getLike(filters.currentUserId, profile.user_id);
 				profile.like = like;
 				const block = await blockService.getBlock(filters.currentUserId, profile.user_id);
-				profile.block = block;
+				if (block.i_blocked || block.he_blocked)
+					profiles?.splice(profiles.indexOf(profile), 1);
 			};
 			console.log("Profiles found:", profiles);
 			return profiles;
