@@ -9,16 +9,25 @@ import { AlbumContainer } from "@/components/AlbumContainer";
 
 export class ProfileView extends BorderPanel {
 
+    id: string = "";
 
 
     constructor() {
         super({ className: "profile-view" });
-        this.update();
+        //this.update();
+        this.onEvent("router:watch", () => this.update());
         //this.append(this.fullScreen);
 
     }
 
     async update() {
+        if (Router.props.id == this.id) {
+            return;
+        }
+        this.id = Router.props.id;
+        this.top.innerHTML = "";
+        this.center.innerHTML = "";
+        this.center.style.maxHeight = "80vh";
         const user: IUser = await Api.User.profile(Router.props.id);
         console.log("get:user", user);
         if (!user) {
@@ -31,9 +40,9 @@ export class ProfileView extends BorderPanel {
         myUser.value.pictures.value = user?.pictures || [];
 
         const isMyUser = user.user_id == userStore.value.user_id
-
-        const avatar = new propertyItem("", isMyUser ? new AvatarPanel({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "10px", marginRight: "30px", borderRadius: "50px", cursor: "pointer" })
-            : new ImageElement({ className: "avatar-profile", src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", width: "min-content", maxHeight: "150px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(user.avatar?.toString() || "") }));
+        // @ts-ignore
+        const avatar = new propertyItem("", isMyUser ? new AvatarPanel({ className: "avatar-profile", srcOut: myUser.value.avatar, src: myUser.value.avatar.valueOf() || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "150px", maxWidth: "150px", margin: "10px", marginRight: "30px", borderRadius: "50px", cursor: "pointer" })
+            : new ImageElement({ className: "avatar-profile", src: myUser.value.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", width: "min-content", maxHeight: "150px", margin: "20px", marginRight: "30px", borderRadius: "50px", onclick: () => this.openFullScreen(user.avatar?.toString() || "") }));
         const usernameUpdateButton = new DivElement({
             className: "username-update-button",
             flexDirection: !isMyUser ? "column" : "row",
@@ -42,7 +51,17 @@ export class ProfileView extends BorderPanel {
                     new ButtonElement({
                         className: "profile-button"
                         , text: "Update Profile", onclick: async () => {
-                            Api.User.update(myUser.toJSON()).then(() => {
+                            const data = myUser.toJSON() as IUser;
+                            for (const key in data) {
+                                // @ts-ignore
+                                if (data[key] == undefined || data[key] == null || data[key] == "" || data[key] == myUser.value[key].value) {
+                                    // @ts-ignore
+                                    delete data[key];
+                                }
+                            }
+                            data.tags = Array.from(new Set(myUser.value.tags.value)) as string[];
+                            console.log("myUser.value", data);
+                            Api.User.update(data).then(() => {
                                 AlertPanel.info("Profile updated");
                             })
                         }
@@ -61,15 +80,20 @@ export class ProfileView extends BorderPanel {
             children: [avatar, usernameUpdateButton]
         }));
 
-        const userInfo = new VBox({ overflow: "auto", margin: "20px" });
+        const userInfo = new VBox({ overflow: "auto", margin: "10px" });
         userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ value: user.first_name + " " + user.last_name, variant: "underlined" }) : user.first_name + " " + user.last_name));
         if (isMyUser) {
             userInfo.append(new propertyItem("Email: ", new TextField({ value: myUser.value.email, variant: "underlined" })));
-
+            userInfo.append(new propertyItem("Latitude: ", new TextField({ value: myUser.value.latitude, variant: "underlined" })));
+            userInfo.append(new propertyItem("Longitude: ", new TextField({ value: myUser.value.longitude, variant: "underlined" })));
         }
         else {
-            if (true || user.like?.he_liked == true)
-                userInfo.append(new propertyItem("Like: ", "👍"));
+            if (user.like.he_liked == true) {
+                if (user.like.i_liked.value)
+                    userInfo.append(new propertyItem("Match:", "❤️"));
+                else
+                    userInfo.append(new propertyItem("Like:", "👍"));
+            }
             userInfo.append(new propertyItem("Fame Score: ", user.fame_score?.toString() || "1"));
         }
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
@@ -84,7 +108,6 @@ export class ProfileView extends BorderPanel {
             // width: "48%",
             variant: "underlined"
         }) : user.sexual_preference));
-        //const formattedDate = new Date(user.dateBirth).toLocaleDateString("en-GB");
         userInfo.append(new propertyItem("Age: ", user.age.toString()));
         const hbox = new HBox({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
@@ -99,7 +122,7 @@ export class ProfileView extends BorderPanel {
         const album = new HBox({ gap: "20px", width: "100%", marginTop: "0" });
         user.pictures?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: (e) => this.openFullScreen(image) })));
         userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "15px", maxHeight: "200px", width: "100%", user: myUser }) : album));
-        const div = new DivElement({ maxHeight: "85%", padding: "5px", margin: "20px", backgroundColor: "#808080b2", borderRadius: "20px", backgroundBlendMode: "darken", marginTop: "0px", children: [userInfo], overflow: "auto" });
+        const div = new DivElement({ maxHeight: "85%", padding: "5px", margin: "10px", backgroundColor: "#808080b2", borderRadius: "20px", backgroundBlendMode: "darken", marginTop: "0px", children: [userInfo], overflow: "auto" });
         this.center.append(div);
     }
 
