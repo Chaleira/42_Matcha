@@ -16,7 +16,7 @@ class UserView extends Component {
 		vbox.append(new SpanElement({ text: user.email }));
 		const div = vbox.appendChild(new DivElement({ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", marginTop: "5px" }));
 		div.append(new SpanElement({ text: "Fame Score: " + user.fame_score?.toString() || "1", fontSize: "16px", fontWeight: "bold" }));
-		if (true || user.like?.he_liked == true)
+		if (user.like.he_liked == true)
 			div.append(new SpanElement({ text: "Like: 👍", fontSize: "16px", fontWeight: "bold" }));
 		const hbox = new HBox({ gap: "5px" });
 		TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
@@ -29,7 +29,7 @@ class UserView extends Component {
 export default class HomeView extends Component {
 
 	private grid = new GridPanel({ className: "grid-users", gap: "10px", padding: "10px", width: "100%", columns: "repeat(4, auto)", marginBottom: "50px" });
-	params = ref<IUser[]>([], "params");
+	private params = ref<IUser[]>([], "params");
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });
