@@ -152,8 +152,15 @@ export const userService = {
 			const conditions: Condition[] = getBaseConditions();
 			conditions.push(...getMatchConditions({ gender: user?.gender, preference: user?.sexual_preference }));
 			conditions.push(...getFiltersConditions(filters));
-
-			return await profileModel.listWithFilter(conditions, { id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! }, filters.order_by);
+			const profiles = await profileModel.listWithFilter(conditions, { id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! }, filters.order_by);
+			for (const profile of profiles ? profiles : []) {
+				const like = await likeService.getLike(filters.currentUserId, profile.user_id);
+				profile.like = like;
+				const block = await blockService.getBlock(filters.currentUserId, profile.user_id);
+				profile.block = block;
+			};
+			console.log("Profiles found:", profiles);
+			return profiles;
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}

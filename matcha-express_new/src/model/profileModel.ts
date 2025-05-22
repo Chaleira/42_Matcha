@@ -23,6 +23,8 @@ export interface IProfile {
 		i_blocked: boolean;
 		he_blocked: boolean;
 	};
+	distance?: number;
+	shared_tags?: number;
 	created_at?: Date;
 	email?: string;
 }
