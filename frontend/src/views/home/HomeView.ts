@@ -8,12 +8,16 @@ import { FilterUsers } from "@/components/FilterUsers.ts";
 class UserView extends Component {
 
 	constructor(user: IUser) {
-		super({ backgroundColor: "white", borderRadius: "5px", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "350px", minHeight: "350px", maxHeight: "350px", padding: "10px", overflow: "hidden" });
+		super({ backgroundColor: "white", borderRadius: "5px", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "350px", minHeight: "350px", padding: "10px", overflow: "hidden" });
 		const vbox = new VBox({ gap: "5px", padding: "5px", width: "100%" });
 		const avatar = new ImageElement({ src: user.avatar || "/assets/image/istockphoto-1337144146-612x612.jpg", maxHeight: "220px" });
 		vbox.append(avatar);
 		vbox.append(new SpanElement({ text: `${user.first_name} ${user.last_name}`, fontSize: "20px", fontWeight: "bold" }));
 		vbox.append(new SpanElement({ text: user.email }));
+		const div = vbox.appendChild(new DivElement({ display: "flex", flexDirection: "row", justifyContent: "space-between", width: "100%", marginTop: "5px" }));
+		div.append(new SpanElement({ text: "Fame Score: " + user.fame_score?.toString() || "1", fontSize: "16px", fontWeight: "bold" }));
+		if (true || user.like?.he_liked == true)
+			div.append(new SpanElement({ text: "Like: 👍", fontSize: "16px", fontWeight: "bold" }));
 		const hbox = new HBox({ gap: "5px" });
 		TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
 		vbox.append(hbox);

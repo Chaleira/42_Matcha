@@ -9,12 +9,12 @@ import { AlbumContainer } from "@/components/AlbumContainer";
 
 export class ProfileView extends BorderPanel {
 
-    fullScreen = new DialogPanel({ className: "full-screen", zIndex: "10", backgroundColor: "#000000bf" })
+
 
     constructor() {
         super({ className: "profile-view" });
         this.update();
-        this.append(this.fullScreen);
+        //this.append(this.fullScreen);
 
     }
 
@@ -53,13 +53,12 @@ export class ProfileView extends BorderPanel {
                     onclick: async () => {
                         Api.User.sendResetPassword(myUser.value.email.toString());
                     }
-                }) : undefined
-            ]
+                }) : undefined,
+            ].filter((item) => item !== undefined)
         });
         this.top.append(new GridPanel({
-            position: "relative",
-            gridTemplateColumns: "auto 1fr",
-            width: "100%", children: [avatar, usernameUpdateButton]
+            className: "grid-user-info",
+            children: [avatar, usernameUpdateButton]
         }));
 
         const userInfo = new VBox({ overflow: "auto", margin: "20px" });
@@ -67,6 +66,11 @@ export class ProfileView extends BorderPanel {
         if (isMyUser) {
             userInfo.append(new propertyItem("Email: ", new TextField({ value: myUser.value.email, variant: "underlined" })));
 
+        }
+        else {
+            if (true || user.like?.he_liked == true)
+                userInfo.append(new propertyItem("Like: ", "👍"));
+            userInfo.append(new propertyItem("Fame Score: ", user.fame_score?.toString() || "1"));
         }
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
             options: ["male", "female", "develop"],
@@ -93,29 +97,22 @@ export class ProfileView extends BorderPanel {
         const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({ value: myUser.value.bio, width: "100%", height: "100%" }) : user.bio));
         bio.element1.style.marginBottom = 0;
         const album = new HBox({ gap: "20px", width: "100%", marginTop: "0" });
-        user.pictures?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: () => this.openFullScreen(image) })));
+        user.pictures?.forEach(image => album.append(new ImageElement({ src: image, maxHeight: "100px", maxWidth: "100px", onclick: (e) => this.openFullScreen(image) })));
         userInfo.appendChild(new propertyItem("", isMyUser ? new AlbumContainer({ marginTop: "15px", maxHeight: "200px", width: "100%", user: myUser }) : album));
         const div = new DivElement({ maxHeight: "85%", padding: "5px", margin: "20px", backgroundColor: "#808080b2", borderRadius: "20px", backgroundBlendMode: "darken", marginTop: "0px", children: [userInfo], overflow: "auto" });
         this.center.append(div);
     }
 
     openFullScreen(image: string) {
-        const img = new ImageElement({ src: image, maxWidth: "100%", maxHeight: "100" });
-        //this.fullScreen.content.append(img);
-        this.fullScreen.show();
-        this.fullScreen.onclick = () => this.closeFullScreen(img);
-        this.fullScreen.style.display = "flex";
-        //this.fullScreen.content.style["justify-content"] = "center";
-        //this.fullScreen.content.style.padding = "0";
-        //this.fullScreen.content.style.height = "";
-        //this.fullScreen.content.style.width = "";
-        //this.fullScreen.content.style.maxWidth = "60%";
-        //this.fullScreen.content.style.maxHeight = "60%";
+        const fullScreen = new DialogPanel({ className: "full-screen", zIndex: "10", backgroundColor: "#000000bf", show: "modal", root: "body" });
+        const img = new ImageElement({ src: image, maxWidth: "100%", maxHeight: "100%" });
+        fullScreen.onClose = () => {
+            fullScreen.remove();
+        }
+        img.onclick = () => fullScreen.close();
+        fullScreen.append(img);
+        fullScreen.onclick = () => fullScreen.close();
         console.log("clicked");
-    }
-
-    closeFullScreen(img: ImageElement) {
-        //this.fullScreen.content.removeChild(img);
     }
 }
 

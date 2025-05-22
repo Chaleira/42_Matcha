@@ -1,84 +1,51 @@
-import { ButtonElement, Component, computed, DivElement, ImageElement, ref, refString, Router } from "typecomposer";
+import { ButtonElement, Component, computed, DivElement, ImageElement, ref, refBoolean, refString, Router } from "typecomposer";
 import { Api } from "@/api/Api";
-import { userStore } from "@/store/UserStore";
 import { IUser } from "@/api/Interfaces";
 
 
 export class ActionButtons extends Component {
 
     private container: DivElement;
-    private liked: boolean;
-    private blocked: boolean;
-    private visible = ref(false);
+    private userRef: ref<IUser>;
 
     constructor(private user: IUser) {
         super({ className: "action-buttons-div" });
-        //this.liked = userStore.value.liked.find(e => e == this.user.user_id) != undefined;
-        this.liked = user.like.i_liked;
-        this.blocked = user.block.i_blocked;
-        this.visible.value = this.blocked
+        this.userRef = ref(user);
         this.container = new DivElement();
         this.createButtons([
-            { name: "message", color: "blue", image: "/assets/image/messenger.png", action: () => { this.msg() }, hidden: this.visible },
-            { name: "like", color: this.liked ? "red" : "green", image: "/assets/image/heart.png", action: (button: ButtonElement) => { this.like(button) }, hidden: this.visible },
-            { name: "block", color: this.blocked ? "blue" : "red", image: "/assets/image/block.png", action: (button: ButtonElement) => { this.block(button) } },
+            { name: "message", color: "blue", image: "/assets/image/messenger.png", action: () => { this.msg() }, hidden: computed(() => !(this.userRef.value.like.i_liked.value && this.userRef.value.like.he_liked.value), [this.userRef]) },
+            { name: "like", color: computed(() => this.userRef.value.like.i_liked.value ? "green" : "red", [this.userRef]), image: "/assets/image/heart.png", action: () => this.like(), hidden: computed(() => this.userRef.value.block.i_blocked.value == true, [this.userRef]) },
+            { name: "block", color: computed(() => this.userRef.value.block.i_blocked.value ? "red" : "blue", [this.userRef]), image: "/assets/image/block.png", action: () => this.block() },
             { name: "report", color: "#ffc72a", image: "/assets/image/report.png", action: () => { this.report() } }
         ]);
         this.append(this.container);
     }
 
-    async onInit() {
-        //const 
-    }
-
-    createButtons(actions: { name: string, color: string | refString; image: string; action: Function; hidden?: ref<boolean> }[]) {
+    createButtons(actions: { name: string, color: string | refString; image: string; action: Function; hidden?: ref<boolean> | refBoolean }[]) {
 
         for (const action of actions) {
             const button = new ButtonElement({ className: "action-button", backgroundColor: action.color, hidden: action.hidden || false });
-
-            button.onclick = () => { action.action(button) }
+            button.onclick = () => action.action(button);
             button.append(new ImageElement({ src: action.image }))
             this.container.append(button)
         }
     }
 
-    block(button: ButtonElement) {
+    block() {
         console.log("block: ", this.user.block);
-        if (!this.user.block.i_blocked)
+        if (!this.userRef.value.block.i_blocked.value)
             Api.User.createBlocks(this.user.user_id || "");
         else
             Api.User.deleteBlocks(this.user.user_id || "");
-        button.style.backgroundColor = button.style.backgroundColor == "red" ? "blue" : "red";
-        this.blocked = !this.blocked;
-        this.visible.value = this.blocked;
-        this.user.block.i_blocked = this.blocked;
-        //if (this.blocked)
-        //    userStore.value.blocked.push(this.user.user_id || "");
-        //else {
-        //    const index = userStore.value.blocked.indexOf(this.user.user_id || "");
-        //    if (index > -1)
-        //        userStore.value.blocked.splice(index, 1);
-        //}
-        console.log("this.blocked: " + userStore.toJSON());
-        console.log("this.visible: " + this.visible.value);
-        console.log("User Blocking ID: " + userStore.value.user_id + "(" + userStore.value.username + ")");
-        console.log("User Being Blocked ID: " + this.user.user_id + "(" + this.user.username + ")");
+        this.userRef.value.block.i_blocked.value = !this.userRef.value.block.i_blocked.value;
     }
 
-    like(button: ButtonElement) {
-        //Api.User.like({
-        //    userLikingId: userStore.value.user_id || "",
-        //    userBeingLikedId: this.user.user_id || ""
-        //});
-        if (!this.user.like.i_liked)
+    like() {
+        if (!this.userRef.value.like.i_liked.value)
             Api.User.createLike(this.user.user_id || "");
         else
             Api.User.deleteLike(this.user.user_id || "");
-        this.liked = !this.liked;
-        this.user.like.i_liked = this.liked;
-        button.style.backgroundColor = button.style.backgroundColor == "red" ? "green" : "red";
-        console.log("User Liking ID: " + userStore.value.user_id + "(" + userStore.value.username + ")");
-        console.log("User Being Liked ID: " + this.user.user_id + "(" + this.user.username + ")");
+        this.userRef.value.like.i_liked.value = !this.userRef.value.like.i_liked.value;
     }
 
     report() {
@@ -86,10 +53,7 @@ export class ActionButtons extends Component {
     }
 
     async msg() {
-        const a = await Api.Chat.create([userStore.value.user_id || "", this.user.user_id || ""]);
-        console.log(a);
-        if (a)
-            Router.go("/chat", { id: a });
+        Router.go("/chat");
 
     }
 }

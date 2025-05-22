@@ -243,7 +243,11 @@ list-element ul li {
   height: 50px;
 }
 
-
+.grid-user-info {
+  position: relative;
+  width: 100%;
+  grid-template-columns: auto 1fr;
+}
 
 @media (max-width: 768px) {
 
@@ -396,7 +400,13 @@ list-element ul li {
     }
 
   }
+
+  .grid-user-info {
+    grid-template-columns: none !important;
+  }
 }
+
+
 
 .message-input {
   width: -webkit-fill-available;
@@ -442,4 +452,12 @@ list-element ul li {
   border: solid #4f46e5;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.full-screen {
+  position: absolute;
+  height: 100vh !important;
+  width: 100vw !important;
+  align-items: center;
+  justify-content: center;
 }
