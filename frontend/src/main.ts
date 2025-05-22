@@ -1,151 +1,185 @@
-import { Component, computed, ref } from 'typecomposer';
-import './style.scss'
+//import { Component, computed, ref } from 'typecomposer';
+//import './style.scss'
 
-import { Buffer } from 'buffer'
-(window as any).Buffer = Buffer
+import { Router } from "typecomposer";
 
-//import process from 'process'
-//(window as any).process = process
+//import { Buffer } from 'buffer'
+//(window as any).Buffer = Buffer
 
-//import { HomeView } from './views/home/HomeView'
+////import process from 'process'
+////(window as any).process = process
+
+////import { HomeView } from './views/home/HomeView'
 
 
 
-//function main(t: ComponentType | AsyncComponentLoader) {
+////function main(t: ComponentType | AsyncComponentLoader) {
 
-//	if (t instanceof Function && t.prototype instanceof Element) {
-//		console.log("component: ", t);
+////	if (t instanceof Function && t.prototype instanceof Element) {
+////		console.log("component: ", t);
 
+////	}
+////	else
+////		console.log("function: ", t);
+
+
+////	//}
+////}
+
+////main(() => import('./views/home/HomeView.ts'));
+////main(HTMLElement);
+
+//class FragmentBase extends Component {
+
+
+//	onConnected(): void {
+//		//console.log("connected: ", this);
 //	}
-//	else
-//		console.log("function: ", t);
 
-
-//	//}
+//	static create(f: () => HTMLElement[]): FragmentBase {
+//		const frag: FragmentBase = new FragmentBase();
+//		frag.append(...(f() || []));
+//		frag.isConnected
+//		return frag
+//	}
 //}
 
-//main(() => import('./views/home/HomeView.ts'));
-//main(HTMLElement);
-
-class FragmentBase extends Component {
-
-
-	onConnected(): void {
-		console.log("connected: ", this);
-	}
-
-	static create(f: () => HTMLElement[]): FragmentBase {
-		const frag: FragmentBase = new FragmentBase();
-		frag.append(...(f() || []));
-		frag.isConnected
-		return frag
-	}
-}
-
-function margin() {
-	const div = document.createElement('div');
-	div.style.margin = "0 auto";
-	div.style.width = "100%";
-	div.style.height = "100%";
-	return div;
-}
+//function margin() {
+//	const div = document.createElement('div');
+//	div.style.margin = "0 auto";
+//	div.style.width = "100%";
+//	div.style.height = "100%";
+//	return div;
+//}
 
 
-document.body.innerHTML = "";
+//document.body.innerHTML = "";
 
-class MyDiv extends Component {
+//class MyDiv extends Component {
 
-	constructor() {
-		super();
-		this.append(new FragmentBase());
-	}
+//	constructor() {
+//		super();
+//		this.append(new FragmentBase());
+//	}
 
-	onConnected(): void {
-		console.log("connected: ", this);
-	}
+//	onConnected(): void {
+//		//console.log("connected: ", this);
+//	}
 
-	append(...nodes: (Node | string | ref<Node> | ref<Node[]>)[]): void {
-		console.log("append: ", nodes);
-		for (const node of nodes) {
-			if (node instanceof Node) {
-				this.appendChild(node);
-			}
-			else if (node instanceof ref) {
-				if (Array.isArray(node.value)) {
-					for (const n of node.value) {
-						this.appendChild(n);
-					}
-				}
-				else {
-					// @ts-ignore
-					this.appendChild(node.value);
-				}
-			}
-			else if (typeof node === "string") {
-				this.appendChild(document.createTextNode(node));
-			}
-		}
-	}
-
-
-}
+//	append(...nodes: (Node | string | ref<Node> | ref<Node[]>)[]): void {
+//		//console.log("append: ", nodes);
+//		for (const node of nodes) {
+//			if (node instanceof Node) {
+//				this.appendChild(node);
+//			}
+//			else if (node instanceof ref) {
+//				if (Array.isArray(node.value)) {
+//					for (const n of node.value) {
+//						this.appendChild(n);
+//					}
+//				}
+//				else {
+//					// @ts-ignore
+//					this.appendChild(node.value);
+//				}
+//			}
+//			else if (typeof node === "string") {
+//				this.appendChild(document.createTextNode(node));
+//			}
+//		}
+//	}
 
 
-const root = new MyDiv();
-root.style.padding = "20px";
-document.body.appendChild(root);
-
-const h1start = document.createElement('h2');
-h1start.style.color = "yellow";
-h1start.innerText = "start";
-root.appendChild(h1start);
+//}
 
 
-const g = ref({ p: 10 });
+//const root = new MyDiv();
+//root.style.padding = "20px";
+//document.body.appendChild(root);
+
+//const h1start = document.createElement('h2');
+//h1start.style.color = "yellow";
+//h1start.innerText = "start";
+//root.appendChild(h1start);
 
 
-root.append(computed(() => {
-	const items: Node[] = []
-	for (let i = 1; i <= g.value.p.value; i++) {
-		const ha = document.createElement('h2');
-		ha.style.color = "red";
-		ha.innerText = "H" + i;
-		items.push(ha);
-	}
-	return items;
-}))
+//const g = ref({ p: 10 });
 
 
-const h1end = document.createElement('h2');
-h1end.style.color = "yellow";
-h1end.innerText = "end";
-root.appendChild(h1end);
+//root.append(computed(() => {
+//	const items: Node[] = []
+//	for (let i = 1; i <= g.value.p.value; i++) {
+//		const ha = document.createElement('h2');
+//		ha.style.color = "red";
+//		ha.innerText = "H" + i;
+//		items.push(ha);
+//	}
+//	return items;
+//}))
 
 
-//const f = new DocumentFragment();
+//const h1end = document.createElement('h2');
+//h1end.style.color = "yellow";
+//h1end.innerText = "end";
+//root.appendChild(h1end);
 
 
-//const template = document.createElement('template');
-//const p = document.createElement('p');
-//p.innerText = "Hello World!";
-//template.appendChild(p);
+////const f = new DocumentFragment();
 
-//// Após isso:
-const btn = document.createElement('button');
-btn.innerText = "Click me!";
-btn.onclick = () => {
-	//const h1 = document.createElement('h1');
-	//h1.innerText = "Hello World! " + Math.random();
-	//template.appendChild(h1);
-};
 
-root.appendChild(btn);
+////const template = document.createElement('template');
+////const p = document.createElement('p');
+////p.innerText = "Hello World!";
+////template.appendChild(p);
 
-//div.appendChild(btn);
 
-//div.appendChild(template);
-//const content = template.content.cloneNode(true);
-//div.appendChild(content);
+//interface UserTest {
+//	name: string;
+//	id: number;
+//	n: string;
+//	n2?: number;
+//	l: string[];
+//}
 
-//// Agora: frag não tem mais filhos
-//console.log(template.childNodes.length); // 0
+//const dataTest = {
+//	name: "test",
+//	id: 1,
+//	n: "test1",
+//	n2: 3,
+//	l: ["sdasda", "b", "c"]
+//}
+
+//const dataTest2 = {
+//	name: "test",
+//	id: 12,
+//	n: "test2",
+//	n2: 32,
+//	l: ["asasas", "b", "c"]
+//}
+
+//const userTest = ref<UserTest>(dataTest);
+
+//userTest.value.l.subscribe((value) => {
+//	console.log("name: ", value);
+//});
+
+////// Após isso:
+//const btn = document.createElement('button');
+//btn.innerText = "Click me!";
+//btn.onclick = () => {
+//	userTest.value.l.remove(0);
+//	//userTest.value.l.value = 
+//	console.log("userTest: ", userTest.value.l.valueOf());
+//	//console.log("deepCopy: ", deepCopy(dataTest));
+//};
+
+//root.appendChild(btn);
+
+////div.appendChild(btn);
+
+////div.appendChild(template);
+////const content = template.content.cloneNode(true);
+////div.appendChild(content);
+
+////// Agora: frag não tem mais filhos
+////console.log(template.childNodes.length); // 0

@@ -1,4 +1,4 @@
-import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, ref, VBox } from "typecomposer";
+import { AnchorElement, ButtonElement, CardPanel, Component, DivElement, ref, Router, VBox } from "typecomposer";
 //import { DataBase, WebSocketSyncAdapter } from "indexed-db-adapter";
 import { TestComponent } from "./tesAp";
 //import { DataBase, TableStore } from "./db/DataBase";
@@ -33,6 +33,31 @@ import { TestComponent } from "./tesAp";
 //});
 
 
+
+interface ComponentEvent extends Event { }
+
+
+interface RouterEvent extends ComponentEvent {
+	payload: Error,
+	url: string,
+}
+
+interface ComponentEventMap {
+	'router:beforeLeave': RouterEvent,
+	'router:beforeEnter': RouterEvent,
+	'router:beforeUpdate': RouterEvent,
+	'router:watch': RouterEvent,
+};
+
+function test<T extends string>(type: T | keyof ComponentEventMap) {
+	console.log("test:", type);
+	return type;
+}
+
+test("");   // autocomplete disponível
+test("dsd");
+
+
 export class TestDbPage extends Component {
 
 	test = ref({
@@ -43,6 +68,7 @@ export class TestDbPage extends Component {
 
 	constructor() {
 		super();
+		console.log("test: ", Router.props);
 		this.append(new DivElement({ className: "background" }));
 		const card = new CardPanel({ width: "400px", zIndex: "2" });
 		const vbox = new VBox({ padding: "10px", gap: "15px" });
@@ -57,13 +83,17 @@ export class TestDbPage extends Component {
 		vbox.append(div);
 		card.append(vbox);
 		this.append(card);
+		this.onEvent("router:watch", (e: { url: string }) => {
+			console.log("router:watch: ", e);
+		});
 	}
 
 	count = 2;
 
 	private async login() {
-		this.test.value.n.value = "";
-		console.log("test: ", this.test.toJSON());
+		//this.test.value.n.value = "";
+		//console.log("test: ", this.test.toJSON());
+		Router.go("test");
 		//const user: UserTable = new UserTable(this.count, "test_" + this.count);
 
 		//await user.save();
@@ -75,7 +105,10 @@ export class TestDbPage extends Component {
 
 	}
 
+
 	private async get() {
+		Router.go("test", { id: 1 });
+
 		//// @ts-ignore
 		//const user: UserTable = await UserTable.get(2);
 		//console.log("user:get: ", user);
