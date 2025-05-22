@@ -99,6 +99,7 @@ export const userService = {
 			const block = await blockService.getBlock(myId, userId);
 			userProfile.block = block;
 			const user = await profileModel.findByUserId(myId);
+			await this.updateUserProfile(userId, { fame_score: userProfile.fame_score! + 1 > 100 ? 100 : userProfile.fame_score! + 1 });
 			await notificationService.createNotification(userId, myId, "visit", `${user?.first_name} ${user?.last_name} visited your profile`);
 			return userProfile;
 		} catch (error: any) {
@@ -153,13 +154,15 @@ export const userService = {
 			conditions.push(...getMatchConditions({ gender: user?.gender, preference: user?.sexual_preference }));
 			conditions.push(...getFiltersConditions(filters));
 			const profiles = await profileModel.listWithFilter(conditions, { id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! }, filters.order_by);
+			console.log("Profiles found after:", profiles);
 			for (const profile of profiles ? profiles : []) {
 				const like = await likeService.getLike(filters.currentUserId, profile.user_id);
 				profile.like = like;
 				const block = await blockService.getBlock(filters.currentUserId, profile.user_id);
-				profile.block = block;
+				if (block.i_blocked || block.he_blocked)
+					profiles?.splice(profiles.indexOf(profile), 1);
 			};
-			console.log("Profiles found:", profiles);
+			console.log("Profiles found after:", profiles);
 			return profiles;
 		} catch (error: any) {
 			throw mapDbError.user(error);

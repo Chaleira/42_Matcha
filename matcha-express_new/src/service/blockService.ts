@@ -10,6 +10,8 @@ export const blockService = {
 			const existingLike = await likeService.findByLikerAndLiked(blockerId, blockedId);
 			if (existingLike) await likeService.deleteLike(blockerId, blockedId);
 			const block = await blockModel.create({ blocker_id: blockerId, blocked_id: blockedId });
+			const blockedProfile = await userService.getUserProfile(blockedId, blockedId);
+			await userService.updateUserProfile(blockedId, { fame_score: blockedProfile!.fame_score! - 20 < 1 ? 1 : blockedProfile!.fame_score! - 20 });
 			return block;
 		} catch (error: any) {
 			throw mapDbError.block(error);
@@ -64,6 +66,8 @@ export const blockService = {
 			const block = await blockModel.findByBlockerAndBlocked(blockerId, blockedId);
 			if (!block) throw new NotFoundError("Block not found");
 			await blockModel.delete(blockerId, blockedId);
+			const blockedProfile = await userService.getUserProfile(blockedId, blockedId);
+			await userService.updateUserProfile(blockedId, { fame_score: blockedProfile!.fame_score! + 20 > 100 ? 100 : blockedProfile!.fame_score! + 20 });
 		} catch (error: any) {
 			throw mapDbError.block(error);
 		}

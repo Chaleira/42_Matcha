@@ -22,6 +22,9 @@ export const chatService = {
 			await notificationService.createNotification(otherUserId, sender_id, "message",
 				`${sender?.first_name} ${sender?.last_name}:
 				${message}`);
+			const receiver = await this.getOtherUserId(chat_id, sender_id);
+			const receiverProfile = await userService.getUserProfile(receiver, receiver);
+			await userService.updateUserProfile(receiver, { fame_score: receiverProfile!.fame_score! + 1 > 100 ? 100 : receiverProfile!.fame_score! + 1 });
 			return await chatModel.createMessage(chat_id, sender_id, message);
 		} catch (error: any) {
 			throw mapDbError.chat(error);
