@@ -10,8 +10,10 @@ export const matchService = {
 		try {
 			const match = await matchModel.create(user1Id, user2Id);
 			await chatService.createChat(user1Id, user2Id);
-			const user1 = await userService.getUserById(user1Id);
-			const user2 = await userService.getUserById(user2Id);
+			const user1 = await userService.getUserProfile(user1Id, user1Id);
+			const user2 = await userService.getUserProfile(user2Id, user2Id);
+			await userService.updateUserProfile(user1Id, { fame_score: user1!.fame_score! + 10 > 100 ? 100 : user1!.fame_score! + 10 });
+			await userService.updateUserProfile(user2Id, { fame_score: user2!.fame_score! + 10 > 100 ? 100 : user2!.fame_score! + 10 });
 			await notificationService.createNotification(user1Id, user2Id, "match", "You have a new match with " + user2?.first_name + " " + user2?.last_name + "!");
 			await notificationService.createNotification(user2Id, user1Id, "match", "You have a new match with " + user1?.first_name + " " + user1?.last_name + "!");
 			return match;
@@ -23,6 +25,10 @@ export const matchService = {
 		try {
 			const match = await matchModel.getMatch(user1Id, user2Id);
 			if (!match) throw new NotFoundError("Match not found");
+			const user1 = await userService.getUserProfile(user1Id, user1Id);
+			const user2 = await userService.getUserProfile(user2Id, user2Id);
+			await userService.updateUserProfile(user1Id, { fame_score: user1!.fame_score! - 10 < 1 ? 1 : user1!.fame_score! - 10 });
+			await userService.updateUserProfile(user2Id, { fame_score: user2!.fame_score! - 10 < 1 ? 1 : user2!.fame_score! - 10 });
 			const chat = await chatService.getChatByUsers(user1Id, user2Id);
 			await chatService.deleteChat(chat.id!, user1Id);
 			await matchModel.delete(user1Id, user2Id);

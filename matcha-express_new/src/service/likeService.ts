@@ -19,6 +19,8 @@ export const likeService = {
 
 			const checkMatch = await likeModel.findByLikerAndLiked(likedId, likerId);
 			if (checkMatch) await matchService.createMatch(likerId, likedId);
+			const likedProfile = await userService.getUserProfile(likedId, likedId);
+			await userService.updateUserProfile(likedId, { fame_score: likedProfile!.fame_score! + 5 > 100 ? 100 : likedProfile!.fame_score! + 5 });
 			await notificationService.createNotification(likedId, likerId, "like", `${liker?.first_name} ${liker?.last_name} liked you!`);
 			return like;
 		} catch (error: any) {
@@ -75,6 +77,10 @@ export const likeService = {
 			if (!like) throw new NotFoundError("Like not found");
 			const checkMatch = await matchService.getMatch(likerId, likedId);
 			if (checkMatch) await matchService.deleteMatch(likerId, likedId);
+			const likedProfile = await userService.getUserProfile(likedId, likedId);
+			const likerProfile = await userService.getUserProfile(likerId, likerId);
+			await userService.updateUserProfile(likedId, { fame_score: likedProfile!.fame_score! - 5 < 1 ? 1 : likedProfile!.fame_score! - 5 });
+			await notificationService.createNotification(likedId, likerId, "unlike", `${likerProfile?.first_name} ${likerProfile?.last_name} unliked you!`);
 			await likeModel.delete(likerId, likedId);
 		} catch (error: any) {
 			throw mapDbError.like(error);
