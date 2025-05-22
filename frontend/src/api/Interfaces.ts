@@ -18,11 +18,11 @@ export interface IUser {
 	fame_score?: number;
 	latitude?: number;
 	longitude?: number;
-	like?: {
+	like: {
 		i_liked: boolean;
 		he_liked: boolean;
 	},
-	block?: {
+	block: {
 		i_blocked: boolean;
 		he_blocked: boolean;
 	},

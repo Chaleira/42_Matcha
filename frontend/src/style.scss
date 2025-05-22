@@ -243,6 +243,11 @@ list-element ul li {
   height: 50px;
 }
 
+.grid-user-info {
+  position: relative;
+  width: 100%;
+  grid-template-columns: auto 1fr;
+}
 
 @media (max-width: 768px) {
 
@@ -359,7 +364,49 @@ list-element ul li {
   .btn-chat-minimize {
     display: block !important;
   }
+
+
+  login-page,
+  verify-email,
+  forgot-page,
+  reset-password,
+  register-page {
+    card-element {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .tc-tf-d input {
+      background-color: white;
+    }
+
+    .tc-tf-d label {
+      font-size: large;
+    }
+
+    .login_header {
+      color: black;
+    }
+
+
+    drop-down[variant=outline] fieldset {
+      background-color: white;
+      z-index: -1;
+    }
+
+    .pop-up-button .button {
+      top: -33px !important
+    }
+
+  }
+
+  .grid-user-info {
+    grid-template-columns: none !important;
+  }
 }
+
+
 
 .message-input {
   width: -webkit-fill-available;
@@ -405,4 +452,12 @@ list-element ul li {
   border: solid #4f46e5;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+}
+
+.full-screen {
+  position: absolute;
+  height: 100vh !important;
+  width: 100vw !important;
+  align-items: center;
+  justify-content: center;
 }
