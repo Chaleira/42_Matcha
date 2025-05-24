@@ -1,5 +1,6 @@
 import { AlertPanel } from "typecomposer";
 import { IChat, IMessage, INotification, IUser } from "./Interfaces";
+import testUsers from "@/assets/test.json";
 
 export namespace Api {
 
@@ -250,22 +251,27 @@ export namespace Api {
 				});
 		}
 
-		export async function list(params: { [key: string]: any } = {}): Promise<IUser[]> {
-			return await fetch(`${URL}/user/list`, {
-				method: "POST",
-				headers: ApiHeader(),
-				redirect: "follow",
-				body: JSON.stringify(params),
-			})
-				.then(async (response) => {
-					if (!response.ok) {
-						throw new Error("Invalid list");
-					}
-					const data = await response.json();
-					return data;
-				}).catch(() => {
-					return [];
-				});
+		export async function list(params: { [key: string]: any } = {}, page: number = 0): Promise<IUser[]> {
+
+			const result = testUsers as any as IUser[];
+			console.log("result", result.length);
+
+			return result.slice(page * 20, page * 20 + 20);
+			//return await fetch(`${URL}/user/list`, {
+			//	method: "POST",
+			//	headers: ApiHeader(),
+			//	redirect: "follow",
+			//	body: JSON.stringify(params),
+			//})
+			//	.then(async (response) => {
+			//		if (!response.ok) {
+			//			throw new Error("Invalid list");
+			//		}
+			//		const data = await response.json();
+			//		return data;
+			//	}).catch(() => {
+			//		return [];
+			//	});
 		}
 
 		export async function update(params: { [key: string]: any } = {}): Promise<IUser> {
