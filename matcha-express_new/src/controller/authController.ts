@@ -6,10 +6,10 @@ import { userService } from "../service/userService";
 
 export const authController = {
 	async register(req: Request, res: Response): Promise<void | any> {
-		const { username, email, first_name, last_name, password, bio, age, tags, gender, sexual_preference, pictures, avatar, fame_score, latitude, longitude} = req.body;
+		const { username, email, first_name, last_name, password, bio, age, tags, gender, sexual_preference, pictures, avatar, fame_score, latitude, longitude } = req.body;
 
 		const user = { username, email, first_name, last_name, password };
-		const profile  = {bio, age, tags, gender, sexual_preference, pictures, avatar, latitude, longitude}
+		const profile = { bio, age, tags, gender, sexual_preference, pictures, avatar, latitude, longitude }
 
 		const newUser: Omit<IUser, "password"> = await authService.register(user);
 		await userService.updateUserProfile(newUser.id!, profile)
@@ -21,6 +21,12 @@ export const authController = {
 		const { username, password } = req.body;
 
 		const response = await authService.login(username, password);
+		res.cookie("token", response.token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production", // só HTTPS em produção
+			sameSite: "strict",
+			maxAge: 7 * 24 * 60 * 60 * 1000, // 7 dias
+		});
 		res.status(202).json(response);
 	},
 
