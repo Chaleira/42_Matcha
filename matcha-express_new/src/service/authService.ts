@@ -15,7 +15,7 @@ export const authService = {
 			const token = await emailVerificationService.generateEmailVerificationToken();
 			if (!newUser || !newUser.id) throw new UnauthorizedError("User creation failed");
 			await emailVerificationService.createEmailVerification(newUser.id, token);
-			await emailVerificationService.sendVerificationEmail(user.email, token, {text: " to verify your email.", subject: "Email Verification", url: "verify-email"});
+			await emailVerificationService.sendVerificationEmail(user.email, token, { text: " to verify your email.", subject: "Email Verification", url: "verify-email" });
 
 			const { password: _pw, ...safeUser } = newUser;
 
@@ -39,6 +39,8 @@ export const authService = {
 			const token = userService.generateUserToken(user);
 
 			const { password: _pw, ...safeUser } = user;
+
+
 
 			return { token, user: safeUser };
 		} catch (error: any) {
@@ -72,7 +74,7 @@ export const authService = {
 			if (!user) throw new UnauthorizedError("User not found");
 			const token = await emailVerificationService.generateEmailVerificationToken();
 			await emailVerificationService.createEmailVerification(user.id!, token);
-			await emailVerificationService.sendVerificationEmail(email, token, {text: " to reset your password.", subject: "Password Reset", url: "reset-password"});
+			await emailVerificationService.sendVerificationEmail(email, token, { text: " to reset your password.", subject: "Password Reset", url: "reset-password" });
 			return { message: "Password reset email sent" };
 		} catch (error: any) {
 			throw mapDbError.auth(error);

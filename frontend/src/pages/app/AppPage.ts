@@ -26,9 +26,11 @@ export class AppPage extends BorderPanel {
 			}, color: "#fff", margin: "0 10px"
 		}));
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
+		console.log("AppPage initialized");
 	}
 
 	onConnected(): void {
+		console.log("AppPage connected to socket server");
 		this.getUserLocation();
 		AppPage.socket.off("notification");
 		AppPage.socket.off("user-connected");
@@ -45,6 +47,7 @@ export class AppPage extends BorderPanel {
 	}
 
 	onDisconnected(): void {
+		console.log("AppPage disconnected from socket server");
 		AppPage.socket.off("notification");
 		AppPage.socket.off("user-connected");
 	}
