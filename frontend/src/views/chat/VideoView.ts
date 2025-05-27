@@ -50,68 +50,24 @@ export class VideoView extends Component {
 	async startAudio() {
 		this.streamAudio = await navigator.mediaDevices.getUserMedia({ audio: true });
 		this.mediaRecorder = new MediaRecorder(this.streamAudio, { mimeType: 'audio/webm;codecs=opus' });
-		console.log("MediaRecorder", MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? "supported" : "not supported");
 		this.mediaRecorder.ondataavailable = (event) => {
-			//const reader = new FileReader();
-			//reader.onloadend = () => {
-			//	const base64Audio = reader.result;
-			//	AppPage.socket.emit("send-message-audio", { chat_id: this.chatId, data: base64Audio });
-			//};
-			//reader.readAsDataURL(event.data);
 			if (event.data.size > 0) {
 				event.data.arrayBuffer().then(arrayBuffer => {
 					AppPage.socket.emit("send-message-audio", { chat_id: this.chatId, data: arrayBuffer });
 				});
 			}
 		};
-		//const audioChunks: Blob[] = [];
-		const audioContext = new AudioContext();
 
 		AppPage.socket.on("receive-message-audio", async (data) => {
 			if (data.chat_id === this.chatId) {
 				try {
-					//// data.data é o dataURL: "data:audio/webm;codecs=opus;base64,..."
-					//const base64 = data.data.split(',')[1];
-
-					//// Garante que o tipo MIME seja extraído corretamente
-					//const mimeMatch = data.data.match(/^data:([^;]+);/);
-					//const mime = mimeMatch ? mimeMatch[1] : 'audio/webm';
-
-					//const byteChars = atob(base64);
-					//const byteArray = new Uint8Array(byteChars.length);
-					//for (let i = 0; i < byteChars.length; i++) {
-					//	byteArray[i] = byteChars.charCodeAt(i);
-					//}
-
-					//const blob = new Blob([byteArray], { type: mime });
-					//const audioUrl = URL.createObjectURL(blob);
-
-					//const audio = new Audio();
-					//this.append(audio);
-					//audio.src = data.data; // data.data é o dataURL
-					//audio.play().catch((err) => console.error('Erro ao tocar áudio:', err));
 					const chunk: ArrayBuffer = data.data;
-					console.log('Chunk recebido:', chunk.byteLength);
-
-					if (chunk.byteLength === 0) return; // evita blobs vazios
-					//try {
-					//	const buffer = await audioContext.decodeAudioData(chunk.slice(0)); // slice evita erro de buffer compartilhado
-					//	const source = audioContext.createBufferSource();
-					//	source.buffer = buffer;
-					//	source.connect(audioContext.destination);
-					//	source.start();
-					//} catch (err) {
-					//	console.error('Erro ao decodificar e tocar áudio:', err);
-					//}
-					//console.log("chunk", chunk);
+					if (chunk.byteLength === 0) return;
 					const blob = new Blob([chunk], { type: 'audio/webm; codecs=opus' });
 					const audio = new Audio();
 					audio.src = URL.createObjectURL(blob);
 					audio.play().catch(err => console.error('Erro ao reproduzir:', err));
-					//this.stopWebcam();
-					//const blob = new Blob([chunk], { type: 'audio/webm;codecs=opus' });
-					//const audio = new Audio(URL.createObjectURL(blob));
-					//audio.play()
+
 				} catch (e) {
 					console.error('Erro ao processar áudio recebido:', e);
 				}
@@ -122,6 +78,8 @@ export class VideoView extends Component {
 	}
 
 	stopWebcam() {
+		AppPage.socket.off('receive-message-video');
+		AppPage.socket.off('receive-message-audio');
 		if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
 			this.mediaRecorder.stop();
 		}
@@ -146,7 +104,6 @@ export class VideoView extends Component {
 			clearInterval(this.isRecording);
 			this.isRecording = 0;
 		}
-
 		console.log("Webcam e microfone desligados.");
 	}
 
