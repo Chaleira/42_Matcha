@@ -23,14 +23,14 @@ export function RegisterStep2(user: ref<IUser>, card: CardPanel): VBox {
 	const hbox1 = new HBox({ gap: "10px" });
 	hbox1.append(new DropDown({
 		placeholder: "Gender",
-		options: ["male", "female", "develop"],
+		options: ["male", "female"],
 		value: user.value.gender,
 		width: "48%"
 	}));
 	hbox1.append(new DropDown({
 		placeholder: "Sexual Orientation",
 		options: [
-			"heterosexual", "Viado"
+			"heterosexual", "homosexual", "bisexual" 
 		],
 		value: user.value.sexual_preference,
 		width: "48%"
