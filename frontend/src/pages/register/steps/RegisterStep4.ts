@@ -23,7 +23,9 @@ export function RegisterStep4(user: ref<IUser>, card: CardPanel): VBox {
 			const data = user.toJSON();
 			delete data?.latitude;
 			delete data?.longitude;
+			// @ts-ignore
 			delete data?.block;
+			// @ts-ignore
 			delete data?.like;
 			delete data?.id;
 			delete data?.created_at;
@@ -32,7 +34,7 @@ export function RegisterStep4(user: ref<IUser>, card: CardPanel): VBox {
 			delete data?.user_id;
 			Api.User.register(data).then((data) => {
 				if (data.ok) {
-					Router.go("login", { email: user.value.email });
+					Router.go("login");
 				} else {
 					AlertPanel.warning(data.msg);
 				}

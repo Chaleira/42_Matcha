@@ -41,7 +41,7 @@ export class FilterUsers extends Component {
 		});
 		const vbox = this.appendChild(new HBox({ gap: "10px", padding: "10px", width: "100%", alignItems: "center" }));
 		vbox.append(new FilterRangeSlider("Age", this.filter.value.age_min, this.filter.value.age_max, 18, 100));
-		vbox.append(new FilterRangeSlider("Fame", this.filter.value.fame_min, this.filter.value.fame_max, 1, 10));
+		vbox.append(new FilterRangeSlider("Fame", this.filter.value.fame_min, this.filter.value.fame_max, 1, 100));
 		vbox.append(new TextField({
 			type: "number",
 			min: "10",
