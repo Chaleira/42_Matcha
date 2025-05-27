@@ -361,7 +361,11 @@ export namespace Api {
 				params: { reportedId },
 			})
 				.then(async (response) => {
-					response.json().then((data) => { AlertPanel.info(data.message || "Report sent successfully")})
+					response.json().then((data) => {
+						if (!response.ok)
+							AlertPanel.error(data.message || "Invalid report");
+						else
+							AlertPanel.info(data.message || "Report sent successfully")})
 				});
 		}
 	}
