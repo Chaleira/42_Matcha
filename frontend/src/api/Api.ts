@@ -131,7 +131,7 @@ export namespace Api {
 				});
 		}
 
-		export async function register(user: IUser): Promise<{ msg: string, ok: boolean }> {
+		export async function register(user: IUser): Promise<{ message: string, ok: boolean }> {
 			console.log(user);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
@@ -148,13 +148,14 @@ export namespace Api {
 					localStorage.removeItem("token");
 					console.log("register: ", response);
 					if (!response.ok) {
-						return { msg: "Invalid registration", ok: response.ok };
+						const { message } = await response.json();
+						return { message, ok: response.ok };
 					}
 					localStorage.removeItem("token");
-					return { msg: "Registration successful", ok: response.ok };
+					return { message: "Registration successful", ok: response.ok };
 				}).catch((error) => {
 					console.error(error);
-					return { msg: "Invalid registration", ok: false };
+					return { message: "Invalid registration", ok: false };
 				});
 		}
 
@@ -359,7 +360,8 @@ export namespace Api {
 						if (!response.ok)
 							AlertPanel.error(data.message || "Invalid report");
 						else
-							AlertPanel.info(data.message || "Report sent successfully")})
+							AlertPanel.info(data.message || "Report sent successfully")
+					})
 				});
 		}
 	}
