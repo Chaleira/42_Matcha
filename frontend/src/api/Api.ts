@@ -257,26 +257,20 @@ export namespace Api {
 		}
 
 		export async function list(params: { [key: string]: any } = {}, page: number = 0): Promise<IUser[]> {
-
-			const result = testUsers as any as IUser[];
-			console.log("result", result.length);
-
-			return result.slice(page * 20, page * 20 + 20);
-			//return await fetch(`${URL}/user/list`, {
-			//	method: "POST",
-			//	headers: ApiHeader(),
-			//	redirect: "follow",
-			//	body: JSON.stringify(params),
-			//})
-			//	.then(async (response) => {
-			//		if (!response.ok) {
-			//			throw new Error("Invalid list");
-			//		}
-			//		const data = await response.json();
-			//		return data;
-			//	}).catch(() => {
-			//		return [];
-			//	});
+			return await fetch(`${URL}/user/list`, {
+				method: "POST",
+				redirect: "follow",
+				body: JSON.stringify(params),
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						throw new Error("Invalid list");
+					}
+					const data = await response.json();
+					return data;
+				}).catch(() => {
+					return [];
+				});
 		}
 
 		export async function update(params: { [key: string]: any } = {}): Promise<IUser> {

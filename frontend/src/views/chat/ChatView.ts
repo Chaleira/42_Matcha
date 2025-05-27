@@ -15,18 +15,27 @@ export class ChatView extends Component {
 	private textField = new TextField({ className: "message-input", placeholder: "Type a message", height: "59px", color: "black", placeholderAnimation: false });
 	private backgroundImage = ref<string>("")
 	private chatId = ""
+	private btnCall = ref<string>("call");
 
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "row" });
 		const left = new DivElement({ className: "list-users", width: "300px", backgroundColor: "#f0f0f0", overflow: "hidden", height: "calc(100% - 50px)" });
 		left.append(this.listUsers);
 		const hbox = new HBox({ gap: "10px", alignItems: "center", display: "none", width: "100%", className: "message-div-input" });
+		let videoCall: VideoView | undefined = undefined;
 		const toolbar = new DivElement({
 			width: "100%", children: [
 				new ButtonElement({
-					text: "call",
+					text: this.btnCall,
 					onclick: () => {
-						toolbar.append(new VideoView(this.chatId));
+						if (videoCall) {
+							videoCall.remove();
+							videoCall = undefined;
+							this.btnCall.value = "call";
+						} else {
+							this.btnCall.value = "stop";
+							videoCall = toolbar.appendChild(new VideoView(this.chatId));
+						}
 					}
 				})
 			], display: "none"
@@ -79,22 +88,22 @@ export class ChatView extends Component {
 			backgroundSize: "cover",
 			backgroundPosition: "center",
 		});
-		//textArea.append(new DivElement({ text: "Chat", fontSize: "20px", fontWeight: "bold", textAlign: "center", width: "100%", padding: "10px" }));
 		textArea.append(toolbar, this.listMessages);
 		center.append(textArea, hbox);
 		this.append(left, center);
 		this.updateMessages(undefined);
 		this.append(new DivElement({
-			className: "btn-chat-minimize", position: "fixed", width: "20px", text: "=", onclick: () => {
-				left.classList.toggle("open");
-			}
+			className: "btn-chat-minimize",
+			position: "fixed",
+			width: "20px",
+			text: "=",
+			onclick: () => left.classList.toggle("open")
 		}));
 	}
 
 	onDisconnected(): void {
 		AppPage.socket.off("receive-message");
 		AppPage.socket.off("join");
-		console.log("disconnected");
 	}
 
 	async onConnected() {
@@ -128,8 +137,6 @@ export class ChatView extends Component {
 		if (messages)
 			for (const message of messages) {
 				this.addMessage(message);
-
-
 			}
 		console.log("messages: ", messages);
 	}
