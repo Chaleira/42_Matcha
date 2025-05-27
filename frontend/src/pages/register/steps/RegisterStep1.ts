@@ -1,22 +1,30 @@
 import { IUser } from "@/api/Interfaces";
 import { ButtonElement, CardPanel, computed, H4Element, ref, TextField, VBox } from "typecomposer";
 import { RegisterStep2 } from "./RegisterStep2";
+import common from "@/assets/10k-most-common.json"
 
 export function RegisterStep1(user: ref<IUser>, card: CardPanel): VBox {
 	const confirmPassword = ref<string>("");
 	const validateStep1 = computed(() => {
-		return !(user.value.username.value.length > 0 &&
-			user.value.email.value.length > 0 &&
-			user.value.email.value?.includes("@") &&
-			user.value.password.value.length > 0 &&
-			confirmPassword.value.length > 8 && 
-			user.value.password.value == confirmPassword.value);
+		const email = user.value.email.value.toString().trim();
+		const username = user.value.username.value.toString().trim();
+		const password = user.value.password.value.toString().trim();
+		const confirmPasswordValue = confirmPassword.value.toString().trim();
+		console.log("Validating step 1", email, username, password, confirmPasswordValue);
+		console.log("Validating step 1", common.words.includes(user.value.password.value));
+		return !(username.length > 0 &&
+			email.length > 0 &&
+			email.includes("@") &&
+			password.length > 0 &&
+			confirmPasswordValue.length > 8 &&
+			common.words.includes(confirmPasswordValue.toLowerCase()) == false &&
+			password == confirmPasswordValue);
 	}, [user]);
 
 	const vbox = new VBox({ padding: "10px", gap: "15px" });
 	vbox.append(new H4Element({ text: "Register", className: "login_header", }));
 	vbox.append(new TextField({ placeholder: "Username", label: "Username", value: user.value.username }));
-	vbox.append(new TextField({ placeholder: "Email", label: "Email", value: user.value.email }));
+	vbox.append(new TextField({ placeholder: "Email", type: "email", label: "Email", value: user.value.email }));
 	vbox.append(new TextField({ placeholder: "Password", label: "Password", type: "password", value: user.value.password }));
 	vbox.append(new TextField({ placeholder: "Confirm password", label: "Confirm password", type: "password", value: confirmPassword }));
 	vbox.append(new ButtonElement({
