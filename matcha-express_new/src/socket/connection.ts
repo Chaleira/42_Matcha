@@ -24,7 +24,7 @@ export default function handleConnection(socket: Socket) {
 	onlineUsers.set(user.id, socket.id);
 	for (const [id, socketId] of onlineUsers.entries()) {
 		if (id === user.id) continue;
-		io.to(socketId).emit("user-connected", { id: user.id, username: user.username });
+		io.to(socketId).emit("user-connected", { id: user.id, username: `${user.first_name} ${user.last_name}` });
 	}
 	socket.data.userId = user.id;
 	socket.data.username = user.username;

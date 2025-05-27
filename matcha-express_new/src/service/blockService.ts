@@ -3,6 +3,7 @@ import { userService } from "../service/userService";
 import { likeService } from "../service/likeService";
 import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
+import db from "../database/db";
 
 export const blockService = {
 	async createBlock(blockerId: number, blockedId: number): Promise<IBlock> {
@@ -58,6 +59,38 @@ export const blockService = {
 			return { i_blocked: !!i_blocked, he_blocked: !!he_blocked };
 		} catch (error: any) {
 			throw mapDbError.block(error);
+		}
+	},
+
+	async getManyBlocks(currentUserId: number, targetUserIds: number[]): Promise<{ user_id: number; i_blocked: boolean; he_blocked: boolean }[]> {
+		try {
+			if (targetUserIds.length === 0) return [];
+
+			const values: any[] = [currentUserId, targetUserIds];
+			const query = `
+				SELECT
+					user_id,
+					BOOL_OR(i_blocked) AS i_blocked,
+					BOOL_OR(he_blocked) AS he_blocked
+					FROM (
+					SELECT
+						CASE
+						WHEN blocker_id = $1 THEN blocked_id
+						ELSE blocker_id
+						END AS user_id,
+						blocker_id = $1 AS i_blocked,
+						blocked_id = $1 AS he_blocked
+					FROM blocks
+					WHERE (blocker_id = $1 AND blocked_id = ANY($2::int[]))
+						OR (blocked_id = $1 AND blocker_id = ANY($2::int[]))
+					) sub
+					GROUP BY user_id
+			`;
+
+			const result = await db.query(query, values);
+			return result.rows;
+		} catch (error: any) {
+			throw mapDbError.like(error);
 		}
 	},
 
