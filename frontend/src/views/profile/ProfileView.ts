@@ -51,7 +51,7 @@ export class ProfileView extends BorderPanel {
                             const data = myUser.toJSON() as IUser;
                             for (const key in data) {
                                 // @ts-ignore
-                                if (data[key] == undefined || data[key] == null || data[key] == "" || data[key] == myUser.value[key].value) {
+                                if (data[key] == undefined || data[key] == null || data[key] == "") {
                                     // @ts-ignore
                                     delete data[key];
                                 }
@@ -94,13 +94,13 @@ export class ProfileView extends BorderPanel {
             userInfo.append(new propertyItem("Fame Score: ", user.fame_score?.toString() || "1"));
         }
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
-            options: ["male", "female", "develop"],
+            options: ["male", "female"],
             value: myUser.value.gender,
             // width: "48%",
             variant: "underlined"
         }) : user.gender));
         userInfo.append(new propertyItem("Sexual Preference: ", isMyUser ? new DropDown({
-            options: ["heterosexual", "Viado"],
+            options: ["heterosexual", "homosexual", "bisexual" ],
             value: myUser.value.sexual_preference,
             // width: "48%",
             variant: "underlined"

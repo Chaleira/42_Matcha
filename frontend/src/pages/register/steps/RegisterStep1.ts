@@ -9,7 +9,7 @@ export function RegisterStep1(user: ref<IUser>, card: CardPanel): VBox {
 			user.value.email.value.length > 0 &&
 			user.value.email.value?.includes("@") &&
 			user.value.password.value.length > 0 &&
-			confirmPassword.value.length > 0 &&
+			confirmPassword.value.length > 8 && 
 			user.value.password.value == confirmPassword.value);
 	}, [user]);
 
