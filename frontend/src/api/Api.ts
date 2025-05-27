@@ -353,6 +353,17 @@ export namespace Api {
 					return null;
 				});
 		}
+
+		export async function report(reportedId: string): Promise<void | { message: string } | null> {
+			return await fetch(`${URL}/user/report`, {
+				method: "POST",
+				redirect: "follow",
+				params: { reportedId },
+			})
+				.then(async (response) => {
+					response.json().then((data) => { AlertPanel.info(data.message || "Report sent successfully")})
+				});
+		}
 	}
 
 

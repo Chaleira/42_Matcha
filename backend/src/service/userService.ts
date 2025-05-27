@@ -8,6 +8,7 @@ import { NotFoundError, ValidationError } from "../utils/errors";
 import mapDbError from "../utils/mapDbError";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { reportModel } from "../model/reportModel";
 export interface UserSearchFilters {
 	currentUserId: number;
 	age_min?: number;
@@ -138,6 +139,22 @@ export const userService = {
 			if (!userProfile) throw new NotFoundError("User profile not found");
 
 			await userModel.delete(userId);
+		} catch (error: any) {
+			throw mapDbError.user(error);
+		}
+	},
+
+	async reportUser(reporterId: number, reportedId: number): Promise<void> {
+		try {
+			const reporter: IUser | null = await userModel.findById(reporterId);
+			const reported: IUser | null = await userModel.findById(reportedId);
+			if (!reporter || !reported) throw new NotFoundError("Reporter or reported user not found");
+			if (reporterId === reportedId) throw new ValidationError("You cannot report yourself");
+			const report = {
+				reporter_id: reporterId,
+				reported_id: reportedId,
+			};
+			await reportModel.create(report);
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}
