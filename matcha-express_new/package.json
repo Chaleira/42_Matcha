@@ -10,7 +10,7 @@
     "migration:create": "node-pg-migrate create $npm_config_name -f ./migrations/.migration.config.json",
     "migration:up": "node-pg-migrate up -f ./migrations/.migration.config.json",
     "migration:down": "node-pg-migrate down -f ./migrations/.migration.config.json",
-	"seed": "ts-node seed.ts"
+    "seed": "ts-node seed.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
     "@faker-js/faker": "^9.8.0",
     "bcryptjs": "^3.0.2",
     "config": "^3.3.12",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
@@ -28,6 +29,7 @@
     "ws": "^8.18.2"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.18",

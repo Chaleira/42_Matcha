@@ -1,23 +1,24 @@
 import { AlertPanel } from "typecomposer";
 import { IChat, IMessage, INotification, IUser } from "./Interfaces";
+import testUsers from "@/assets/test.json";
 
 export namespace Api {
 
 	export const URL = "http://localhost:3000/api";
 
-	export function ApiHeader(): Headers {
+	Fetch.defaultCredentials = "include";
+	Fetch.defaultHeaders = ((): Headers => {
 		const myHeaders = new Headers();
 		myHeaders.append("Content-Type", "application/json");
-		myHeaders.append("Authorization", `Bearer ${localStorage.getItem("token")}`);
 		return myHeaders;
-	}
+	})();
+
 
 	export namespace Notification {
 
 		export async function list(): Promise<INotification[]> {
 			return await fetch(`${URL}/notification/get`, {
 				method: "GET",
-				headers: Api.ApiHeader(),
 				redirect: "follow"
 			})
 				.then(async (response) => {
@@ -36,7 +37,6 @@ export namespace Api {
 		export async function list(): Promise<IChat[]> {
 			return await fetch(`${URL}/chat/get/user-chats`, {
 				method: "GET",
-				headers: Api.ApiHeader(),
 				redirect: "follow"
 			})
 				.then(async (response) => {
@@ -54,7 +54,6 @@ export namespace Api {
 		export async function get(chatId: string): Promise<{ user_id: string, messages: IMessage[] }> {
 			return await fetch(`${URL}/chat/get?chatId=${chatId}`, {
 				method: "GET",
-				headers: Api.ApiHeader(),
 				redirect: "follow"
 			})
 				.then(async (response) => {
@@ -73,7 +72,6 @@ export namespace Api {
 			console.log(body);
 			return await fetch(`${URL}/chat/create`, {
 				method: "POST",
-				headers: Api.ApiHeader(),
 				body: body,
 				redirect: "follow"
 			})
@@ -94,7 +92,6 @@ export namespace Api {
 			console.log(email, password);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
-
 			const body = JSON.stringify({
 				"username": email,
 				"password": password
@@ -112,6 +109,21 @@ export namespace Api {
 					const { token } = await response.json();
 					console.log(token);
 					localStorage.setItem("token", token);
+					return true;
+				}).catch((error) => {
+					AlertPanel.error(error);
+					return false;
+				});
+		}
+
+		export async function logout(): Promise<boolean> {
+			return await fetch(`${URL}/auth/logout`, {
+				method: "POST",
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok)
+						throw new Error((await response.json()).message);
 					return true;
 				}).catch((error) => {
 					AlertPanel.error(error);
@@ -149,7 +161,6 @@ export namespace Api {
 		export async function getLikes(userId: string): Promise<IUser[]> {
 			return await fetch(`${URL}/user/profile`, {
 				method: "GET",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: userId ? { id: userId } : undefined,
 			})
@@ -167,7 +178,6 @@ export namespace Api {
 		export async function createBlocks(userId: string): Promise<boolean> {
 			return await fetch(`${URL}/block/create`, {
 				method: "POST",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: { blocked_id: userId },
 			}).then(async (response) => {
@@ -180,7 +190,6 @@ export namespace Api {
 		export async function deleteBlocks(userId: string): Promise<boolean> {
 			return await fetch(`${URL}/block/delete`, {
 				method: "POST",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: { blocked_id: userId },
 			}).then(async (response) => {
@@ -193,7 +202,6 @@ export namespace Api {
 		export async function createLike(userId: string): Promise<boolean> {
 			return await fetch(`${URL}/like/create`, {
 				method: "POST",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: { liked_id: userId },
 			}).then(async (response) => {
@@ -206,7 +214,6 @@ export namespace Api {
 		export async function deleteLike(userId: string): Promise<boolean> {
 			return await fetch(`${URL}/like/delete`, {
 				method: "POST",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: { liked_id: userId },
 			}).then(async (response) => {
@@ -219,7 +226,6 @@ export namespace Api {
 		export async function profile(userId?: string): Promise<IUser> {
 			return await fetch(`${URL}/user/profile`, {
 				method: "GET",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: userId ? { id: userId } : undefined,
 			})
@@ -250,22 +256,27 @@ export namespace Api {
 				});
 		}
 
-		export async function list(params: { [key: string]: any } = {}): Promise<IUser[]> {
-			return await fetch(`${URL}/user/list`, {
-				method: "POST",
-				headers: ApiHeader(),
-				redirect: "follow",
-				body: JSON.stringify(params),
-			})
-				.then(async (response) => {
-					if (!response.ok) {
-						throw new Error("Invalid list");
-					}
-					const data = await response.json();
-					return data;
-				}).catch(() => {
-					return [];
-				});
+		export async function list(params: { [key: string]: any } = {}, page: number = 0): Promise<IUser[]> {
+
+			const result = testUsers as any as IUser[];
+			console.log("result", result.length);
+
+			return result.slice(page * 20, page * 20 + 20);
+			//return await fetch(`${URL}/user/list`, {
+			//	method: "POST",
+			//	headers: ApiHeader(),
+			//	redirect: "follow",
+			//	body: JSON.stringify(params),
+			//})
+			//	.then(async (response) => {
+			//		if (!response.ok) {
+			//			throw new Error("Invalid list");
+			//		}
+			//		const data = await response.json();
+			//		return data;
+			//	}).catch(() => {
+			//		return [];
+			//	});
 		}
 
 		export async function update(params: { [key: string]: any } = {}): Promise<IUser> {
@@ -273,9 +284,9 @@ export namespace Api {
 			delete params?.created_at;
 			delete params?.viewd;
 			const body = JSON.stringify(params);
+			console.log("update body", body);
 			return await fetch(`${URL}/user/profile/update`, {
 				method: "POST",
-				headers: ApiHeader(),
 				body: body,
 				redirect: "follow"
 			})
@@ -293,7 +304,6 @@ export namespace Api {
 		export async function like(params: { userBeingLikedId: string, userLikingId: string }): Promise<IUser> {
 			return await fetch(`${URL}/user/like`, {
 				method: "POST",
-				headers: ApiHeader(),
 				body: JSON.stringify(params),
 				redirect: "follow"
 			})
@@ -311,7 +321,6 @@ export namespace Api {
 		export async function sendResetPassword(email: string): Promise<{ message: string }> {
 			return await fetch(`${URL}/auth/send-reset-password-email`, {
 				method: "GET",
-				headers: ApiHeader(),
 				redirect: "follow",
 				params: { email },
 			})
@@ -330,7 +339,6 @@ export namespace Api {
 		export async function resetPassword(token: string, password: string): Promise<{ message: string }> {
 			return await fetch(`${URL}/auth/reset-password`, {
 				method: "POST",
-				headers: ApiHeader(),
 				redirect: "follow",
 				body: JSON.stringify({ password }),
 				params: { token },

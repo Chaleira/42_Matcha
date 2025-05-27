@@ -14,22 +14,19 @@ export class ProfileView extends BorderPanel {
 
     constructor() {
         super({ className: "profile-view" });
-        //this.update();
         this.onEvent("router:watch", () => this.update());
-        //this.append(this.fullScreen);
-
     }
 
     async update() {
         if (Router.props.id == this.id) {
             return;
         }
+        console.log("ProfileView update", Router.props.id);
         this.id = Router.props.id;
         this.top.innerHTML = "";
         this.center.innerHTML = "";
         this.center.style.maxHeight = "80vh";
         const user: IUser = await Api.User.profile(Router.props.id);
-        console.log("get:user", user);
         if (!user) {
             console.error("User not found");
             Router.go("home");
@@ -112,9 +109,7 @@ export class ProfileView extends BorderPanel {
         const hbox = new HBox({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
         if (isMyUser) {
-            console.log("myUser.value.tags", user.tags);
             myUser.value.tags.value = user.tags;
-            console.log("myUser.value.tags", myUser.value.tags);
         }
         userInfo.append(new propertyItem("Tags: ", isMyUser ? new TagList(myUser) : hbox));
         const bio = userInfo.appendChild(new propertyItem("Bio: ", isMyUser ? new TextAreaElement({ value: myUser.value.bio, width: "100%", height: "100%" }) : user.bio));
@@ -136,6 +131,10 @@ export class ProfileView extends BorderPanel {
         fullScreen.append(img);
         fullScreen.onclick = () => fullScreen.close();
         console.log("clicked");
+    }
+
+    onDisconnected(): void {
+        this.removeEvent("router:watch");
     }
 }
 

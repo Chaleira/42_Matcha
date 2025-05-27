@@ -15,5 +15,12 @@ router.post("/login", validateQueryParams(null), validateBodyParams(allowedLogin
 router.get("/verify-email", validateQueryParams(["token"], ["token"]), validateBodyParams(null), catchAsync(authController.verifyEmail));
 router.get("/send-reset-password-email", validateQueryParams(["email"], ["email"]), validateBodyParams(null), catchAsync(authController.resetPassword));
 router.post("/reset-password", validateQueryParams(["token"], ["token"]), validateBodyParams(["password"], ["password"]), catchAsync(authController.verifyResetPassword));
-
+router.post('/logout', (req, res) => {
+	res.clearCookie('token', {
+		httpOnly: true,
+		secure: process.env.NODE_ENV === 'production',
+		sameSite: 'strict',
+	});
+	res.json({ message: 'Logout successful' });
+});
 export default router;

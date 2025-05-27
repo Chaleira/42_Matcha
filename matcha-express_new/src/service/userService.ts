@@ -118,6 +118,7 @@ export const userService = {
 	},
 
 	async updateUserProfile(userId: number, updates: Partial<IProfile>): Promise<IProfile> {
+		console.log("updateUserProfile: ", updates)
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
