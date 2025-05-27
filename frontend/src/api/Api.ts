@@ -116,6 +116,21 @@ export namespace Api {
 				});
 		}
 
+		export async function logout(): Promise<boolean> {
+			return await fetch(`${URL}/auth/logout`, {
+				method: "POST",
+				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok)
+						throw new Error((await response.json()).message);
+					return true;
+				}).catch((error) => {
+					AlertPanel.error(error);
+					return false;
+				});
+		}
+
 		export async function register(user: IUser): Promise<{ msg: string, ok: boolean }> {
 			console.log(user);
 			const myHeaders = new Headers();

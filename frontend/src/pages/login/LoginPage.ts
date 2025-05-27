@@ -1,6 +1,7 @@
 import { AlertPanel, AnchorElement, ButtonElement, CardPanel, Component, DivElement, FormElement, H4Element, Router, TextField } from "typecomposer";
 import { Api } from "@/api/Api";
 
+
 export class LoginPage extends Component {
 
 	constructor() {
@@ -23,6 +24,7 @@ export class LoginPage extends Component {
 	private async login(response: Response) {
 		if (response.ok) {
 			const { token } = await response.json();
+			console.log(token);
 			localStorage.setItem("token", token);
 			Router.go("home");
 		}

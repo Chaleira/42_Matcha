@@ -5,11 +5,17 @@ import { io, Socket } from "socket.io-client";
 
 export class AppPage extends BorderPanel {
 
-	static socket: Socket = io("http://localhost:3000", {
-		extraHeaders: {
-			"token": localStorage.getItem("token") || "",
+	static #socket: Socket | null = null;
+	static get socket(): Socket {
+		if (!AppPage.#socket) {
+			AppPage.#socket = io("http://localhost:3000", {
+				extraHeaders: {
+					"token": localStorage.getItem("token") || "",
+				}
+			});
 		}
-	});
+		return AppPage.#socket;
+	}
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });
@@ -18,10 +24,9 @@ export class AppPage extends BorderPanel {
 		this.top.append(new AnchorElement({ text: "Chat", rlink: "chat", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value.user_id, color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Notifications", rlink: "notifications", color: "#fff", margin: "0 10px" }));
-
 		this.top.append(new AnchorElement({
 			text: "Logout", href: "#", onclick: () => {
-				localStorage.removeItem("token");
+				Api.User.logout();
 				Router.go("login");
 			}, color: "#fff", margin: "0 10px"
 		}));
