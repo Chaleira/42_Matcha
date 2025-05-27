@@ -31,6 +31,8 @@ const mapDbError = {
 				return new ValidationError("Username already exists.");
 			} else if (error.detail.includes("email")) {
 				return new ValidationError("Email already exists.");
+			} else if (error.detail.includes("reporter_id")) {
+				return new ValidationError("User already reported.");
 			}
 		} else if (error.code === "23502") {
 			if (error.column.includes("username")) {

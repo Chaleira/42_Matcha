@@ -12,6 +12,7 @@ router.post('/profile/update', validateQueryParams(null), validateBodyParams(all
 router.post('/update', validateQueryParams(null), validateBodyParams(["email"]), catchAsync(userController.updateUser));
 router.post('/delete', validateQueryParams(null), validateBodyParams(null), catchAsync(userController.deleteUser));
 router.post('/list', validateQueryParams(null), validateBodyParams(allowedListBody), catchAsync(userController.listUsers));
+router.post('/report', validateQueryParams(["reportedId", "reportedId"]), validateBodyParams(null), catchAsync(userController.reportUser));
 
 
 router.get('/profile', validateQueryParams(["id"]), validateBodyParams(null), catchAsync(userController.getUserProfile));

@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { UserSearchFilters, userService } from "../service/userService";
 import { AuthenticatedRequest } from "../types/request";
+import { report } from "process";
 
 export const userController = {
 
@@ -45,4 +46,11 @@ export const userController = {
 		const users = await userService.listUsers(filters);
 		res.status(200).json(users || []);
 	},
+
+	async reportUser(req: AuthenticatedRequest, res: Response): Promise<void> {
+		const reporterId = req.user.id;
+		const reportedId = parseInt(req.query.reportedId as string);
+		await userService.reportUser(reporterId, reportedId);
+		res.status(201).json({ message: "User reported successfully" });
+	}
 };
