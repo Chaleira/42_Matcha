@@ -52,7 +52,7 @@ export const userModel = {
 	},
 
 	generateToken(user: IUser): string {
-		const payload = { id: user.id, username: user.username, email: user.email };
+		const payload = { id: user.id, username: user.username, email: user.email, first_name: user.first_name, last_name: user.last_name };
 		const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "6h" });
 		return token;
 	},

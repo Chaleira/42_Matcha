@@ -154,21 +154,45 @@ export const userService = {
 			const conditions: Condition[] = getBaseConditions();
 			conditions.push(...getMatchConditions({ gender: user?.gender, preference: user?.sexual_preference }));
 			conditions.push(...getFiltersConditions(filters));
-			const profiles = await profileModel.listWithFilter(conditions, { id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! }, filters.order_by);
-			console.log("Profiles found after:", profiles);
-			for (const profile of profiles ? profiles : []) {
-				const like = await likeService.getLike(filters.currentUserId, profile.user_id);
-				profile.like = like;
-				const block = await blockService.getBlock(filters.currentUserId, profile.user_id);
-				if (block.i_blocked || block.he_blocked)
-					profiles?.splice(profiles.indexOf(profile), 1);
-			};
-			console.log("Profiles found after:", profiles);
-			return profiles;
+			const profiles = await profileModel.listWithFilter(
+				conditions,
+				{ id: filters.currentUserId, latitude: user.latitude!, longitude: user.longitude!, tags: user.tags! },
+				filters.order_by
+			);
+			const filteredProfiles = await handleLikesAndBlocks(filters.currentUserId, profiles);
+			return filteredProfiles;
 		} catch (error: any) {
 			throw mapDbError.user(error);
 		}
 	},
+};
+
+async function handleLikesAndBlocks(currentUserId: number, profiles: IProfile[] | null): Promise<IProfile[]> {
+	if (!profiles || profiles.length === 0) return [];
+	const profileIds = profiles.map(p => p.user_id);
+
+	const likes = await likeService.getManyLikes(currentUserId, profileIds);
+	const blocks = await blockService.getManyBlocks(currentUserId, profileIds);
+
+	const likeMap = new Map<number, { i_liked: boolean; he_liked: boolean }>();
+	const blockMap = new Map<number, { i_blocked: boolean; he_blocked: boolean }>();
+
+	for (const like of likes)
+		likeMap.set(like.user_id, { i_liked: like.i_liked, he_liked: like.he_liked });
+	for (const block of blocks)
+		blockMap.set(block.user_id, { i_blocked: block.i_blocked, he_blocked: block.he_blocked });
+
+	const filteredProfiles = [];
+	for (const profile of profiles) {
+		const like = likeMap.get(profile.user_id) || { i_liked: false, he_liked: false };
+		const block = blockMap.get(profile.user_id) || { i_blocked: false, he_blocked: false };
+
+		if (block.i_blocked || block.he_blocked) continue; // Skip blocked profiles
+		profile.like = like;
+		profile.block = block;
+		filteredProfiles.push(profile);
+	};
+	return filteredProfiles;
 };
 
 function getFiltersConditions(filters: UserSearchFilters): Condition[] {
@@ -184,7 +208,7 @@ function getFiltersConditions(filters: UserSearchFilters): Condition[] {
 
 	if (filters?.fame_max) conditions.push({ column: "fame_score", operator: "<=" as ConditionOperator, value: filters.fame_max });
 
-	if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "&&" as ConditionOperator, value: filters.tags });
+	if (filters?.tags && filters?.tags?.length > 0) conditions.push({ column: "tags", operator: "@>" as ConditionOperator, value: filters.tags });
 
 	conditions.push({
 		column: `6371 * acos(

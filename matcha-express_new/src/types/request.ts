@@ -4,6 +4,8 @@ import { JwtPayload } from "jsonwebtoken";
 export interface AuthenticatedUser {
 	id: number;
 	username: string;
+	first_name: string;
+	last_name: string;
 	email: string;
 	iat: number;
 	exp: number;

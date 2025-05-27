@@ -55,8 +55,8 @@ export const profileModel = {
 	async listWithFilter(conditions: Condition[], user: { id: number; latitude: number; longitude: number; tags: string[] }, orderBy: string | undefined): Promise<IProfile[] | null> {
 		const { text, values } = selectWhereFlexible("profiles", conditions, user, orderBy);
 		values.push(user.tags);
-		console.log("SQL Query:", text);
-		console.log("SQL Values:", values);
+		// console.log("SQL Query:", text);
+		// console.log("SQL Values:", values);
 		const result = await db.query(text, values);
 		return result.rows.length > 0 ? result.rows : null;
 	},
