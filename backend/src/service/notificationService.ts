@@ -49,6 +49,16 @@ export const notificationService = {
 		}
 	},
 
+	async seenNotification(id: number): Promise<INotification | null> {
+		try {
+			const notification = await notificationModel.update(id, { seen: true });
+			if (!notification) throw new NotFoundError("Notification not found");
+			return notification;
+		} catch (error: any) {
+			throw mapDbError.notification(error);
+		}
+	},
+
 	async deleteNotification(id: number): Promise<void> {
 		try {
 			await notificationModel.delete(id);

@@ -3,7 +3,8 @@ import { IChat, IMessage, INotification, IUser } from "./Interfaces";
 
 export namespace Api {
 
-	export const URL = "http://localhost:3000/api";
+	// export const URL = "http://localhost:3000/api";
+	export const URL = "/api";
 
 	Fetch.defaultCredentials = "include";
 	Fetch.defaultHeaders = ((): Headers => {

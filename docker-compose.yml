@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: database
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: youruser
+      POSTGRES_PASSWORD: yourpass
+      POSTGRES_DB: matcha
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - default
+  backend:
+    container_name: backend
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    env_file: .env
+    networks:
+      - default
+
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - default
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
+
+networks: 
+  default:
