@@ -9,12 +9,15 @@ export class AppPage extends BorderPanel {
 	static userStatus = new Map<string, boolean>();
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
-			AppPage.#socket = io({
-				path: "/socket.io",
-				extraHeaders: {
-					"token": localStorage.getItem("token") || "",
-				}
-			});
+			AppPage.#socket = io(
+				"http://localhost:3000"
+				, {
+
+					//path: "/socket.io",
+					extraHeaders: {
+						"token": localStorage.getItem("token") || "",
+					}
+				});
 		}
 		return AppPage.#socket;
 	}
