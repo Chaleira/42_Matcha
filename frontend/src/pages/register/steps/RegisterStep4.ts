@@ -36,7 +36,7 @@ export function RegisterStep4(user: ref<IUser>, card: CardPanel): VBox {
 				if (data.ok) {
 					Router.go("login");
 				} else {
-					AlertPanel.warning(data.msg);
+					AlertPanel.warning(data.message);
 				}
 			});
 

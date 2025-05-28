@@ -1,4 +1,4 @@
-import { Component, H2Element, H4Element, HBox, ListItemElement, ListPanel, ref } from "typecomposer";
+import { Component, DropDown, H2Element, H4Element, HBox, ListItemElement, ListPanel, ref } from "typecomposer";
 import { INotification } from "@/api/Interfaces";
 import { Api } from "@/api/Api";
 import { CustomCheckbox } from "@/components/CustomCheckbox";
@@ -32,11 +32,21 @@ class NotificationItem extends ListItemElement {
 		this.append(new H4Element({
 			text: this.formatDate(notification.created_at!), fontWeight: "bold", textAlign: "center"
 		}));
+		const observer = new IntersectionObserver((entries, observer) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					console.log('Elemento visível!');
+					// Você pode executar qualquer ação aqui
+					observer.unobserve(entry.target); // Opcional: parar de observar depois de visível
+				}
+			});
+		});
+
+		observer.observe(this);
 
 	}
 
 	formatDate(date: string) {
-		console.log("Date:", date);
 		const options: Intl.DateTimeFormatOptions = {
 			year: 'numeric',
 			month: '2-digit',
@@ -63,6 +73,7 @@ export default class NotificationsView extends Component {
 		like: true,
 	})
 
+
 	constructor() {
 		super({ display: "flex", width: "100vw", height: "100vh", overflowX: "hidden", overflowY: "auto", flexDirection: "column" });
 		this.append(new HBox({
@@ -73,6 +84,15 @@ export default class NotificationsView extends Component {
 				new CustomCheckbox("visit", this.filter.value.visit),
 				new CustomCheckbox("message", this.filter.value.message),
 				new CustomCheckbox("like", this.filter.value.like),
+				new DropDown({
+					value: "all",
+					placeholder: "seen",
+					options: ["all", "seen", "unseen"],
+					onchange: (e: any) => {
+						const value = e.target.value;
+						console.log("Filter by seen:", value);
+					}
+				})
 			]
 		}));
 		this.listNotifications = new ListPanel<NotificationItem>({ gap: "15px", padding: "20px", marginBottom: "2rem" });
@@ -84,6 +104,7 @@ export default class NotificationsView extends Component {
 
 	async listenNotifications() {
 		this.listNotifications.removeItems();
+		console.log("Notifications:", this.notifications);
 		this.notifications.filter(e => {
 			return this.filter.value[e.type].value;
 		}).forEach((notification) => this.listNotifications.addItem(new NotificationItem(notification)));
