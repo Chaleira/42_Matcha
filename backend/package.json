@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "start": "npm run build && node dist/index.js",
+    "start": "npm run migration:up && npm run seed && npm run build && node dist/index.js",
     "dev": "nodemon --exec ts-node src/index.ts",
     "migration:create": "node-pg-migrate create $npm_config_name -f ./migrations/.migration.config.json",
     "migration:up": "node-pg-migrate up -f ./migrations/.migration.config.json",

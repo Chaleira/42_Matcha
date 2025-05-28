@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Matcha DB",
+      "Group": "Servers",
+      "Host": "database",
+      "Port": 5432,
+      "Username": "youruser",
+      "MaintenanceDB": "matcha",
+      "SSLMode": "prefer"
+    }
+  }
+}

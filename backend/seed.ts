@@ -32,14 +32,65 @@ const allowedTags = [
 ];
 
 async function seedUsers(count = 500) {
-	for (let i = 0; i < count; i++) {
+	const existingUsers = await pool.query("SELECT * FROM users WHERE id = $1", [500]);
+
+	if (existingUsers.rows.length > 0) {
+		console.log("Users already seeded. Skipping seeding process.");
+		return;
+	}
+
+	const adminPassword = await bcrypt.hash("adminpassword", 10); // Replace with the desired admin password
+	const admin = await pool.query(
+			`
+      INSERT INTO users (username, email, first_name, last_name, password, email_verified)
+      VALUES ($1, $2, $3, $4, $5, true)
+      RETURNING id
+    `,
+			[ "admin", "admin@email.com", "Super", "User", adminPassword]
+		);
+
+	const adminId = admin.rows[0].id;
+
+	await pool.query(
+			`
+      INSERT INTO profiles (user_id, bio, tags, gender, sexual_preference, pictures, fame_score, latitude, longitude, age, avatar)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+    `,
+			[adminId,
+			 "This is the admin biography",
+			 ["💑 Dating", "🤝 Friends", "🎶 Music", "✈️ Travel", "🍣 Foodie"],
+			 "male",
+			 "bisexual",
+			 ["https://picsum.photos/seed/Bqrf7s/200/200?blur=1","https://picsum.photos/seed/EDF8yuiU/200/200?grayscale","https://picsum.photos/seed/RJtT7Dcy/200/200?blur=10","https://picsum.photos/seed/oaEiX2/200/200?blur=1","https://picsum.photos/seed/glhQWhXM6L/200/200?blur=4"],
+			 100,
+			 38.7733,
+			 -9.1224,
+			 25,
+			"https://picsum.photos/seed/dJi4AtonV/200/200?blur=6"]
+		);
+
+	
+
+	for (let i = 0; i <= count; i++) {
+		const usedNames: string[] = [];
+		const usedEmails: string[] = [];
 		const sex = Math.random() < 0.5 ? "female" : "male";
 		const orientations = ["heterosexual", "homosexual", "bisexual"];
 		const orientation = orientations[Math.floor(Math.random() * orientations.length)];
 		const password = "password"; // Replace with the desired password
 		
 		const username = faker.internet.displayName();
+		if (usedNames.includes(username)) {
+			i--;
+			continue; // Skip if username already exists
+		}
+		usedNames.push(username);
 		const email = faker.internet.email();
+		if (usedEmails.includes(email)) {
+			i--;
+			continue; // Skip if email already exists
+		}
+		usedEmails.push(email);
 		const firstName = faker.person.firstName(sex);
 		const lastName = faker.person.lastName();
 		const passwordHash = await bcrypt.hash(password, 10); // Hash the password
@@ -80,5 +131,4 @@ async function seedUsers(count = 500) {
 	await pool.end();
 }
 
-// seedUsers().catch(console.error);
-console.log("Seeding users is commented out to prevent accidental execution. Uncomment the seedUsers() call to run it.");
+seedUsers().catch(console.error);
