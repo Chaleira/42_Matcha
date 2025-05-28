@@ -1,6 +1,5 @@
 import { AlertPanel } from "typecomposer";
 import { IChat, IMessage, INotification, IUser } from "./Interfaces";
-import testUsers from "@/assets/test.json";
 
 export namespace Api {
 
@@ -21,6 +20,23 @@ export namespace Api {
 			return await fetch(`${URL}/notification/get`, {
 				method: "GET",
 				redirect: "follow"
+			})
+				.then(async (response) => {
+					if (!response.ok) {
+						return "Invalid registration";
+					}
+					return (await response.json());
+				}).catch((error) => {
+					return error;
+				});
+		}
+
+		export async function update(id: number, value: Partial<INotification>): Promise<INotification> {
+			return await fetch(`${URL}/notification/update`, {
+				method: "GET",
+				redirect: "follow",
+				params: { id },
+				body: JSON.stringify(value)
 			})
 				.then(async (response) => {
 					if (!response.ok) {
@@ -70,7 +86,6 @@ export namespace Api {
 
 		export async function create(users: string[]): Promise<string> {
 			const body = JSON.stringify({ users: users });
-			console.log(body);
 			return await fetch(`${URL}/chat/create`, {
 				method: "POST",
 				body: body,
@@ -90,7 +105,6 @@ export namespace Api {
 	export namespace User {
 
 		export async function login(email: string, password: string): Promise<boolean> {
-			console.log(email, password);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 			const body = JSON.stringify({
@@ -108,7 +122,6 @@ export namespace Api {
 					if (!response.ok)
 						throw new Error((await response.json()).message);
 					const { token } = await response.json();
-					console.log(token);
 					localStorage.setItem("token", token);
 					return true;
 				}).catch((error) => {
@@ -133,7 +146,6 @@ export namespace Api {
 		}
 
 		export async function register(user: IUser): Promise<{ message: string, ok: boolean }> {
-			console.log(user);
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 
@@ -147,7 +159,6 @@ export namespace Api {
 			})
 				.then(async (response) => {
 					localStorage.removeItem("token");
-					console.log("register: ", response);
 					if (!response.ok) {
 						const { message } = await response.json();
 						return { message, ok: response.ok };
@@ -171,8 +182,7 @@ export namespace Api {
 						throw new Error("Invalid token");
 					}
 					return await response.json();
-				}).catch((error) => {
-					//alert(error);
+				}).catch(() => {
 					return null;
 				});
 		}
@@ -258,7 +268,7 @@ export namespace Api {
 				});
 		}
 
-		export async function list(params: { [key: string]: any } = {}, page: number = 0): Promise<IUser[]> {
+		export async function list(params: { [key: string]: any } = {}): Promise<IUser[]> {
 			return await fetch(`${URL}/user/list`, {
 				method: "POST",
 				redirect: "follow",
@@ -280,7 +290,6 @@ export namespace Api {
 			delete params?.created_at;
 			delete params?.viewd;
 			const body = JSON.stringify(params);
-			console.log("update body", body);
 			return await fetch(`${URL}/user/profile/update`, {
 				method: "POST",
 				body: body,
@@ -326,7 +335,7 @@ export namespace Api {
 					}
 					AlertPanel.info("Check your email for the reset password link");
 					return await response.json();
-				}).catch((error) => {
+				}).catch(() => {
 					//alert(error);
 					return null;
 				});
@@ -344,8 +353,7 @@ export namespace Api {
 						throw new Error("Invalid token");
 					}
 					return await response.json();
-				}).catch((error) => {
-					//alert(error);
+				}).catch(() => {
 					return null;
 				});
 		}

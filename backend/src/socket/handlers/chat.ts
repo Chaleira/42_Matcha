@@ -2,17 +2,9 @@ import { Socket } from "socket.io";
 import { chatService } from "../../service/chatService";
 import { io } from "../index";
 import mapDbError from "../../utils/mapDbError";
-import { onlineUsers } from "../connection";
 
 export default function registerChatHandlers(socket: Socket, userId: number) {
 
-	socket.on("disconnect", () => {
-		onlineUsers.delete(userId);
-		for (const [id, socketId] of onlineUsers.entries()) {
-			if (id === userId) continue;
-			io.to(socketId).emit("user-disconnected", { id: userId, username: socket.data.username });
-		}
-	});
 
 	socket.on("send-message", async ({ chat_id, text }) => {
 		console.log("send-message", chat_id, text);

@@ -6,6 +6,7 @@ import { io, Socket } from "socket.io-client";
 export class AppPage extends BorderPanel {
 
 	static #socket: Socket | null = null;
+	static userStatus = new Map<string, boolean>();
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
 			AppPage.#socket = io({
@@ -45,17 +46,23 @@ export class AppPage extends BorderPanel {
 			console.log("Notification:", data);
 			AlertPanel.info(data.content)
 		});
-
-		AppPage.socket.on("user-connected", (data: any) => {
-			console.log("User Connected:", data.username);
-			AlertPanel.info("User Connected: " + data.username)
+		AppPage.socket.on("user-connected", (data: {
+			userId
+			: string
+		}[]) => {
+			AppPage.userStatus.clear();
+			for (const user of data) {
+				AppPage.userStatus.set(user.userId.toString(), true);
+			}
+			setTimeout(() => this.emitEvent("user-connected", data), 0);
 		});
 	}
 
 	onDisconnected(): void {
-		console.log("AppPage disconnected from socket server");
 		AppPage.socket.off("notification");
 		AppPage.socket.off("user-connected");
+		AppPage.socket.off("user-connected");
+
 	}
 
 	getUserLocation() {
@@ -63,7 +70,9 @@ export class AppPage extends BorderPanel {
 			navigator.geolocation.getCurrentPosition((position) => {
 				this.updateLocation({ latitude: position.coords.latitude, longitude: position.coords.longitude });
 			}, () => {
-				fetch('https://ipapi.co/json/')
+				fetch('https://ipapi.co/json/', {
+					credentials: "omit"
+				})
 					.then(response => response.json())
 					.then(data => {
 						const latitude = data.latitude;

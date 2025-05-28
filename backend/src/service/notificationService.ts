@@ -9,10 +9,10 @@ export const notificationService = {
 	async createNotification(user_id: number, triggered_by_id: number, type: string, content: string): Promise<INotification> {
 		try {
 			const notification = await notificationModel.create(user_id, triggered_by_id, type, content);
-			const socket_id = onlineUsers.get(user_id);
-			console.log("Socket ID:", socket_id);
-			if (socket_id)
-				io.to(socket_id).emit("notification", notification);
+			const { id } = onlineUsers.get(user_id) || {};
+			console.log("Socket ID:", id);
+			if (id)
+				io.to(id).emit("notification", notification);
 			return notification;
 		} catch (error: any) {
 			throw mapDbError.notification(error);
