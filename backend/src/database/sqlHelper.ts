@@ -45,14 +45,14 @@ export function selectWhereFlexible(table: string, conditions: Condition[], user
 		values.push(user.id);
 	}
 	if (orderBy === "distance")
-		text += ` ORDER BY ${orderBy} ASC, fame_score DESC, shared_tags DESC`;
+		text += ` ORDER BY ${orderBy} ASC, shared_tags DESC, fame_score DESC`;
 	else if (orderBy === "shared_tags")
 		text += ` ORDER BY ${orderBy} DESC, fame_score DESC, distance ASC`;
 	else if (orderBy === "fame_score")
 		text += ` ORDER BY ${orderBy} DESC, shared_tags DESC, distance ASC`;
 	else if (orderBy === "age")
 		text += ` ORDER BY ${orderBy} ASC, fame_score DESC, distance ASC`;
-	else text += ` ORDER BY distance ASC, fame_score DESC, shared_tags DESC`;
+	else text += ` ORDER BY distance ASC, shared_tags DESC, fame_score DESC`;
 	// text += ` LIMIT 20 OFFSET 0`;
 
 	return { text, values };

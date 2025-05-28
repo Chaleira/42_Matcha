@@ -103,3 +103,8 @@ notifications
 	Similar to the suggested list, the search results must be sortable and filterable by age,
 	location, “fame rating”, and interest tags.
 
+
+
+
+- See the cors error when realoding own profile
+- implement notification readability

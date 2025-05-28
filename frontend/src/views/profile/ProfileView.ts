@@ -49,6 +49,7 @@ export class ProfileView extends BorderPanel {
                         className: "profile-button"
                         , text: "Update Profile", onclick: async () => {
                             const data = myUser.toJSON() as IUser;
+							console.log("DATA", data);
                             for (const key in data) {
                                 // @ts-ignore
                                 if (data[key] == undefined || data[key] == null || data[key] == "") {
@@ -78,7 +79,11 @@ export class ProfileView extends BorderPanel {
         }));
 
         const userInfo = new VBox({ overflow: "auto", margin: "10px" });
-        userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ value: user.first_name + " " + user.last_name, variant: "underlined" }) : user.first_name + " " + user.last_name));
+		const userName = new HBox();
+		userName.append(new propertyItem("Name: ", isMyUser ? new TextField({ value: myUser.value.first_name, variant: "underlined" }) : user.first_name));
+		userName.append(new propertyItem("", isMyUser ? new TextField({ value: myUser.value.last_name, variant: "underlined" }) : user.last_name));
+		userInfo.append(userName);
+        // userInfo.append(new propertyItem("Name: ", isMyUser ? new TextField({ value: myUser.value.first_name + " " + myUser.value.last_name, variant: "underlined" }) : user.first_name + " " + user.last_name));
         if (isMyUser) {
             userInfo.append(new propertyItem("Email: ", new TextField({ value: myUser.value.email, variant: "underlined" })));
             userInfo.append(new propertyItem("Latitude: ", new TextField({ value: myUser.value.latitude, variant: "underlined" })));
@@ -91,7 +96,6 @@ export class ProfileView extends BorderPanel {
                 else
                     userInfo.append(new propertyItem("Like:", "👍"));
             }
-            userInfo.append(new propertyItem("Fame Score: ", user.fame_score?.toString() || "1"));
         }
         userInfo.append(new propertyItem("Gender: ", isMyUser ? new DropDown({
             options: ["male", "female"],
@@ -105,6 +109,7 @@ export class ProfileView extends BorderPanel {
             // width: "48%",
             variant: "underlined"
         }) : user.sexual_preference));
+		userInfo.append(new propertyItem("Fame Score: ", user.fame_score?.toString() || "1"));
         userInfo.append(new propertyItem("Age: ", user.age.toString()));
         const hbox = new HBox({ gap: "5px" });
         TagList.convertTags(user.tags).forEach(tag => hbox.append(TagList.createTag(tag, false, () => { }, undefined)));
