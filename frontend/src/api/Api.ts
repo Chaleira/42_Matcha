@@ -4,7 +4,8 @@ import testUsers from "@/assets/test.json";
 
 export namespace Api {
 
-	export const URL = "http://localhost:3000/api";
+	// export const URL = "http://localhost:3000/api";
+	export const URL = "/api";
 
 	Fetch.defaultCredentials = "include";
 	Fetch.defaultHeaders = ((): Headers => {

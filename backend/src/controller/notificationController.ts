@@ -32,6 +32,12 @@ export const notificationController = {
 		res.status(200).json(notification);
 	},
 
+	async seenNotification(req: AuthenticatedRequest, res: Response): Promise<any> {
+		const id = parseInt(req.query.id as string);
+		const notification = await notificationService.seenNotification(id);
+		res.status(200).json(notification);
+	},
+
 	async deleteNotification(req: AuthenticatedRequest, res: Response): Promise<any> {
 		const id = parseInt(req.query.id as string);
 		await notificationService.deleteNotification(id);

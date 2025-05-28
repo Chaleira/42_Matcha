@@ -8,7 +8,8 @@ export class AppPage extends BorderPanel {
 	static #socket: Socket | null = null;
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
-			AppPage.#socket = io("http://localhost:3000", {
+			AppPage.#socket = io({
+				path: "/socket.io",
 				extraHeaders: {
 					"token": localStorage.getItem("token") || "",
 				}
