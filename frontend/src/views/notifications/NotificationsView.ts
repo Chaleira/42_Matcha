@@ -35,9 +35,10 @@ class NotificationItem extends ListItemElement {
 		const observer = new IntersectionObserver((entries, observer) => {
 			entries.forEach(entry => {
 				if (entry.isIntersecting) {
-					console.log('Elemento visível!');
-					// Você pode executar qualquer ação aqui
-					observer.unobserve(entry.target); // Opcional: parar de observar depois de visível
+					if (notification.seen) return;
+					notification.seen = true;
+					Api.Notification.seen(notification.id!);
+					observer.unobserve(entry.target);
 				}
 			});
 		});
@@ -72,6 +73,7 @@ export default class NotificationsView extends Component {
 		message: true,
 		like: true,
 	})
+	seen = ref("all");
 
 
 	constructor() {
@@ -85,19 +87,18 @@ export default class NotificationsView extends Component {
 				new CustomCheckbox("message", this.filter.value.message),
 				new CustomCheckbox("like", this.filter.value.like),
 				new DropDown({
-					value: "all",
+					value: this.seen,
+					defaultOption: "all",
 					placeholder: "seen",
 					options: ["all", "seen", "unseen"],
-					onchange: (e: any) => {
-						const value = e.target.value;
-						console.log("Filter by seen:", value);
-					}
 				})
 			]
 		}));
 		this.listNotifications = new ListPanel<NotificationItem>({ gap: "15px", padding: "20px", marginBottom: "2rem" });
 		this.append(this.listNotifications);
+		this.seen.value = "all";
 		this.filter.subscribe(() => this.listenNotifications())
+		this.seen.subscribe(() => this.listenNotifications());
 		Api.Notification.list().then((notifications: INotification[]) => { this.notifications = notifications; this.listenNotifications(); })
 
 	}
@@ -106,7 +107,12 @@ export default class NotificationsView extends Component {
 		this.listNotifications.removeItems();
 		console.log("Notifications:", this.notifications);
 		this.notifications.filter(e => {
-			return this.filter.value[e.type].value;
+			const seen = this.seen.valueOf();
+			console.log("Type:", this.seen.toString());
+			console.log("Filter:", seen.value);
+			if (seen == "all" || ((e.seen == true && seen == "seen") || (e.seen == false && seen == "unseen")))
+				return this.filter.value[e.type].value;
+			return false;
 		}).forEach((notification) => this.listNotifications.addItem(new NotificationItem(notification)));
 	}
 }

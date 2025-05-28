@@ -3,8 +3,8 @@ import { IChat, IMessage, INotification, IUser } from "./Interfaces";
 
 export namespace Api {
 
-	// export const URL = "http://localhost:3000/api";
-	export const URL = "/api";
+	export const URL = "http://localhost:3000/api";
+	//export const URL = "/api";
 
 	Fetch.defaultCredentials = "include";
 	Fetch.defaultHeaders = ((): Headers => {
@@ -31,12 +31,11 @@ export namespace Api {
 				});
 		}
 
-		export async function update(id: number, value: Partial<INotification>): Promise<INotification> {
-			return await fetch(`${URL}/notification/update`, {
+		export async function seen(id: number): Promise<INotification> {
+			return await fetch(`${URL}/notification/seen`, {
 				method: "GET",
 				redirect: "follow",
 				params: { id },
-				body: JSON.stringify(value)
 			})
 				.then(async (response) => {
 					if (!response.ok) {
