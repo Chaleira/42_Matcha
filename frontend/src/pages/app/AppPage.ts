@@ -10,21 +10,21 @@ export class AppPage extends BorderPanel {
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
 			if (!(import.meta.env.VITE_PRODUCTION === "true")) {
-			AppPage.#socket = io(
-				"http://localhost:3000"
-				, {
-					extraHeaders: {
-						"token": localStorage.getItem("token") || "",
-					}
-				});
-			}
-			else {
-				AppPage.#socket = io({
-						path: "/socket.io",
+				AppPage.#socket = io(
+					"http://localhost:3000"
+					, {
 						extraHeaders: {
 							"token": localStorage.getItem("token") || "",
 						}
 					});
+			}
+			else {
+				AppPage.#socket = io({
+					path: "/socket.io",
+					extraHeaders: {
+						"token": localStorage.getItem("token") || "",
+					}
+				});
 			}
 		}
 		return AppPage.#socket;
@@ -46,25 +46,29 @@ export class AppPage extends BorderPanel {
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
 	}
 
-	onConnected(): void {
+	onInit(): void {
+		console.log("Connected to socket server");
+		AppPage.socket.disconnect();
+		AppPage.socket.on("connect", () => {
+			console.log("Socket connected");
+			// notification
+			AppPage.socket.on("notification", (data: any) => {
+				AlertPanel.info(data.content)
+			});
+			AppPage.socket.on("user-connected", (data: {
+				userId
+				: string
+			}[]) => {
+				AppPage.userStatus.clear();
+				for (const user of data) {
+					AppPage.userStatus.set(user.userId.toString(), true);
+				}
+				setTimeout(() => this.emitEvent("user-connected", data), 0);
+			});
+			setTimeout(() => AppPage.#socket?.emit("user-status"), 0);
+		});
+		AppPage.socket.connect();
 		this.getUserLocation();
-		AppPage.socket.off("notification");
-		AppPage.socket.off("user-connected");
-		// notification
-		AppPage.socket.on("notification", (data: any) => {
-			AlertPanel.info(data.content)
-		});
-		AppPage.socket.on("user-connected", (data: {
-			userId
-			: string
-		}[]) => {
-			AppPage.userStatus.clear();
-			for (const user of data) {
-				AppPage.userStatus.set(user.userId.toString(), true);
-			}
-			setTimeout(() => this.emitEvent("user-connected", data), 0);
-		});
-		AppPage.#socket?.emit("user-status");
 	}
 
 	onDisconnected(): void {

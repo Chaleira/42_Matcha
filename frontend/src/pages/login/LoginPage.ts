@@ -25,7 +25,7 @@ export class LoginPage extends Component {
 		if (response.ok) {
 			const { token } = await response.json();
 			localStorage.setItem("token", token);
-			Router.go("home");
+			setTimeout(() => Router.go("home"), 0);
 		}
 		else
 			AlertPanel.error("Login failed: " + response.statusText);

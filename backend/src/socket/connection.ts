@@ -14,6 +14,7 @@ export default function handleConnection(socket: Socket) {
 	const token = socket.handshake.headers?.token as string;
 
 	if (!token) {
+		console.error("No token provided for socket connection");
 		socket.emit("error", { message: "No token provided" });
 		return socket.disconnect();
 	}
@@ -31,14 +32,14 @@ export default function handleConnection(socket: Socket) {
 	});
 	socket.join("user-connected");
 
-	console.log(`User connected: ${user.id} - ${user.username}`);
+	console.log(`User connected: ${user.id}`);
 	console.log(`Online users: ${Array.from(onlineUsers.values()).map(u => `${u.userId} - ${u.username}`).join(", ")}`);
 	io.to("user-connected").emit("user-connected", Array.from(onlineUsers.values()));
 	socket.data.userId = user.id;
 	socket.data.username = user.username;
 
 	socket.on("user-status", () => {
-		console.log(`User status requested: ${user.id} - ${user.username}`);
+		console.log(`User status requested: ${user.id}`);
 		onlineUsers.set(user.id, {
 			id: socket.id,
 			username: `${user.first_name} ${user.last_name}`,
@@ -48,7 +49,8 @@ export default function handleConnection(socket: Socket) {
 	});
 
 	socket.on("disconnect", () => {
-		// socket.leave("user-connected");
+		console.log(`User disconnected: ${JSON.stringify(Array.from(onlineUsers.values()))}`);
+		socket.leave("user-connected");
 		onlineUsers.delete(user.id);
 		io.to("user-connected").emit("user-connected", Array.from(onlineUsers.values()));
 	});
