@@ -61,10 +61,11 @@ export const chatService = {
 				const otherUserId = chat.user1_id === user_id ? chat.user2_id : chat.user1_id;
 				chat.user1_id = user_id;
 				chat.user2_id = otherUserId;
-				const user = await userService.getUserById(otherUserId);
+				const user = await userService.getUserProfile(user_id, otherUserId);
 				if (user) {
 					chat.first_name = user.first_name;
 					chat.last_name = user.last_name;
+					chat.avatar = user.avatar
 				}
 			}
 			return chats;

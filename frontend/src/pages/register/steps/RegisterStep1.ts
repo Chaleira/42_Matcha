@@ -10,8 +10,6 @@ export function RegisterStep1(user: ref<IUser>, card: CardPanel): VBox {
 		const username = user.value.username.value.toString().trim();
 		const password = user.value.password.value.toString().trim();
 		const confirmPasswordValue = confirmPassword.value.toString().trim();
-		console.log("Validating step 1", email, username, password, confirmPasswordValue);
-		console.log("Validating step 1", common.words.includes(user.value.password.value));
 		return !(username.length > 0 &&
 			email.length > 0 &&
 			email.includes("@") &&

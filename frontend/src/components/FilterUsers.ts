@@ -65,7 +65,6 @@ export class FilterUsers extends Component {
 			placeholder: "Sort",
 			value: this.filter.value.order_by,
 			textValue: (value) => {
-				console.log("value", value)
 				switch (value) {
 					case "distance":
 						return "Distance";

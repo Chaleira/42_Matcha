@@ -105,11 +105,8 @@ export default class NotificationsView extends Component {
 
 	async listenNotifications() {
 		this.listNotifications.removeItems();
-		console.log("Notifications:", this.notifications);
 		this.notifications.filter(e => {
 			const seen = this.seen.valueOf();
-			console.log("Type:", this.seen.toString());
-			console.log("Filter:", seen.value);
 			if (seen == "all" || ((e.seen == true && seen == "seen") || (e.seen == false && seen == "unseen")))
 				return this.filter.value[e.type].value;
 			return false;

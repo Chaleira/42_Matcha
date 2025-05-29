@@ -21,7 +21,6 @@ export class ProfileView extends BorderPanel {
         if (Router.props.id == this.id) {
             return;
         }
-        console.log("ProfileView update", Router.props.id);
         this.id = Router.props.id;
         this.top.innerHTML = "";
         this.center.innerHTML = "";
@@ -49,7 +48,6 @@ export class ProfileView extends BorderPanel {
                         className: "profile-button"
                         , text: "Update Profile", onclick: async () => {
                             const data = myUser.toJSON() as IUser;
-							console.log("DATA", data);
                             for (const key in data) {
                                 // @ts-ignore
                                 if (data[key] == undefined || data[key] == null || data[key] == "") {
@@ -58,7 +56,6 @@ export class ProfileView extends BorderPanel {
                                 }
                             }
                             data.tags = Array.from(new Set(myUser.value.tags.value)) as string[];
-                            console.log("myUser.value", data);
                             Api.User.update(data).then(() => {
                                 AlertPanel.info("Profile updated");
                             })
@@ -135,7 +132,6 @@ export class ProfileView extends BorderPanel {
         img.onclick = () => fullScreen.close();
         fullScreen.append(img);
         fullScreen.onclick = () => fullScreen.close();
-        console.log("clicked");
     }
 
     onDisconnected(): void {

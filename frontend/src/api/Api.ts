@@ -1,10 +1,11 @@
 import { AlertPanel } from "typecomposer";
 import { IChat, IMessage, INotification, IUser } from "./Interfaces";
+import { AppPage } from "@/pages/app/AppPage";
 
+const isProd = import.meta.env.VITE_PRODUCTION === "true";
 export namespace Api {
 
-	export const URL = "http://localhost:3000/api";
-	//export const URL = "/api";
+	export const URL = isProd ? "/api" : "http://localhost:3000/api";
 
 	Fetch.defaultCredentials = "include";
 	Fetch.defaultHeaders = ((): Headers => {
@@ -104,6 +105,7 @@ export namespace Api {
 	export namespace User {
 
 		export async function login(email: string, password: string): Promise<boolean> {
+			console.log("Connecting to socket...");
 			const myHeaders = new Headers();
 			myHeaders.append("Content-Type", "application/json");
 			const body = JSON.stringify({
@@ -130,6 +132,7 @@ export namespace Api {
 		}
 
 		export async function logout(): Promise<boolean> {
+			AppPage.socket?.disconnect();
 			return await fetch(`${URL}/auth/logout`, {
 				method: "POST",
 				redirect: "follow"

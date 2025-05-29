@@ -7,7 +7,6 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 
 
 	socket.on("send-message", async ({ chat_id, text }) => {
-		console.log("send-message", chat_id, text);
 		try {
 			const message = await chatService.createMessage(chat_id, userId, text);
 			//const receiverId = await chatService.getOtherUserId(chat_id, userId);
@@ -17,7 +16,6 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 			//}
 		} catch (error: any) {
 			mapDbError.chat(error);
-			console.log("Error:", error.message);
 			socket.emit("error", { message: error.message });
 		}
 	});
@@ -27,7 +25,6 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 	});
 
 	socket.on("send-message-video", async (data) => {
-		console.log("send-message-video", data.chatId);
 		socket.to(data.chatId).emit("receive-message-video", data);
 	});
 
@@ -36,7 +33,6 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 	//});
 
 	socket.on("join", async ({ chat_id }) => {
-		console.log("join", chat_id);
 		try {
 			if (socket.data?.chatId) socket.leave(socket.data.chatId);
 			const messages = await chatService.getChatMessages(chat_id, userId);
@@ -45,7 +41,6 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 			socket.emit("join", { id: chat_id, messages: messages });
 		} catch (error: any) {
 			mapDbError.chat(error);
-			console.log("Error:", error.message);
 			socket.emit("error", { message: error.message });
 		}
 	});

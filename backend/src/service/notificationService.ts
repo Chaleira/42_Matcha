@@ -10,7 +10,6 @@ export const notificationService = {
 		try {
 			const notification = await notificationModel.create(user_id, triggered_by_id, type, content);
 			const { id } = onlineUsers.get(user_id) || {};
-			console.log("Socket ID:", id);
 			if (id)
 				io.to(id).emit("notification", notification);
 			return notification;

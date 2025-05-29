@@ -38,7 +38,6 @@ export class VerifyEmail extends Component {
 		}))
 		card.append(vbox);
 		this.append(card);
-		console.log("VerifyEmail: ", Router.props);
 
 
 	}

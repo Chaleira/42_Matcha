@@ -95,7 +95,6 @@ export class ActionButtons extends Component {
   }
 
   block() {
-    console.log("block: ", this.user.block);
     if (!this.userRef.value.block.i_blocked.value)
       Api.User.createBlocks(this.user.user_id || "");
     else Api.User.deleteBlocks(this.user.user_id || "");

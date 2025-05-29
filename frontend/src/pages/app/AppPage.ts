@@ -1,4 +1,4 @@
-import { AlertPanel, AnchorElement, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
+import { AlertPanel, AnchorElement, App, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
 import { Api } from '@/api/Api';
 import { userStore } from '@/store/UserStore';
 import { io, Socket } from "socket.io-client";
@@ -9,15 +9,23 @@ export class AppPage extends BorderPanel {
 	static userStatus = new Map<string, boolean>();
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
+			if (!(import.meta.env.VITE_PRODUCTION === "true")) {
 			AppPage.#socket = io(
 				"http://localhost:3000"
 				, {
-
-					//path: "/socket.io",
 					extraHeaders: {
 						"token": localStorage.getItem("token") || "",
 					}
 				});
+			}
+			else {
+				AppPage.#socket = io({
+						path: "/socket.io",
+						extraHeaders: {
+							"token": localStorage.getItem("token") || "",
+						}
+					});
+			}
 		}
 		return AppPage.#socket;
 	}
@@ -36,17 +44,14 @@ export class AppPage extends BorderPanel {
 			}, color: "#fff", margin: "0 10px"
 		}));
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
-		console.log("AppPage initialized");
 	}
 
 	onConnected(): void {
-		console.log("AppPage connected to socket server");
 		this.getUserLocation();
 		AppPage.socket.off("notification");
 		AppPage.socket.off("user-connected");
 		// notification
 		AppPage.socket.on("notification", (data: any) => {
-			console.log("Notification:", data);
 			AlertPanel.info(data.content)
 		});
 		AppPage.socket.on("user-connected", (data: {
@@ -59,9 +64,11 @@ export class AppPage extends BorderPanel {
 			}
 			setTimeout(() => this.emitEvent("user-connected", data), 0);
 		});
+		AppPage.#socket?.emit("user-status");
 	}
 
 	onDisconnected(): void {
+		this.emitEvent("disconnect");
 		AppPage.socket.off("notification");
 		AppPage.socket.off("user-connected");
 		AppPage.socket.off("user-connected");

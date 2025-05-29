@@ -12,7 +12,6 @@ export class AlbumContainer extends Component {
 		this.container = new DivElement({ className: "album-container" });
 		this.container.append(this.createAddPhoto());
 		this.append(this.container);
-		console.log("user", this.props.user.toJSON());
 		for (const image of props.user.value?.pictures || []) {
 			this.createAlbum(new ImageElement({ src: image.toString() }));
 		}
@@ -23,7 +22,7 @@ export class AlbumContainer extends Component {
 		album.append(image);
 		const close = new DivElement({ className: "album-close", text: "❌" });
 		close.onclick = () => {
-			const index = (this.props.user.value.pictures as []).findIndex((e: string) => e.toString() == image.src);
+			const index = (this.props.user.value.pictures as string[]).findIndex((e: string) => e.toString() == image.src);
 			this.props.user.value.pictures?.splice(index, 1);
 			album.remove();
 		}

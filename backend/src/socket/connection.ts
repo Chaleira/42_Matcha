@@ -2,6 +2,7 @@ import { Socket } from "socket.io";
 import registerChatHandlers from "./handlers/chat";
 import { verifyToken } from "../utils/verifyToken";
 import { io } from ".";
+import { on } from "events";
 
 export const onlineUsers = new Map<number, {
 	id: string;
@@ -13,14 +14,12 @@ export default function handleConnection(socket: Socket) {
 	const token = socket.handshake.headers?.token as string;
 
 	if (!token) {
-		console.log("No token provided");
 		socket.emit("error", { message: "No token provided" });
 		return socket.disconnect();
 	}
 
 	const user = verifyToken(token);
 	if (!user) {
-		console.log("Invalid token");
 		socket.emit("error", { message: "Invalid token" });
 		return socket.disconnect();
 	}
@@ -31,12 +30,25 @@ export default function handleConnection(socket: Socket) {
 		userId: user.id
 	});
 	socket.join("user-connected");
+
+	console.log(`User connected: ${user.id} - ${user.username}`);
+	console.log(`Online users: ${Array.from(onlineUsers.values()).map(u => `${u.userId} - ${u.username}`).join(", ")}`);
 	io.to("user-connected").emit("user-connected", Array.from(onlineUsers.values()));
 	socket.data.userId = user.id;
 	socket.data.username = user.username;
 
+	socket.on("user-status", () => {
+		console.log(`User status requested: ${user.id} - ${user.username}`);
+		onlineUsers.set(user.id, {
+			id: socket.id,
+			username: `${user.first_name} ${user.last_name}`,
+			userId: user.id
+		});
+		socket.emit("user-connected", Array.from(onlineUsers.values()));
+	});
+
 	socket.on("disconnect", () => {
-		socket.leave("user-connected");
+		// socket.leave("user-connected");
 		onlineUsers.delete(user.id);
 		io.to("user-connected").emit("user-connected", Array.from(onlineUsers.values()));
 	});

@@ -13,7 +13,6 @@ export class VideoView extends Component {
 
 	constructor(private chatId: string) {
 		super({ display: "flex", flexDirection: "row", gap: "10px", padding: "10px", width: "100%", backgroundColor: "#f0f0f0", borderRadius: "5px", boxShadow: "0px 0px 5px 0px rgba(0,0,0,0.1)" });
-		console.log("VideoView", chatId);
 		this.append(this.video, this.video3);
 		this.startWebcam();
 	}
@@ -29,19 +28,16 @@ export class VideoView extends Component {
 		});
 
 		peer.on('signal', (data: any) => {
-			console.log("Enviando sinal", data);
 			AppPage.socket.emit('send-message-video', { chatId: this.chatId, signal: data });
 		});
 
 		peer.on('stream', (remoteStream: MediaStream) => {
-			console.log("Stream remoto recebido");
 			this.video3.srcObject = remoteStream;
 			this.video3.play();
 		});
 
 		AppPage.socket.on('receive-message-video', (data) => {
 			if (data.chatId === this.chatId) {
-				console.log("Recebido sinal remoto", data.signal);
 				peer.signal(data.signal);
 			}
 		});

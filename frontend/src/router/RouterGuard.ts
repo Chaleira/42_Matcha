@@ -12,6 +12,7 @@ export class RouterGuardHome extends RouterGuard {
         response.redirect("registerprofile");
       else {
         if (userStore.value.id != user.id) {
+			// @ts-ignore
           userStore.value = user;
         }
         response.resolve();

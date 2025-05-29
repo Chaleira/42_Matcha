@@ -22,7 +22,10 @@ services:
 
   frontend:
     container_name: frontend
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        VITE_PRODUCTION: ${VITE_PRODUCTION}
     restart: unless-stopped
     depends_on:
       - backend

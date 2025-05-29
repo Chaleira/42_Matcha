@@ -24,7 +24,6 @@ export class LoginPage extends Component {
 	private async login(response: Response) {
 		if (response.ok) {
 			const { token } = await response.json();
-			console.log(token);
 			localStorage.setItem("token", token);
 			Router.go("home");
 		}

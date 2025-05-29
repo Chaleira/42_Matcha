@@ -59,10 +59,8 @@ export class ChatView extends Component {
 			hbox.style.display = "flex";
 			toolbar.style.display = "flex";
 			left.classList.remove("open");
-			console.log("join", chat);
 			this.updateMessages(chat.messages);
 			this.sendButton.onclick = () => {
-				console.log("send", chat.id, " / ", userStore.value.user_id, " / ", this.textField.value.toString());
 				AppPage.socket.emit("send-message", { chat_id: chat.id, text: this.textField.value.toString() });
 				this.textField.value = "";
 			}
@@ -73,7 +71,6 @@ export class ChatView extends Component {
 				this.updateMessages(chat);
 				return
 			}
-			console.log("message", chat);
 			this.addMessage(chat);
 			this.textField.value = "";
 		});
@@ -138,7 +135,6 @@ export class ChatView extends Component {
 			for (const message of messages) {
 				this.addMessage(message);
 			}
-		console.log("messages: ", messages);
 	}
 
 
