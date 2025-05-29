@@ -39,7 +39,7 @@ async function seedUsers(count = 500) {
 		return;
 	}
 
-	const adminPassword = await bcrypt.hash("adminpassword", 10); // Replace with the desired admin password
+	const adminPassword = await bcrypt.hash("password", 10); // Replace with the desired admin password
 	const admin = await pool.query(
 			`
       INSERT INTO users (username, email, first_name, last_name, password, email_verified)
@@ -79,20 +79,20 @@ async function seedUsers(count = 500) {
 		const orientation = orientations[Math.floor(Math.random() * orientations.length)];
 		const password = "password"; // Replace with the desired password
 		
-		const username = faker.internet.displayName();
+		const firstName = faker.person.firstName(sex);
+		const lastName = faker.person.lastName();
+		const username = `${firstName} ${lastName}`; // Unique username
 		if (usedNames.includes(username)) {
 			i--;
 			continue; // Skip if username already exists
 		}
 		usedNames.push(username);
-		const email = faker.internet.email();
+		const email = faker.internet.email().toLowerCase(); // Generate a random email
 		if (usedEmails.includes(email)) {
 			i--;
 			continue; // Skip if email already exists
 		}
 		usedEmails.push(email);
-		const firstName = faker.person.firstName(sex);
-		const lastName = faker.person.lastName();
 		const passwordHash = await bcrypt.hash(password, 10); // Hash the password
 
 		const bio = faker.lorem.sentence();

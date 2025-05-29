@@ -46,6 +46,10 @@ frontend:
 db:
 	$(COMPOSE) exec db psql -U $$POSTGRES_USER -d $$POSTGRES_DB
 
+# Clean up Docker containers, images, and volumes
+clean:
+	 docker stop $(docker ps -q) && docker rm $(docker ps -aq) && docker rmi $(docker images -q) && docker system prune -af --volumes
+
 # Help
 help:
 	@echo "Makefile commands:"
