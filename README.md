@@ -105,6 +105,4 @@ notifications
 
 
 
-
-- See the cors error when realoding own profile
-- implement notification readability
+- CHANGE PASSWORD CRITERIA/CHECKER ON FORGOT PASSWORD

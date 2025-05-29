@@ -102,12 +102,17 @@ export class ActionButtons extends Component {
       !this.userRef.value.block.i_blocked.value;
   }
 
-  like() {
-    if (!this.userRef.value.like.i_liked.value)
-      Api.User.createLike(this.user.user_id || "");
-    else Api.User.deleteLike(this.user.user_id || "");
-    this.userRef.value.like.i_liked.value =
-      !this.userRef.value.like.i_liked.value;
+  async like() {
+    if (!this.userRef.value.like.i_liked.value) {
+		const res = await Api.User.createLike(this.user.user_id || "");
+		console.log(res);
+		if (res)
+			this.userRef.value.like.i_liked.value = !this.userRef.value.like.i_liked.value;
+	}
+    else {
+		Api.User.deleteLike(this.user.user_id || "");
+		this.userRef.value.like.i_liked.value = !this.userRef.value.like.i_liked.value;
+	}
   }
 
   async report() {

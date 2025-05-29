@@ -219,6 +219,12 @@ export namespace Api {
 				redirect: "follow",
 				params: { liked_id: userId },
 			}).then(async (response) => {
+				if (!response.ok) {
+					response.json().then((data) => {
+						AlertPanel.error(data.message || "Invalid like");
+					});
+					throw new Error("Invalid like");
+				}
 				return response.ok
 			}).catch(() => {
 				return false;
