@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const isProduction = (process.env.VITE_PRODUCTION === 'true');
+export const isProduction = (process.env.VITE_PRODUCTION === 'true');
 export const DB_URL = isProduction ? process.env.DATABASE_URL : process.env.DATABASE_URL_DEV
 export const PORT = process.env.PORT || 3000;
 export const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret';

@@ -14,7 +14,7 @@ import notificationRoutes from "./routes/notificationRoute";
 import { errorHandler } from "./middleware/errorHandler";
 import { authenticateUser } from "./middleware/authMiddleware";
 import cookieParser from "cookie-parser";
-
+import { isProduction } from "./config/config";
 
 const app = express();
 
@@ -22,9 +22,7 @@ const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
 app.use(cors({
-	//origin: 'http://localhost:81',
-	origin: 'http://localhost:5173',
-
+	origin: isProduction ? 'https://localhost:8080' : 'http://localhost:5173',
 	credentials: true,
 }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
@@ -52,7 +50,7 @@ app.use("/api/notification", authenticateUser, notificationRoutes);
 })();
 
 server.listen(PORT, () => {
-	console.log(`Server is running at http://localhost:${PORT}`);
+	console.log(`Server is running at https://localhost:${PORT}`);
 });
 
 app.use(errorHandler);

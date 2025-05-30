@@ -70,7 +70,7 @@ export const emailVerificationService = {
 				from: '"Your App" <noreply@yourapp.com>',
 				to: email,
 				subject: emailVars.subject,
-				html: `<p>Click <a href="http://${URL_FRONTEND}/${emailVars.url}?token=${token}">here</a>${emailVars.text}</p>`,
+				html: `<p>Click <a href="https://${URL_FRONTEND}/${emailVars.url}?token=${token}">here</a>${emailVars.text}</p>`,
 			});
 		} catch (error: any) {
 			throw mapDbError.emailVerification(error);
