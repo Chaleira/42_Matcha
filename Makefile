@@ -48,7 +48,7 @@ db:
 
 # Clean up Docker containers, images, and volumes
 clean:
-	 docker stop $(docker ps -q) && docker rm $(docker ps -aq) && docker rmi $(docker images -q) && docker system prune -af --volumes
+	 docker stop $(docker ps -q); docker rm $(docker ps -aq); docker rmi $(docker images -q); docker system prune -af --volumes
 
 # Help
 help:
