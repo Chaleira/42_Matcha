@@ -25,3 +25,9 @@ import { Buffer } from 'buffer'
 
 //main(() => import('./views/home/HomeView.ts'));
 //main(HTMLElement);
+
+outer: {
+	console.log("Antes");
+	break outer; // isso "pula" para fora do bloco nomeado
+	console.log("Depois"); // nunca será executado
+}

@@ -24,6 +24,11 @@ export default function registerChatHandlers(socket: Socket, userId: number) {
 		socket.leave(chat_id);
 	});
 
+	socket.on("leave-chat", ({ chat_id }) => {
+		console.log(`leave-chat ${userId}`);
+		socket.leave(chat_id);
+	});
+
 	socket.on("send-message-video", async (data) => {
 		socket.to(data.chatId).emit("receive-message-video", data);
 	});

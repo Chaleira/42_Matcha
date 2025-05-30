@@ -67,6 +67,9 @@ export class ChatView extends Component {
 		});
 
 		AppPage.socket.on("receive-message", (chat) => {
+			if (chat.chat_id != this.chatId) {
+				return; // Ignore messages from other chats
+			}
 			if (Array.isArray(chat)) {
 				this.updateMessages(chat);
 				return
@@ -99,6 +102,8 @@ export class ChatView extends Component {
 	}
 
 	onDisconnected(): void {
+		console.log("Disconnected from chat");
+		AppPage.socket.emit("leave-chat", this.chatId);
 		AppPage.socket.off("receive-message");
 		AppPage.socket.off("join");
 	}

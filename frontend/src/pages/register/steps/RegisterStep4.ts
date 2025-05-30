@@ -1,16 +1,13 @@
 import { IUser } from "@/api/Interfaces";
-import { AlertPanel, AvatarPanel, ButtonElement, CardPanel, HBox, ref, Router, SpanElement, VBox } from "typecomposer";
+import { AlertPanel, ButtonElement, CardPanel, HBox, ref, Router, SpanElement, VBox } from "typecomposer";
 import { RegisterStep3 } from "./RegisterStep3";
 import { Api } from "@/api/Api";
-
-
 
 
 export function RegisterStep4(user: ref<IUser>, card: CardPanel): VBox {
 
 	const vbox = new VBox({ padding: "10px", gap: "15px" });
-	vbox.append(new SpanElement({ text: "Avatar" }));
-	vbox.append(new AvatarPanel({ src: user.value.avatar }));
+	vbox.append(new SpanElement({ text: "A confirmation email will be sent to the address: " + user.value.email, fontSize: "16px", margin: "50px 0px", fontWeight: "bold" }));
 
 	const hbox2 = new HBox({ gap: "10px" });
 	hbox2.append(new ButtonElement({
