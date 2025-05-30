@@ -9,6 +9,7 @@ import mapDbError from "../utils/mapDbError";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { reportModel } from "../model/reportModel";
+import { tr } from "@faker-js/faker/.";
 export interface UserSearchFilters {
 	currentUserId: number;
 	age_min?: number;
@@ -87,7 +88,7 @@ export const userService = {
 		}
 	},
 
-	async getUserProfile(myId: number, userId: number): Promise<IProfile | null> {
+	async getUserProfile(myId: number, userId: number, notification: boolean = true): Promise<IProfile | null> {
 		try {
 			const userProfile = await profileModel.findByUserId(userId);
 			if (!userProfile) throw new NotFoundError("User profile not found");
@@ -101,7 +102,7 @@ export const userService = {
 			userProfile.block = block;
 			const user = await profileModel.findByUserId(myId);
 			await this.updateUserProfile(userId, { fame_score: userProfile.fame_score! + 1 > 100 ? 100 : userProfile.fame_score! + 1 });
-			await notificationService.createNotification(userId, myId, "visit", `${user?.first_name} ${user?.last_name} visited your profile`);
+			if (notification) await notificationService.createNotification(userId, myId, "visit", `${user?.first_name} ${user?.last_name} visited your profile`);
 			return userProfile;
 		} catch (error: any) {
 			throw mapDbError.user(error);
