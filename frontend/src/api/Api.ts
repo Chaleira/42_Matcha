@@ -339,12 +339,12 @@ export namespace Api {
 			})
 				.then(async (response) => {
 					if (!response.ok) {
-						throw new Error("Invalid token");
+						throw new Error((await response.json()).message || "Invalid email");
 					}
 					AlertPanel.info("Check your email for the reset password link");
 					return await response.json();
-				}).catch(() => {
-					//alert(error);
+				}).catch((error: any) => {
+					AlertPanel.error(error);
 					return null;
 				});
 		}

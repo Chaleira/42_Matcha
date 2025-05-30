@@ -47,9 +47,10 @@ export class AppPage extends BorderPanel {
 			, rlink: "notifications", color: "#fff", margin: "0 10px"
 		}));
 		this.top.append(new AnchorElement({
-			text: "Logout", href: "#", onclick: () => {
-				Api.User.logout();
-				Router.go("login");
+			text: "Logout", href: "#", onclick: async () => {
+				await Api.User.logout();
+				//Router.go("login");
+				window.location.reload();
 			}, color: "#fff", margin: "0 10px"
 		}));
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });

@@ -83,4 +83,10 @@ export class FilterUsers extends Component {
 			}
 		}))
 	}
+
+	onConnected(): void {
+		setTimeout(() => {
+			this.getParent<HomeView>()?.listerUsers(this.filter.toJSON())
+		}, 300);
+	}
 }
