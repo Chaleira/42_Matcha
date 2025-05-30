@@ -298,6 +298,7 @@ list-element ul li {
     right: 0px;
     bottom: 0px !important;
     display: block;
+    z-index: 1000;
   }
 
   .list-users.open {
