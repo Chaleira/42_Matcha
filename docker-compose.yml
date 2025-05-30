@@ -32,7 +32,7 @@ services:
     networks:
       - default
     ports:
-      - "8080:8080"
+      - "8080:443"
 
   pgadmin:
     image: dpage/pgadmin4
