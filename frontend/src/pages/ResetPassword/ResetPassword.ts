@@ -28,8 +28,8 @@ export class ResetPassword extends Component {
 		const card = new CardPanel({ width: "400px", zIndex: "2" });
 		const vbox = new VBox({ padding: "10px", gap: "15px" });
 		vbox.append(new H4Element({ text: "48 - Matcha", className: "login_header" }));
-		vbox.append(new TextField({ placeholder: "password", type: "password", value: this.reset.value.password, minLength: 12, maxLength: 20 }));
-		vbox.append(new TextField({ placeholder: "confirm password", type: "password", value: this.reset.value.confirm, minLength: 12, maxLength: 20 }));
+		vbox.append(new TextField({ placeholder: "password", type: "password", value: this.reset.value.password, minLength: 12, maxLength: 50 }));
+		vbox.append(new TextField({ placeholder: "confirm password", type: "password", value: this.reset.value.confirm, minLength: 12, maxLength: 50 }));
 		vbox.append(new SpanElement({
 			text: "password must be at least 12 characters long and not a common word.",
 		}))

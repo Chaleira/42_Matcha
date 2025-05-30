@@ -8,7 +8,7 @@ export const authController = {
 	async register(req: Request, res: Response): Promise<void | any> {
 		const { username, email, first_name, last_name, password, bio, age, tags, gender, sexual_preference, pictures, avatar, fame_score, latitude, longitude } = req.body;
 
-		const user = { username, email, first_name, last_name, password };
+		const user = { username: username.trim(), email: email.trim(), first_name: first_name.trim(), last_name: last_name.trim(), password: password.trim() };
 		const profile = { bio, age, tags, gender, sexual_preference, pictures, avatar, latitude, longitude }
 
 		const newUser: Omit<IUser, "password"> = await authService.register(user);

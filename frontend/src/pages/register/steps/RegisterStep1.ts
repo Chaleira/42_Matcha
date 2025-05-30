@@ -23,8 +23,8 @@ export function RegisterStep1(user: ref<IUser>, card: CardPanel): VBox {
 	vbox.append(new H4Element({ text: "Register", className: "login_header", }));
 	vbox.append(new TextField({ placeholder: "Username", label: "Username", value: user.value.username }));
 	vbox.append(new TextField({ placeholder: "Email", type: "email", label: "Email", value: user.value.email }));
-	vbox.append(new TextField({ placeholder: "Password", label: "Password", type: "password", value: user.value.password, minLength: 12, maxLength: 20 }));
-	vbox.append(new TextField({ placeholder: "Confirm password", label: "Confirm password", type: "password", value: confirmPassword, minLength: 12, maxLength: 20 }));
+	vbox.append(new TextField({ placeholder: "Password", label: "Password", type: "password", value: user.value.password, minLength: 12, maxLength: 50 }));
+	vbox.append(new TextField({ placeholder: "Confirm password", label: "Confirm password", type: "password", value: confirmPassword, minLength: 12, maxLength: 50 }));
 	vbox.append(new SpanElement({
 		text: "password must be at least 12 characters long and not a common word.",
 	}))
