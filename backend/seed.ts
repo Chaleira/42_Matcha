@@ -33,43 +33,52 @@ const allowedTags = [
 
 async function seedUsers(count = 500) {
 	const existingUsers = await pool.query("SELECT * FROM users WHERE id = $1", [500]);
+	const existingAdmin = await pool.query("SELECT * FROM users WHERE id = $1", [1]);
 
 	if (existingUsers.rows.length > 0) {
 		console.log("Users already seeded. Skipping seeding process.");
 		return;
 	}
 
-	const adminPassword = await bcrypt.hash("password", 10); // Replace with the desired admin password
-	const admin = await pool.query(
+	if (existingAdmin.rows.length == 0) {
+		const adminPassword = await bcrypt.hash("password", 10); // Replace with the desired admin password
+		const admin = await pool.query(
 			`
       INSERT INTO users (username, email, first_name, last_name, password, email_verified)
       VALUES ($1, $2, $3, $4, $5, true)
       RETURNING id
     `,
-			[ "admin", "admin@email.com", "Super", "User", adminPassword]
+			["admin", "admin@email.com", "Super", "User", adminPassword]
 		);
 
-	const adminId = admin.rows[0].id;
+		const adminId = admin.rows[0].id;
 
-	await pool.query(
+		await pool.query(
 			`
       INSERT INTO profiles (user_id, bio, tags, gender, sexual_preference, pictures, fame_score, latitude, longitude, age, avatar)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
     `,
-			[adminId,
-			 "This is the admin biography",
-			 ["💑 Dating", "🤝 Friends", "🎶 Music", "✈️ Travel", "🍣 Foodie"],
-			 "male",
-			 "bisexual",
-			 ["https://picsum.photos/seed/Bqrf7s/200/200?blur=1","https://picsum.photos/seed/EDF8yuiU/200/200?grayscale","https://picsum.photos/seed/RJtT7Dcy/200/200?blur=10","https://picsum.photos/seed/oaEiX2/200/200?blur=1","https://picsum.photos/seed/glhQWhXM6L/200/200?blur=4"],
-			 100,
-			 38.7733,
-			 -9.1224,
-			 25,
-			"https://picsum.photos/seed/dJi4AtonV/200/200?blur=6"]
+			[
+				adminId,
+				"This is the admin biography",
+				["💑 Dating", "🤝 Friends", "🎶 Music", "✈️ Travel", "🍣 Foodie"],
+				"male",
+				"bisexual",
+				[
+					"https://picsum.photos/seed/Bqrf7s/200/200?blur=1",
+					"https://picsum.photos/seed/EDF8yuiU/200/200?grayscale",
+					"https://picsum.photos/seed/RJtT7Dcy/200/200?blur=10",
+					"https://picsum.photos/seed/oaEiX2/200/200?blur=1",
+					"https://picsum.photos/seed/glhQWhXM6L/200/200?blur=4",
+				],
+				100,
+				38.7733,
+				-9.1224,
+				25,
+				"https://picsum.photos/seed/dJi4AtonV/200/200?blur=6",
+			]
 		);
-
-	
+	}
 
 	for (let i = 0; i <= count; i++) {
 		const usedNames: string[] = [];
@@ -78,7 +87,7 @@ async function seedUsers(count = 500) {
 		const orientations = ["heterosexual", "homosexual", "bisexual"];
 		const orientation = orientations[Math.floor(Math.random() * orientations.length)];
 		const password = "password"; // Replace with the desired password
-		
+
 		const firstName = faker.person.firstName(sex);
 		const lastName = faker.person.lastName();
 		const username = `${firstName} ${lastName}`; // Unique username
