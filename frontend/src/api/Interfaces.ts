@@ -29,6 +29,14 @@ export interface IUser {
 	created_at?: Date;
 }
 
+export interface IUserStatus {
+	id: string;
+	username: string;
+	userId: number;
+	online: boolean;
+	updatedAt?: Date;
+}
+
 export interface IFilter {
 	name: string;
 	gender: string;

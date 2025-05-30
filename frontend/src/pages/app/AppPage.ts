@@ -1,12 +1,13 @@
-import { AlertPanel, AnchorElement, App, BorderPanel, DivElement, Router, RouteView } from 'typecomposer'
+import { AlertPanel, AnchorElement, App, BorderPanel, computed, DivElement, ref, Router, RouteView } from 'typecomposer'
 import { Api } from '@/api/Api';
 import { userStore } from '@/store/UserStore';
 import { io, Socket } from "socket.io-client";
+import { IUserStatus } from '@/api/Interfaces';
 
 export class AppPage extends BorderPanel {
 
 	static #socket: Socket | null = null;
-	static userStatus = new Map<string, boolean>();
+	static userStatus = new Map<string, IUserStatus>();
 	static get socket(): Socket {
 		if (!AppPage.#socket) {
 			if (!(import.meta.env.VITE_PRODUCTION === "true")) {
@@ -29,14 +30,22 @@ export class AppPage extends BorderPanel {
 		}
 		return AppPage.#socket;
 	}
+	notification = ref<boolean>(false);
+	static instance: AppPage;
 
 	constructor() {
 		super({ height: "100vh", width: "100vw", backgroundColor: "#f0f0f0" });
+		AppPage.instance = this;
 		this.top = new DivElement({ className: "app-top", height: "50px", backgroundColor: "#333", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" });
 		this.top.append(new AnchorElement({ text: "Home", rlink: "home", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Chat", rlink: "chat", color: "#fff", margin: "0 10px" }));
 		this.top.append(new AnchorElement({ text: "Profile", rlink: "profile?id=" + userStore.value.user_id, color: "#fff", margin: "0 10px" }));
-		this.top.append(new AnchorElement({ text: "Notifications", rlink: "notifications", color: "#fff", margin: "0 10px" }));
+		this.top.append(new AnchorElement({
+			text: computed(() => {
+				return "Notifications" + (this.notification.value ? " 🔔" : "");
+			}, [this.notification])
+			, rlink: "notifications", color: "#fff", margin: "0 10px"
+		}));
 		this.top.append(new AnchorElement({
 			text: "Logout", href: "#", onclick: () => {
 				Api.User.logout();
@@ -46,6 +55,8 @@ export class AppPage extends BorderPanel {
 		this.center = new RouteView({ backgroundColor: "white", overflow: "hidden" });
 	}
 
+
+
 	onInit(): void {
 		console.log("Connected to socket server");
 		AppPage.socket.disconnect();
@@ -53,21 +64,22 @@ export class AppPage extends BorderPanel {
 			console.log("Socket connected");
 			// notification
 			AppPage.socket.on("notification", (data: any) => {
+				this.notification.value = true;
 				AlertPanel.info(data.content)
 			});
-			AppPage.socket.on("user-connected", (data: {
-				userId
-				: string
-			}[]) => {
+			AppPage.socket.on("user-connected", (data: IUserStatus[]) => {
 				AppPage.userStatus.clear();
 				for (const user of data) {
-					AppPage.userStatus.set(user.userId.toString(), true);
+					AppPage.userStatus.set(user.userId.toString(), user);
 				}
 				setTimeout(() => this.emitEvent("user-connected", data), 0);
 			});
 			setTimeout(() => AppPage.#socket?.emit("user-status"), 0);
 		});
 		AppPage.socket.connect();
+		Api.Notification.list().then((notifications) => {
+			this.notification.value = notifications.filter(notification => !notification.seen).length > 0;
+		});
 		this.getUserLocation();
 	}
 

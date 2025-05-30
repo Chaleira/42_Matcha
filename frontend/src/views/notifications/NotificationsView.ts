@@ -2,6 +2,7 @@ import { Component, DropDown, H2Element, H4Element, HBox, ListItemElement, ListP
 import { INotification } from "@/api/Interfaces";
 import { Api } from "@/api/Api";
 import { CustomCheckbox } from "@/components/CustomCheckbox";
+import { AppPage } from "@/pages/app/AppPage";
 
 class NotificationItem extends ListItemElement {
 
@@ -104,6 +105,7 @@ export default class NotificationsView extends Component {
 	}
 
 	async listenNotifications() {
+		if (AppPage.instance) AppPage.instance.notification.value = false;
 		this.listNotifications.removeItems();
 		this.notifications.filter(e => {
 			const seen = this.seen.valueOf();

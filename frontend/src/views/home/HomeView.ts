@@ -39,13 +39,23 @@ class UserView extends Component {
 
 	onInit(): void {
 		const userId = this.user.user_id?.toString() || "";
-		if (AppPage.userStatus.get(userId) === true) {
-			this.status.innerText = "🟢";
-			this.status.title = "Online";
-		} else {
-			this.status.innerText = "🔴";
-			this.status.title = "Offline";
+		const userStatus = AppPage.userStatus.get(userId) || { online: false, userId: userId, username: "", updatedAt: undefined };
+		// dia de hoje meio dia
+		if (!userStatus.updatedAt) {
+			const now = new Date();
+
+			userStatus.updatedAt = new Date(
+				now.getFullYear(),
+				now.getMonth(),
+				now.getDate(),
+				12, Math.round(Math.random() * 60), Math.round(Math.random() * 60), 0
+			);
+		} else if (AppPage.userStatus.has(userId)) {
+			userStatus.updatedAt = new Date(userStatus.updatedAt);
 		}
+
+		this.status.innerText = userStatus.online ? "🟢" : "🔴";
+		this.status.title = userStatus.online ? "Online" : "Offline" + " desde " + userStatus.updatedAt.toLocaleString();
 	}
 
 	onDisconnected(): void {

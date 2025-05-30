@@ -8,6 +8,8 @@ export const onlineUsers = new Map<number, {
 	id: string;
 	username: string;
 	userId: number;
+	online: boolean;
+	updatedAt?: Date;
 }>();
 
 export default function handleConnection(socket: Socket) {
@@ -28,6 +30,8 @@ export default function handleConnection(socket: Socket) {
 	onlineUsers.set(user.id, {
 		id: socket.id,
 		username: `${user.first_name} ${user.last_name}`,
+		online: true,
+		updatedAt: new Date(),
 		userId: user.id
 	});
 	socket.join("user-connected");
@@ -42,6 +46,8 @@ export default function handleConnection(socket: Socket) {
 		console.log(`User status requested: ${user.id}`);
 		onlineUsers.set(user.id, {
 			id: socket.id,
+			online: true,
+			updatedAt: new Date(),
 			username: `${user.first_name} ${user.last_name}`,
 			userId: user.id
 		});
@@ -51,7 +57,11 @@ export default function handleConnection(socket: Socket) {
 	socket.on("disconnect", () => {
 		console.log(`User disconnected: ${JSON.stringify(Array.from(onlineUsers.values()))}`);
 		socket.leave("user-connected");
-		onlineUsers.delete(user.id);
+		const disconnectedUser = onlineUsers.get(user.id);
+		if (disconnectedUser) {
+			disconnectedUser.online = false;
+			disconnectedUser.updatedAt = new Date();
+		}
 		io.to("user-connected").emit("user-connected", Array.from(onlineUsers.values()));
 	});
 	registerChatHandlers(socket, user.id);
