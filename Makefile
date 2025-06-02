@@ -47,8 +47,8 @@ db:
 	$(COMPOSE) exec db psql -U $$POSTGRES_USER -d $$POSTGRES_DB
 
 # Clean up Docker containers, images, and volumes
-clean:
-	 docker stop $(docker ps -q); docker rm $(docker ps -aq); docker rmi $(docker images -q); docker system prune -af --volumes
+clean: down
+	docker system prune -af --volumes; docker volume rm 42_matcha_pgadmin-data; docker volume rm 42_matcha_pg-data
 
 # Help
 help:

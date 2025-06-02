@@ -80,9 +80,9 @@ async function seedUsers(count = 500) {
 		);
 	}
 
+	const usedNames: string[] = [];
+	const usedEmails: string[] = [];
 	for (let i = 0; i <= count; i++) {
-		const usedNames: string[] = [];
-		const usedEmails: string[] = [];
 		const sex = Math.random() < 0.5 ? "female" : "male";
 		const orientations = ["heterosexual", "homosexual", "bisexual"];
 		const orientation = orientations[Math.floor(Math.random() * orientations.length)];
@@ -91,7 +91,9 @@ async function seedUsers(count = 500) {
 		const firstName = faker.person.firstName(sex);
 		const lastName = faker.person.lastName();
 		const username = `${firstName} ${lastName}`; // Unique username
+		console.log(i, ": ", username);
 		if (usedNames.includes(username)) {
+			console.warn("Repeated Username Detected");
 			i--;
 			continue; // Skip if username already exists
 		}
